@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es2015",
+        "sourceMap": true
+    },
+    "exclude": [
+        "node_modules", "typings"
+    ],
+    "files": [
+        "src/main.ts",
+        "src/server/api.ts",
+        "src/server/errors.ts",
+        "src/server/server.ts",
+        "src/server/storage/kills.ts",
+        "src/server/storage/players.ts",
+        "src/server/storage/storage.ts",
+        "src/shared/actions.ts"
+    ]
+}

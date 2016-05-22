@@ -1,0 +1,35 @@
+{
+  "name": "intern-assassins",
+  "version": "1.0.0",
+  "description": "Microsoft 2016 ISC Intern Assassins. Go wild or go home.",
+  "main": "src/main.js",
+  "scripts": {
+    "run": "src/main.js assassins.json",
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoshuaKGoldberg/intern-assassins.git"
+  },
+  "author": "Josh Goldberg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JoshuaKGoldberg/intern-assassins/issues"
+  },
+  "homepage": "https://github.com/JoshuaKGoldberg/intern-assassins#readme",
+  "devDependencies": {
+    "fs-promise": "^0.5.0",
+    "gulp": "^3.9.1",
+    "gulp-mocha": "^2.2.0",
+    "gulp-tslint": "^5.0.0",
+    "gulp-typescript": "^2.13.4",
+    "run-sequence": "^1.2.0",
+    "tslint": "^3.10.2",
+    "typescript": "^1.8.10",
+    "typings": "^1.0.4"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.1",
+    "express": "^4.13.4"
+  }
+}

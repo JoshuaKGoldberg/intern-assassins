@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-export interface IGreetingState {
+export interface IGreetingProps {
     nickname: string;
 }
 
@@ -16,7 +16,7 @@ const greetings: string[] = [
     "Sup {0}?"
 ];
 
-export const Greeting: React.StatelessComponent<IGreetingState> = (state: IGreetingState): JSX.Element => {
+export const Greeting: React.StatelessComponent<IGreetingProps> = (state: IGreetingProps): JSX.Element => {
     return (
         <h1 className="greeting">
             {greetings[(Math.random() * greetings.length | 0)].replace("{0}", state.nickname)}

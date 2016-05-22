@@ -20,7 +20,9 @@
         "src/site/scripts/index.ts",
         "src/site/scripts/main.tsx",
         "src/site/scripts/components/app.tsx",
+        "src/site/scripts/components/activitybar/activity.tsx",
         "src/site/scripts/components/activitybar/activitybar.tsx",
+        "src/site/scripts/components/profile/actions.tsx",
         "src/site/scripts/components/profile/greeting.tsx",
         "src/site/scripts/components/profile/infodisplay.tsx",
         "src/site/scripts/components/profile/profile.tsx"

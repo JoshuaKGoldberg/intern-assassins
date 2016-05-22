@@ -3,6 +3,7 @@
 
 import * as React from "react";
 import { IPlayer } from "../../../../shared/players";
+import { Actions } from "./actions";
 import { Greeting } from "./greeting";
 import { InfoDisplay } from "./infodisplay";
 
@@ -34,18 +35,22 @@ export class Profile extends React.Component<IProfileProps, IPlayer> {
 
         return (
             <section id="profile">
-                <div class="area">
+                <div className="area greeting-area">
                     <Greeting nickname={this.state.nickname} />
                 </div>
 
-                <div class="area">
-                    <img src={`https://me.microsoft.com/ThumbnailPhoto.ashx?email=${this.props.alias}@microsoft.com`} />
+                <div className="area profile-picture-area">
+                    <img src={`https://me.microsoft.com/ThumbnailPhoto.ashx?email=${this.state.alias}@microsoft.com`} />
+                </div>
+
+                <div className="area info-display-area">
+                    <InfoDisplay info="alias" display={this.state.alias} />
+                    <InfoDisplay info="nickname" display={this.state.nickname} editable={true} />
+                    <InfoDisplay info="target" display={this.state.target} />
                 </div>
 
                 <div class="area">
-                    <InfoDisplay info="alias" display={this.props.alias} />
-                    <InfoDisplay info="nickname" display={this.state.nickname} editable={true} />
-                    <InfoDisplay info="target" display={this.state.target} />
+                    <Actions />
                 </div>
             </section>);
     }

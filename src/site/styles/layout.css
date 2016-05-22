@@ -6,7 +6,6 @@ body {
   outline: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden;
 }
 /* Flexbox shenanigans */
 #app-rendered {
@@ -19,7 +18,7 @@ body {
   flex-direction: column;
   justify-content: space-between;
 }
-@media screen and (min-width: 560px) {
+@media screen and (min-width: 700px) {
   #app-rendered {
     flex-direction: row-reverse;
   }
@@ -35,6 +34,12 @@ body {
 #activity-bar {
   padding: 11px 14px;
   height: 100%;
+  box-sizing: border-box;
+}
+.activity {
+  margin: auto;
+  padding: 11px 0;
+  text-align: center;
 }
 /* Profile */
 #profile {

@@ -2,6 +2,7 @@
 /// <reference path="../../../../../typings/react-dom/index.d.ts" />
 
 import * as React from "react";
+import { Activity } from "./activity";
 
 export interface IActivityBarProps {
     // ...
@@ -18,7 +19,10 @@ export class ActivityBar extends React.Component<IActivityBarProps, IActivityBar
     public render(): JSX.Element {
         return (
             <section id="activity-bar">
-                Events will show up here when they happen.
+                <Activity key={0} />
+                <Activity key={1} />
+                <Activity key={2} />
+                <Activity key={3} />
             </section>);
     }
 }

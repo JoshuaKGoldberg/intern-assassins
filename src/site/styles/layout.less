@@ -7,7 +7,6 @@ html, body {
     outline: 0;
     width: 100%;
     height: 100%;
-    overflow: hidden;
 }
 
 
@@ -43,15 +42,22 @@ html, body {
 /* Activity bar */
 
 #activity-bar {
-    padding: @section-padding;
+    padding: @padding-section;
     height: 100%;
+    box-sizing: border-box;
+}
+
+.activity {
+    margin: auto;
+    padding: @padding-inside;
+    text-align: center;
 }
 
 
 /* Profile */
 
 #profile {
-    padding: @section-padding;
+    padding: @padding-section;
     padding-bottom: 70px;
     text-align: center;
 

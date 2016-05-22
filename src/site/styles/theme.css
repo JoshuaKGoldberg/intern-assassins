@@ -32,5 +32,32 @@ img:hover {
 /* Activity bar */
 #activity-bar {
   background: #283542;
-  color: #f0f7f7;
+  color: #ccccd0;
+}
+#activity-bar .activity:last-of-type {
+  padding-bottom: 42px;
+}
+/* Profile */
+.info-display-area {
+  padding-top: 21px;
+}
+.actions {
+  margin-top: 28px;
+}
+.actions input[type=button] {
+  margin: 0 14px;
+  padding: 11px 21px 14px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #494949;
+  font-family: "Segoe UI Semilight", "Segoe UI", "sans-serif";
+  font-weight: 100;
+  font-size: 117%;
+  cursor: pointer;
+  transition: 210ms all;
+}
+.actions input[type=button]:hover,
+.actions input[type=button]:active {
+  border: 1px solid #ccccd0;
+  box-shadow: 0 3px 7px #bbcccc;
 }

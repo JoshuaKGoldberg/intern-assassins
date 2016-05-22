@@ -11,7 +11,8 @@ export enum ErrorCause {
     PlayersDoNotExist,
     PlayerAlreadyExists,
     PlayersAlreadyExist,
-    PlayerIsDead
+    PlayerIsDead,
+    WrongTarget
 }
 
 /**

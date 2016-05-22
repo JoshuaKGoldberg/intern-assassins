@@ -1,0 +1,41 @@
+@import "variables";
+
+body {
+    background: @color-background-light;
+    color: @color-font-dark;
+    font-family: @font-body-family;
+    font-size: @font-body-size;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    cursor: default;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: lighter;
+}
+
+h1 {
+    font-size: 2.1em;
+}
+
+img {
+    position: relative;
+    border-radius: 100%;
+    transition: 210ms all;
+    .shadow-light();
+}
+
+img:hover {
+    margin-top: -2px;
+    margin-bottom: 2px;
+    .shadow-heavy();
+}
+
+
+/* Activity bar */
+
+#activity-bar {
+    background: @color-background-dark;
+    color: @color-font-light;
+}
+

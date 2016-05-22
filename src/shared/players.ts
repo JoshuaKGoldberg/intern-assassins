@@ -21,4 +21,9 @@ export interface IPlayer {
      * "Secret key" for verification.
      */
     passphrase: string;
+
+    /**
+     * Who this person is hunting, if still alive.
+     */
+    target: string;
 }

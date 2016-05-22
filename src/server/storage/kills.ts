@@ -24,6 +24,14 @@ export class KillStorage extends StorageMember<IKillClaim> {
     }
 
     /**
+     * @param alias   Ids of kill claims.
+     * @returns A promise for the kill claims with the ids.
+     */
+    public getMany(ids: string[]): Promise<IReport<IKillClaim>[]> {
+        throw new ServerError(ErrorCause.NotImplemented);
+    }
+
+    /**
      * @returns Past kills, ordered from oldest to newest.
      */
     public getAll(): Promise<IReport<IKillClaim>[]> {
@@ -51,19 +59,27 @@ export class KillStorage extends StorageMember<IKillClaim> {
                 const [killer, victim] = [reports[0].data, reports[1].data];
 
                 if (!killer.alive) {
-                    throw new ServerError(ErrorCause.PlayerIsDead, killer.alias);
+                    throw new ServerError(ErrorCause.PlayerIsDead, killerAlias);
                 }
 
-                if (!killer.alive) {
-                    throw new ServerError(ErrorCause.PlayerIsDead, victim.alias);
+                if (!victim.alive) {
+                    throw new ServerError(ErrorCause.PlayerIsDead, victimAlias);
                 }
 
-                return [killer, victim];
+                if (killer.target !== victimAlias) {
+                    throw new ServerError(ErrorCause.WrongTarget, victimAlias);
+                }
+
+                return reports;
             })
             .then((reports) => {
                 const [killer, victim] = reports;
 
-                console.log("Todo: execute the kill", killer, victim);
+                victim.data.alive = false;
+                killer.data.target = victim.data.target;
+
+                this.api.players.update(killer);
+                this.api.players.update(victim);
 
                 return new Promise<IReport<IKillClaim>>(undefined);
             });

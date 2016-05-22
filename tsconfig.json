@@ -2,7 +2,8 @@
     "compilerOptions": {
         "module": "commonjs",
         "target": "es2015",
-        "sourceMap": true
+        "sourceMap": true,
+        "jsx": "react"
     },
     "exclude": [
         "node_modules", "typings"
@@ -15,6 +16,13 @@
         "src/server/storage/kills.ts",
         "src/server/storage/players.ts",
         "src/server/storage/storage.ts",
-        "src/shared/actions.ts"
+        "src/shared/actions.ts",
+        "src/site/scripts/index.ts",
+        "src/site/scripts/main.tsx",
+        "src/site/scripts/components/app.tsx",
+        "src/site/scripts/components/activitybar/activitybar.tsx",
+        "src/site/scripts/components/profile/greeting.tsx",
+        "src/site/scripts/components/profile/infodisplay.tsx",
+        "src/site/scripts/components/profile/profile.tsx"
     ]
 }

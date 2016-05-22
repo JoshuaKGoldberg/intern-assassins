@@ -54,6 +54,8 @@ export class Server {
 
         this.app = express();
         this.app.use(express.static("src/site"));
+        this.app.use("/node_modules", express.static("node_modules"));
+
         this.api = new Api(this.app);
         this.server = http.createServer(this.app);
     }

@@ -96,4 +96,11 @@ export class PlayerStorage extends StorageMember<IPlayer> {
     public retrieveIdFromRequest(submission: ISubmission<IPlayer>): string {
         return submission.data.alias;
     }
+
+    /**
+     * 
+     */
+    public update(report: IReport<IPlayer>): Promise<void> {
+        throw new ServerError(ErrorCause.NotImplemented);
+    }
 }

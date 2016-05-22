@@ -1,0 +1,47 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+/* Flexbox shenanigans */
+#app-rendered {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+@media screen and (min-width: 560px) {
+  #app-rendered {
+    flex-direction: row-reverse;
+  }
+  #activity-bar {
+    width: 490px;
+  }
+  #profile {
+    padding-bottom: 0;
+    width: 100%;
+  }
+}
+/* Activity bar */
+#activity-bar {
+  padding: 11px 14px;
+  height: 100%;
+}
+/* Profile */
+#profile {
+  padding: 11px 14px;
+  padding-bottom: 70px;
+  text-align: center;
+}
+#profile .area {
+  display: block;
+}

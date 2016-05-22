@@ -1,0 +1,36 @@
+body {
+  background: #fefeff;
+  color: #494949;
+  font-family: "Segoe UI Semilight", "Segoe UI", "sans-serif";
+  font-size: 1.17em;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  cursor: default;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: lighter;
+}
+h1 {
+  font-size: 2.1em;
+}
+img {
+  position: relative;
+  border-radius: 100%;
+  transition: 210ms all;
+  box-shadow: 0 3px 7px #bbcccc;
+}
+img:hover {
+  margin-top: -2px;
+  margin-bottom: 2px;
+  box-shadow: 0 7px 14px 3px #aabbbb;
+}
+/* Activity bar */
+#activity-bar {
+  background: #283542;
+  color: #f0f7f7;
+}

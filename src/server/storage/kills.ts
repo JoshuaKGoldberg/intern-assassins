@@ -70,24 +70,11 @@ export class KillStorage extends StorageMember<IKillClaim> {
                     throw new ServerError(ErrorCause.PlayersDead, victimAlias);
                 }
 
-                if (killer.target !== victimAlias) {
+                if (killer.target !== victimAlias && killer.alias !== victimAlias) {
+                    console.log("Problem", killer.target, victimAlias);
                     throw new ServerError(ErrorCause.WrongTarget, victimAlias);
                 }
-
-                killer.target = victim.target;
-                victim.alive = false;
-                victim.target = undefined;
             })
-            .then(() => this.api.players.update({
-                data: killer,
-                reporter: killer.alias,
-                timestamp: Date.now()
-            }))
-            .then(() => this.api.players.update({
-                data: victim,
-                reporter: victim.alias,
-                timestamp: Date.now()
-            }))
             .then(() => {
                 const killClaimReport: IReport<IKillClaim> = {
                     data: {
@@ -101,6 +88,34 @@ export class KillStorage extends StorageMember<IKillClaim> {
                 this.claims.push(killClaimReport);
 
                 return killClaimReport;
+            })
+            .then((killClaimReport: IReport<IKillClaim>): Promise<IReport<IKillClaim>> => {
+                return this.checkKillClaimValidity(killClaimReport)
+                    .then((valid: boolean): Promise<IReport<IKillClaim>> => {
+                        if (!valid) {
+                            return Promise.resolve(killClaimReport);
+                        }
+
+                        const oldVictimTarget: string = victim.target;
+
+                        killer.target = victim.target;
+                        victim.alive = false;
+                        victim.target = undefined;
+
+                        return this.api.players
+                            .update({
+                                data: killer,
+                                reporter: killer.alias,
+                                timestamp: Date.now()
+                            })
+                            .then(() => this.api.players.update({
+                                data: victim,
+                                reporter: victim.alias,
+                                timestamp: Date.now()
+                            }))
+                            .then(() => this.api.players.updateTargetForDeath(victim.alias, oldVictimTarget))
+                            .then(() => killClaimReport);
+                    });
             });
     }
 
@@ -112,5 +127,26 @@ export class KillStorage extends StorageMember<IKillClaim> {
      */
     public retrieveIdFromRequest(body): string {
         throw new ServerError(ErrorCause.NotImplemented);
+    }
+
+    /**
+     * Checks whether one player's kill claim is "valid" (proven if necessary).
+     * 
+     * 
+     */
+    private checkKillClaimValidity(killClaimReport: IReport<IKillClaim>): Promise<boolean> {
+        // Victims are allowed to self-identify as dead.
+        if (killClaimReport.data.victim === killClaimReport.reporter) {
+            return Promise.resolve(true);
+        }
+
+        const victimReport = this.claims.find(
+            (claim: IReport<IKillClaim>): boolean => {
+                return (
+                    claim.reporter === killClaimReport.data.victim
+                    && claim.data.victim === killClaimReport.data.victim);
+            });
+
+        return Promise.resolve(!!victimReport);
     }
 }

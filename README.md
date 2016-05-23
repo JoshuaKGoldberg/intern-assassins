@@ -30,10 +30,12 @@ node src\main
 ## Build Process
 
 [Gulp](http://gulpjs.com/) is used to automate building, which requires [Node.js](http://node.js.org).
+Use Node >= 6.0.0.
 
 To build from scratch, install Node.js and run the following commands:
 
 ```
+npm install -g gulp
 npm install
 gulp
 ```

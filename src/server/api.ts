@@ -76,25 +76,20 @@ export class Api {
             const query: ILoginValues = request.body;
 
             this.players.get(query.alias)
-                // If the player exists already, the login info must match
+                // Case: player alias exists in the database, does the info match?
                 .then(record => {
-                    if (query.nickname === record.data.nickname && query.alias === record.data.alias) {
-                        response.send("true");
+                    if (
+                        query.nickname === record.data.nickname
+                        && query.alias === record.data.alias
+                        && query.passphrase === record.data.passphrase) {
+                        response.sendStatus(200);
                     } else {
-                        response.send("false");
+                        response.sendStatus(401);
                     }
                 })
-                // If the player doesn't exist, create a new one
+                // Case: player alias does not exist in the database
                 .catch((error: ServerError): void => {
-                    if (error.cause !== ErrorCause.PlayersDoNotExist) {
-                        response.send("false");
-                        return;
-                    }
-
-                    this.players.createNewFromLogin(query)
-                        .then((): void => {
-                            response.send("true");
-                        });
+                    response.sendStatus(401);
                 });
         });
     }

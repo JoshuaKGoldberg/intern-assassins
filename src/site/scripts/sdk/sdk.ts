@@ -5,6 +5,12 @@ import { IKillClaim } from "../../../shared/kills";
 import { ILoginValues } from "../../../shared/login";
 import { IPlayer } from "../../../shared/players";
 
+type Method = "GET" | "POST" | "PUT";
+
+interface IRequestParser<T> {
+    (request: XMLHttpRequest): T;
+}
+
 /**
  * @todo Use Swagger instead...
  */
@@ -15,14 +21,22 @@ export class Sdk {
      * @returns A promise for whether the login was accepted.
      */
     public login(values: ILoginValues): Promise<boolean> {
-        return this.sendAjaxRequest("POST", "api/login", values);
+        return this.sendAjaxRequest(
+            "POST",
+            "api/login",
+            values,
+            Sdk.parseResponseForOkStatus);
     }
 
     /**
      * 
      */
     public getPlayer(alias: string, passphrase: string): Promise<IReport<IPlayer>> {
-        return this.sendAjaxRequest("GET", "api/players", { alias, passphrase });
+        return this.sendAjaxRequest(
+            "GET",
+            "api/players",
+            { alias, passphrase },
+            Sdk.parseResponseForJsonData);
     }
 
     /**
@@ -38,13 +52,14 @@ export class Sdk {
                 data: { killer, victim },
                 reporter: killer,
                 passphrase
-            });
+            },
+            Sdk.parseResponseForJsonData);
     }
 
     /**
      * 
      */
-    private sendAjaxRequest<TData, TResponse>(method: "GET" | "POST" | "PUT", url: string, data?: TData): Promise<TResponse> {
+    private sendAjaxRequest<TData, TResponse>(method: Method, url: string, data: TData, parser: IRequestParser<TResponse>): Promise<TResponse> {
         if (method === "GET") {
             url = url + "?" + Object.keys(data)
                 .map((key: string): string => `${key}=${encodeURIComponent(data[key])}`)
@@ -60,21 +75,30 @@ export class Sdk {
                     return;
                 }
 
-                let response: TResponse;
-
                 try {
-                    response = JSON.parse(request.responseText);
+                    resolve(parser(request));
                 } catch (error) {
                     reject(error);
-                    return;
                 }
-
-                resolve(response);
             };
 
             request.open(method, url);
             request.setRequestHeader("content-type", "application/json");
             request.send(JSON.stringify(data));
         });
+    }
+
+    /**
+     * 
+     */
+    private static parseResponseForOkStatus(request: XMLHttpRequest): boolean {
+        return request.status === 200;
+    }
+
+    /**
+     * 
+     */
+    private static parseResponseForJsonData<T>(request: XMLHttpRequest): T {
+        return JSON.parse(request.responseText);
     }
 }

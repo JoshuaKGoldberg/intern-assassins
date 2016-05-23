@@ -52,7 +52,7 @@ gulp.task("tslint", () => {
 });
 
 gulp.task("watch", () => {
-    gulp.watch(["*.json", "src/**/*.ts","src/**/*.tsx"], ["tsc", "tslint"]);
+    gulp.watch(["*.json", "src/**/*.ts","src/**/*.tsx"], ["tsc", "tslint", "browserify"]);
     gulp.watch(["src/site/**/*.less"], ["less"]);
 });
 

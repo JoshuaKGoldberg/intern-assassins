@@ -31,10 +31,6 @@ export const Profile: React.StatelessComponent<IAppLoggedInProps> = (props: IApp
                 <Greeting nickname={props.player.nickname} />
             </div>
 
-            <div className="area profile-picture-area">
-                <img src={`https://me.microsoft.com/ThumbnailPhoto.ashx?email=${props.player.alias}@microsoft.com`} />
-            </div>
-
             <div className="area info-display-area">
                 <InfoDisplay info="alias" display={props.player.alias} />
                 <InfoDisplay info="nickname" display={props.player.nickname} editable={true} />

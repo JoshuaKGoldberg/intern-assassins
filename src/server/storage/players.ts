@@ -78,7 +78,6 @@ export class PlayerStorage extends StorageMember<IPlayer> {
                 const playerReport: IReport<IPlayer> = this.players.find(
                     report => report.data.alias === alias);
 
-                console.log("Finding", alias, "gives", playerReport);
                 if (!playerReport) {
                     (unfound || (unfound = [])).push(alias);
                 }

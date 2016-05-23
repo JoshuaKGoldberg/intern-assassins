@@ -59,10 +59,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         };
 
         if (this.state.alias && this.state.passphrase) {
-            this.populatePlayer({
-                alias: this.state.alias,
-                passphrase: this.state.passphrase
-            });
+            this.receivePlayerUpdate();
         }
     }
 
@@ -74,7 +71,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             return (
                 <AppLoggedIn
                     player={this.state.player}
-                    reportUpdate={(): void => console.log("Heya!")}
+                    reportUpdate={(): void => this.receivePlayerUpdate()}
                     sdk={this.sdk}
                 />);
         } else {
@@ -112,5 +109,15 @@ export class App extends React.Component<IAppProps, IAppState> {
                     player: report.data
                 });
             });
+    }
+
+    /**
+     * 
+     */
+    private receivePlayerUpdate(): void {
+        this.populatePlayer({
+            alias: this.state.alias,
+            passphrase: this.state.passphrase
+        });
     }
 }

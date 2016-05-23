@@ -18,18 +18,6 @@ h6 {
 h1 {
   font-size: 2.1em;
 }
-img {
-  position: relative;
-  border-radius: 100%;
-  overflow: hidden;
-  transition: 210ms all;
-  box-shadow: 0 3px 7px #bbcccc;
-}
-img:hover {
-  margin-top: -2px;
-  margin-bottom: 2px;
-  box-shadow: 0 7px 14px 3px #aabbbb;
-}
 input {
   margin: 0 14px;
   padding: 11px 21px 14px;

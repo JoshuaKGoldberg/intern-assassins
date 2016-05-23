@@ -58,7 +58,6 @@ export class KillStorage extends StorageMember<IKillClaim> {
         let killer: IPlayer;
         let victim: IPlayer;
 
-        console.log("Putting -> getMany", [killerAlias, victimAlias]);
         return this.api.players.getMany([killerAlias, victimAlias])
             .then(reports => {
                 [killer, victim] = [reports[0].data, reports[1].data];

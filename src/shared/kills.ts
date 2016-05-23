@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * A player claiming to have killed or been killed.
  */

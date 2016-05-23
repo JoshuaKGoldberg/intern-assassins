@@ -1,3 +1,5 @@
+"use strict";
+
 import { IReport } from "../../../shared/actions";
 import { IKillClaim } from "../../../shared/kills";
 import { ILoginValues } from "../../../shared/login";

@@ -1,5 +1,6 @@
 /// <reference path="../../../typings/all.d.ts" />
 
+"use strict";
 import { IReport } from "../../shared/actions";
 import { IKillClaim } from "../../shared/kills";
 import { IPlayer } from "../../shared/players";

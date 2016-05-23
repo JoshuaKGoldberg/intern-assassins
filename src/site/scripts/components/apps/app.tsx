@@ -1,6 +1,7 @@
 /// <reference path="../../../../../typings/react/index.d.ts" />
 /// <reference path="../../../../../typings/socket.io/index.d.ts" />
 
+"use strict";
 declare var io: SocketIOStatic;
 import * as React from "react";
 import { IReport } from "../../../../shared/actions";
@@ -82,7 +83,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         }
 
         this.socket = io();
-        this.socket.on("report", (report: IReport<any>): void => this.receiveReport(report));
+        this.socket.on("report", (reportRaw: string): void => this.receiveReportRaw(reportRaw));
     }
 
     /**
@@ -149,9 +150,10 @@ export class App extends React.Component<IAppProps, IAppState> {
     /**
      * 
      */
-    private receiveReport(reportRaw: string): void {
+    private receiveReportRaw(reportRaw: string): void {
+        const report = JSON.parse(reportRaw);
         const newReports: IReport<any>[] = this.state.recentReports.slice();
-        newReports.push(JSON.parse(reportRaw));
+        newReports.push(report);
 
         this.setState(
             {

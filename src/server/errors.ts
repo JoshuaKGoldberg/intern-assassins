@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Possible causes for a ServerError.
  */
@@ -14,7 +16,7 @@ export enum ErrorCause {
 }
 
 /**
- * An error in the server.
+ * An error triggered in the server.
  */
 export class ServerError extends Error {
     /**

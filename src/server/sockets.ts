@@ -1,5 +1,6 @@
 /// <reference path="../../typings/all.d.ts" />
 
+"use strict";
 import * as http from "http";
 import * as socketIo from "socket.io";
 import { IReport } from "../shared/actions";

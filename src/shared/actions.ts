@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * A user submission of data, along with their credentials.
  * 

@@ -1,7 +1,10 @@
 "use strict";
 import { Server } from "./server/server";
 
-const fileName = "assassins.json";
+/**
+ * Path to a settings file storing server settings.
+ */
+const settingsFileName: string = "assassins.json";
 
-Server.createFromFile(fileName)
+Server.createFromFile(settingsFileName)
     .then((server: Server): void => server.run());

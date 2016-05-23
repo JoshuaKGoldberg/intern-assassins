@@ -1,6 +1,7 @@
 /// <reference path="../../../../../typings/react/index.d.ts" />
 /// <reference path="../../../../../typings/react-dom/index.d.ts" />
 
+"use strict";
 import * as React from "react";
 import { IAppLoggedInProps } from "../apps/apploggedin";
 import { Actions } from "./actions";

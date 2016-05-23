@@ -1,11 +1,13 @@
 /// <reference path="../../typings/all.d.ts" />
 
+"use strict";
 import * as bodyParser from "body-parser";
 import * as express from "express";
 import * as url from "url";
 import { IReport, ISubmission } from "../shared/actions";
 import { ILoginValues } from "../shared/login";
 import { ErrorCause, ServerError } from "./errors";
+import { IAdmin } from "./server";
 import { KillStorage } from "./storage/kills";
 import { PlayerStorage } from "./storage/players";
 import { StorageMember } from "./storage/storage";
@@ -43,6 +45,11 @@ export class Api {
     public /* readonly */ players: PlayerStorage = new PlayerStorage(this);
 
     /**
+     * Login credentials for server administrators.
+     */
+    private admins: IAdmin[];
+
+    /**
      * Callbacks to notify of reports.
      */
     private reportCallbacks: IReportCallback<any>[] = [];
@@ -53,7 +60,9 @@ export class Api {
      * 
      * @param app   The container application.
      */
-    public constructor(app: any) {
+    public constructor(app: any, admins: IAdmin[]) {
+        this.admins = admins;
+
         app.use(bodyParser.json());
 
         this.registerStorageRoutes(app, "/api/kills", this.kills);
@@ -195,14 +204,22 @@ export class Api {
     }
 
     /**
+     * Checks whether a submission was made by a server administrator.
      * 
+     * @param submission   An API submission sent in by a user.
+     * @returns Whether the submission was made by a server administrator.
      */
     private isSubmissionFromAdministrator<T>(submission: ISubmission<T>): boolean {
-        return submission.reporter === "joshypoo" && submission.passphrase === "satya";
+        return !!this.admins.find((admin: IAdmin): boolean => {
+            return admin.alias === submission.reporter && admin.passphrase === submission.passphrase;
+        });
     }
 
     /**
+     * Standardizes data wrappings around a submission to use it as a report.
      * 
+     * @param submission   An API submission sent in by a user.
+     * @returns The submission wrapped as a request.
      */
     private wrapSubmission<T>(submission: ISubmission<T>): IReport<T> {
         return {

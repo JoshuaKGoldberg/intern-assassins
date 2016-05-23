@@ -1,5 +1,6 @@
 /// <reference path="../../../../../typings/react/index.d.ts" />
 
+"use strict";
 import * as React from "react";
 import { ActionButton } from "./actionbutton";
 

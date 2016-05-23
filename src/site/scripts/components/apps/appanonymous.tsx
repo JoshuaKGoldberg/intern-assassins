@@ -1,5 +1,6 @@
 /// <reference path="../../../../../typings/react/index.d.ts" />
 
+"use strict";
 import * as React from "react";
 import { Sdk } from "../../sdk/sdk";
 import { ILoginValues, LoginValueKeys } from "../../../../shared/login";

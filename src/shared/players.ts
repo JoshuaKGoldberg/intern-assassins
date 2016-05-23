@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Intern who's totally getting a Hololens as an intern gift if they win.
  */

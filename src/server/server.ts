@@ -4,6 +4,7 @@ import * as express from "express";
 import * as http from "http";
 import * as fsp from "fs-promise";
 import { Api } from "./api";
+import { Sockets } from "./sockets";
 
 /**
  * Settings to initialize a new Server.
@@ -40,6 +41,11 @@ export class Server {
     private api: Api;
 
     /**
+     * Real-time push notifications for activity.
+     */
+    private sockets: Sockets;
+
+    /**
      * Whether the server is currently running.
      */
     private running: boolean = false;
@@ -58,6 +64,7 @@ export class Server {
 
         this.api = new Api(this.app);
         this.server = http.createServer(this.app);
+        this.sockets = new Sockets(this.server);
     }
 
     /**

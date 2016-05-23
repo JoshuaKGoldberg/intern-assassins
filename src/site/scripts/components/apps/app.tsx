@@ -1,5 +1,7 @@
 /// <reference path="../../../../../typings/react/index.d.ts" />
+/// <reference path="../../../../../typings/socket.io/index.d.ts" />
 
+declare var io: SocketIOStatic;
 import * as React from "react";
 import { IReport } from "../../../../shared/actions";
 import { IPlayer } from "../../../../shared/players";
@@ -9,10 +11,16 @@ import { Sdk } from "../../sdk/sdk";
 import { AppAnonymous } from "./appanonymous";
 import { AppLoggedIn } from "./apploggedin";
 
+/**
+ * 
+ */
 export interface IAppProps {
     // ...
 }
 
+/**
+ * 
+ */
 export interface IAppState {
     /**
      * 
@@ -49,6 +57,11 @@ export class App extends React.Component<IAppProps, IAppState> {
     /**
      * 
      */
+    private socket: SocketIO.Server;
+
+    /**
+     * 
+     */
     public constructor(props?: IAppProps, context?: any) {
         super(props, context);
         this.storage = new AppStorage();
@@ -61,6 +74,8 @@ export class App extends React.Component<IAppProps, IAppState> {
         if (this.state.alias && this.state.passphrase) {
             this.receivePlayerUpdate();
         }
+
+        this.socket = io();
     }
 
     /**

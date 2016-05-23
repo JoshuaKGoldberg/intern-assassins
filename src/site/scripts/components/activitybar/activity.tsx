@@ -11,7 +11,7 @@ export interface IActivityProps {
     /**
      * 
      */
-    text: string;
+    message: string;
 }
 
 /**
@@ -29,10 +29,9 @@ export class Activity extends React.Component<IActivityProps, IActivityState> {
      * 
      */
     public render(): JSX.Element {
-        console.log("Rendering in activity", this.props);
         return (
             <div className="activity">
-                {this.props.text}
+                {this.props.message}
             </div>);
     }
 }

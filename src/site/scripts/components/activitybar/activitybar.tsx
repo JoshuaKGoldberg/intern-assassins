@@ -3,23 +3,21 @@
 
 "use strict";
 import * as React from "react";
-import { IReport } from "../../../../shared/actions";
 import { Activity } from "./activity";
 
 export interface IActivityBarProps {
     /**
      * 
      */
-    recentReports: IReport<any>[];
+    messages: string[];
 }
 
 export const ActivityBar: React.StatelessComponent<IActivityBarProps> = (props: IActivityBarProps): JSX.Element => {
     return (
         <section id="activity-bar">
-            {props.recentReports.map(
-                (recentReport: IReport<any>, i: number): JSX.Element => {
-                    console.log("Rendering", recentReport, i);
-                    return <Activity key={i} text={JSON.stringify(recentReport.data)} />;
+            {props.messages.map(
+                (message: string, i: number): JSX.Element => {
+                    return <Activity key={i} message={message} />;
                 })}
         </section>);
 };

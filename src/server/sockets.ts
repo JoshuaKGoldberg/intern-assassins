@@ -4,6 +4,7 @@
 import * as http from "http";
 import * as socketIo from "socket.io";
 import { IReport } from "../shared/actions";
+import { IKillClaim } from "../shared/kills";
 
 /**
  * 
@@ -24,7 +25,7 @@ export class Sockets {
     /**
      * 
      */
-    public broadcast(report: IReport<any>): void {
-        this.ioServer.emit("report", JSON.stringify(report));
+    public broadcast(report: IReport<IKillClaim>): void {
+        this.ioServer.emit("report", `${report.data.killer} killed ${report.data.victim}!`);
     }
 }

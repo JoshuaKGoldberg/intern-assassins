@@ -41,7 +41,7 @@ export interface IAppState {
     /**
      * 
      */
-    recentReports: IReport<any>[];
+    messages: string[];
 }
 
 export class App extends React.Component<IAppProps, IAppState> {
@@ -75,7 +75,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         this.state = {
             alias: this.storage.alias,
             passphrase: this.storage.passphrase,
-            recentReports: []
+            messages: []
         };
 
         if (this.state.alias && this.state.passphrase) {
@@ -83,7 +83,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         }
 
         this.socket = io();
-        this.socket.on("report", (reportRaw: string): void => this.receiveReportRaw(reportRaw));
+        this.socket.on("report", (reportRaw: string): void => this.receiveMessage(reportRaw));
     }
 
     /**
@@ -94,7 +94,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             return (
                 <AppLoggedIn
                     player={this.state.player}
-                    recentReports={this.state.recentReports}
+                    messages={this.state.messages}
                     reportUpdate={(): void => this.receivePlayerUpdate()}
                     sdk={this.sdk}
                 />);
@@ -117,7 +117,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             {
                 alias: values.alias,
                 passphrase: values.passphrase,
-                recentReports: this.state.recentReports
+                messages: this.state.messages
             },
             (): void => this.populatePlayer(values));
     }
@@ -132,7 +132,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                     alias: this.state.alias,
                     passphrase: this.state.passphrase,
                     player: report.data,
-                    recentReports: this.state.recentReports
+                    messages: this.state.messages
                 });
             });
     }
@@ -150,33 +150,28 @@ export class App extends React.Component<IAppProps, IAppState> {
     /**
      * 
      */
-    private receiveReportRaw(reportRaw: string): void {
-        const report = JSON.parse(reportRaw);
-        const newReports: IReport<any>[] = this.state.recentReports.slice();
-        newReports.push(report);
+    private receiveMessage(message: string): void {
+        const messages: string[] = this.state.messages.slice();
+        messages.push(message);
 
         this.setState(
-            {
-                recentReports: newReports
-            },
+            { messages },
             (): void => {
                 setTimeout(
-                    (): void => this.removeReport(report),
-                    5000);
+                    (): void => this.removeReport(message),
+                    60000);
             });
     }
 
     /**
      * 
      */
-    private removeReport(report: IReport<any>): void {
-        const newReports: IReport<any>[] = this.state.recentReports.filter(
-            (recentReport: IReport<any>): boolean => {
-                return recentReport !== report;
-            });
+    private removeReport(message: string): void {
+        const newMessages: string[] = this.state.messages.filter(
+            (newMessage: string): boolean => newMessage !== message);
 
         this.setState({
-            recentReports: newReports
+            messages: newMessages
         });
     }
 }

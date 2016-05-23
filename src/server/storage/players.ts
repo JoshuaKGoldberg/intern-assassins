@@ -162,24 +162,4 @@ export class PlayerStorage extends StorageMember<IPlayer> {
             timestamp: Date.now()
         });
     }
-
-    /**
-     * After a victim dies, this should check if any player was targeting
-     * them and needs to be updated.
-     * 
-     * 
-     */
-    public updateTargetForDeath(victim: string, victimTarget: string): Promise<void> {
-        const hunter = this.players.find(
-            (playerReport: IReport<IPlayer>): boolean => {
-                return playerReport.data.target === victim;
-            });
-
-        if (!hunter) {
-            return Promise.resolve();
-        }
-
-        hunter.data.target = victimTarget;
-        return this.update(hunter);
-    }
 }

@@ -10,6 +10,10 @@ import { KillStorage } from "./storage/kills";
 import { PlayerStorage } from "./storage/players";
 import { StorageMember } from "./storage/storage";
 
+export interface IReportCallback<T> {
+    (event: IReport<T>): void;
+}
+
 /**
  * Handler a received request.
  */
@@ -37,6 +41,11 @@ export class Api {
      * Storage for players.
      */
     public /* readonly */ players: PlayerStorage = new PlayerStorage(this);
+
+    /**
+     * Callbacks to notify of reports.
+     */
+    private reportCallbacks: IReportCallback<any>[] = [];
 
     /**
      * Initializes a new instance of the Api class, registering its routes
@@ -78,6 +87,26 @@ export class Api {
                             response.send("true");
                         });
                 });
+        });
+    }
+
+    /**
+     * Registers a callback to receive updates of events.
+     * 
+     * @param callback   A callback to receive updates of events.
+     */
+    public registerReportCallback(callback: IReportCallback<any>): void {
+        this.reportCallbacks.push(callback);
+    }
+
+    /**
+     * Fires all registered callbacks for a new report.
+     * 
+     * @param report   A new report.
+     */
+    public fireReportCallback(report: IReport<any>): void {
+        this.reportCallbacks.forEach((callback: IReportCallback<any>): void => {
+            callback(report);
         });
     }
 

@@ -2,6 +2,7 @@
 
 import * as http from "http";
 import * as socketIo from "socket.io";
+import { IReport } from "../shared/actions";
 
 /**
  * 
@@ -17,5 +18,12 @@ export class Sockets {
      */
     public constructor(server: http.Server) {
         this.ioServer = socketIo(server);
+    }
+
+    /**
+     * 
+     */
+    public broadcast(report: IReport<any>): void {
+        this.ioServer.emit("report", JSON.stringify(report));
     }
 }

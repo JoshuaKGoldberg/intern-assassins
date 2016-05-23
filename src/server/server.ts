@@ -3,6 +3,7 @@
 import * as express from "express";
 import * as http from "http";
 import * as fsp from "fs-promise";
+import { IReport } from "../shared/actions";
 import { Api } from "./api";
 import { Sockets } from "./sockets";
 
@@ -65,6 +66,8 @@ export class Server {
         this.api = new Api(this.app);
         this.server = http.createServer(this.app);
         this.sockets = new Sockets(this.server);
+
+        this.api.registerReportCallback((event: IReport<any>) => this.sockets.broadcast(event));
     }
 
     /**

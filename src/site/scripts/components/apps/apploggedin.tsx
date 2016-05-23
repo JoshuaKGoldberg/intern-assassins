@@ -1,6 +1,7 @@
 /// <reference path="../../../../../typings/react/index.d.ts" />
 
 import * as React from "react";
+import { IReport } from "../../../../shared/actions";
 import { IPlayer } from "../../../../shared/players";
 import { Sdk } from "../../sdk/sdk";
 import { ActivityBar } from "../activitybar/activitybar";
@@ -18,6 +19,11 @@ export interface IAppLoggedInProps {
     /**
      * 
      */
+    recentReports: IReport<any>[];
+
+    /**
+     * 
+     */
     reportUpdate: () => void;
 
     /**
@@ -30,6 +36,6 @@ export const AppLoggedIn: React.StatelessComponent<IAppLoggedInProps> = (props: 
     return (
         <div id="app" className="app-logged-in">
             <Profile {...props} />
-            <ActivityBar />
+            <ActivityBar recentReports={props.recentReports} />
         </div>);
 };

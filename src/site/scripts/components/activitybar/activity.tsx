@@ -7,7 +7,10 @@ import * as React from "react";
  * 
  */
 export interface IActivityProps {
-    // ...
+    /**
+     * 
+     */
+    text: string;
 }
 
 /**
@@ -25,9 +28,10 @@ export class Activity extends React.Component<IActivityProps, IActivityState> {
      * 
      */
     public render(): JSX.Element {
+        console.log("Rendering in activity", this.props);
         return (
             <div className="activity">
-                Something happened to someone.
+                {this.props.text}
             </div>);
     }
 }

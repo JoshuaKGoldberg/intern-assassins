@@ -36,6 +36,11 @@ export interface IAppState {
      * 
      */
     player?: IPlayer;
+
+    /**
+     * 
+     */
+    recentReports: IReport<any>[];
 }
 
 export class App extends React.Component<IAppProps, IAppState> {
@@ -68,7 +73,8 @@ export class App extends React.Component<IAppProps, IAppState> {
         this.sdk = new Sdk();
         this.state = {
             alias: this.storage.alias,
-            passphrase: this.storage.passphrase
+            passphrase: this.storage.passphrase,
+            recentReports: []
         };
 
         if (this.state.alias && this.state.passphrase) {
@@ -76,6 +82,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         }
 
         this.socket = io();
+        this.socket.on("report", (report: IReport<any>): void => this.receiveReport(report));
     }
 
     /**
@@ -86,6 +93,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             return (
                 <AppLoggedIn
                     player={this.state.player}
+                    recentReports={this.state.recentReports}
                     reportUpdate={(): void => this.receivePlayerUpdate()}
                     sdk={this.sdk}
                 />);
@@ -107,7 +115,8 @@ export class App extends React.Component<IAppProps, IAppState> {
         this.setState(
             {
                 alias: values.alias,
-                passphrase: values.passphrase
+                passphrase: values.passphrase,
+                recentReports: this.state.recentReports
             },
             (): void => this.populatePlayer(values));
     }
@@ -121,7 +130,8 @@ export class App extends React.Component<IAppProps, IAppState> {
                 this.setState({
                     alias: this.state.alias,
                     passphrase: this.state.passphrase,
-                    player: report.data
+                    player: report.data,
+                    recentReports: this.state.recentReports
                 });
             });
     }
@@ -133,6 +143,38 @@ export class App extends React.Component<IAppProps, IAppState> {
         this.populatePlayer({
             alias: this.state.alias,
             passphrase: this.state.passphrase
+        });
+    }
+
+    /**
+     * 
+     */
+    private receiveReport(reportRaw: string): void {
+        const newReports: IReport<any>[] = this.state.recentReports.slice();
+        newReports.push(JSON.parse(reportRaw));
+
+        this.setState(
+            {
+                recentReports: newReports
+            },
+            (): void => {
+                setTimeout(
+                    (): void => this.removeReport(report),
+                    5000);
+            });
+    }
+
+    /**
+     * 
+     */
+    private removeReport(report: IReport<any>): void {
+        const newReports: IReport<any>[] = this.state.recentReports.filter(
+            (recentReport: IReport<any>): boolean => {
+                return recentReport !== report;
+            });
+
+        this.setState({
+            recentReports: newReports
         });
     }
 }

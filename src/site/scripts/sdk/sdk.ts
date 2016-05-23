@@ -29,7 +29,6 @@ export class Sdk {
      * @param alias   The player's alias.
      */
     public reportKillClaim(killer: string, victim: string, passphrase: string): Promise<IReport<IKillClaim>> {
-        console.log("Reporting kill claim", killer, victim);
         return this.sendAjaxRequest(
             "PUT",
             "api/kills",

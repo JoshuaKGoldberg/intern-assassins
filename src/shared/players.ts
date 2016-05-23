@@ -25,5 +25,5 @@ export interface IPlayer {
     /**
      * Who this person is hunting, if still alive.
      */
-    target: string;
+    target?: string;
 }

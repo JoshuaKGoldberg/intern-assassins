@@ -2,18 +2,40 @@
 /// <reference path="../../../../../typings/react-dom/index.d.ts" />
 
 import * as React from "react";
+import { IReport } from "../../../../shared/actions";
 import { IPlayer } from "../../../../shared/players";
+import { Sdk } from "../../sdk/sdk";
 import { Actions } from "./actions";
 import { Greeting } from "./greeting";
 import { InfoDisplay } from "./infodisplay";
 
+/**
+ * 
+ */
 export interface IProfileProps {
+    /**
+     * 
+     */
     alias: string;
+
+    /**
+     * 
+     */
+    sdk: Sdk;
 }
 
+/**
+ * 
+ */
 export class Profile extends React.Component<IProfileProps, IPlayer> {
-    // todo: make reacty
-    public state: IPlayer = this.fetchWhomData(this.props.alias);
+    /**
+     * 
+     */
+    public constructor(props?: IProfileProps, context?: any) {
+        super(props, context);
+
+        props.sdk.getPlayer(props.alias).then((report: IReport<IPlayer>) => this.setState(report.data));
+    }
 
     /**
      * 
@@ -50,25 +72,25 @@ export class Profile extends React.Component<IProfileProps, IPlayer> {
                 </div>
 
                 <div class="area">
-                    <Actions />
+                    <Actions
+                        alive={this.state.alive}
+                        onDeath={(): void => this.onDeath()}
+                        onKill={(): void => this.onKill()} />
                 </div>
             </section>);
     }
 
     /**
      * 
-     * 
-     * @remarks http://who/Data/Person/{alias}.xml
-     * @remarks https://me.microsoft.com/ThumbnailPhoto.ashx?email={alias}@microsoft.com
-     * @todo Fill out...
      */
-    private fetchWhomData(alias: string): IPlayer {
-        return {
-            alias,
-            alive: true,
-            nickname: "joshypoo",
-            passphrase: "satya",
-            target: "kkeer"
-        };
+    private onDeath(): void {
+        console.log("You say you died...");
+    }
+
+    /**
+     * 
+     */
+    private onKill(): void {
+        console.log("Another kill for you!");
     }
 }

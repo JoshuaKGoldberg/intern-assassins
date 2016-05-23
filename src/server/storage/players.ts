@@ -1,7 +1,8 @@
 /// <reference path="../../../typings/all.d.ts" />
 
-import { IReport, ISubmission } from "../../shared/actions";
+import { IReport } from "../../shared/actions";
 import { IPlayer } from "../../shared/players";
+import { ILoginValues } from "../../shared/login";
 import { ErrorCause, ServerError } from "../errors";
 import { StorageMember } from "./storage";
 
@@ -14,7 +15,41 @@ export class PlayerStorage extends StorageMember<IPlayer> {
     /**
      * All known players.
      */
-    public /* readonly */ players: IReport<IPlayer>[] = [];
+    public /* readonly */ players: IReport<IPlayer>[] = [
+        {
+            data: {
+                alias: "jogol",
+                alive: true,
+                nickname: "Joshypoo",
+                passphrase: "butts",
+                target: "kkeer"
+            },
+            reporter: "jogol",
+            timestamp: 1234567
+        },
+        {
+            data: {
+                alias: "kkeer",
+                alive: true,
+                nickname: "KK",
+                passphrase: "butts",
+                target: "cgong"
+            },
+            reporter: "kkeer",
+            timestamp: 1234567
+        },
+        {
+            data: {
+                alias: "cgong",
+                alive: true,
+                nickname: "CC",
+                passphrase: "butts",
+                target: "jogol"
+            },
+            reporter: "cgong",
+            timestamp: 1234567
+        }
+    ];
 
     /**
      * @param alias   Alias of a player.
@@ -93,8 +128,8 @@ export class PlayerStorage extends StorageMember<IPlayer> {
      * @param submission   A submission targeting a player.
      * @returns The target id (alias) from the submission.
      */
-    public retrieveIdFromRequest(submission: ISubmission<IPlayer>): string {
-        return submission.data.alias;
+    public retrieveIdFromRequest(submission: any): string {
+        return submission.alias;
     }
 
     /**
@@ -102,5 +137,21 @@ export class PlayerStorage extends StorageMember<IPlayer> {
      */
     public update(report: IReport<IPlayer>): Promise<void> {
         throw new ServerError(ErrorCause.NotImplemented);
+    }
+
+    /**
+     * 
+     */
+    public createNewFromLogin(values: ILoginValues): Promise<IReport<IPlayer>> {
+        return this.put({
+            data: {
+                alias: values.alias,
+                alive: true,
+                nickname: values.nickname,
+                passphrase: values.passphrase
+            },
+            reporter: values.alias,
+            timestamp: Date.now()
+        });
     }
 }

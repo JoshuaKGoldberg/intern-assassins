@@ -9,33 +9,24 @@ html, body {
     height: 100%;
 }
 
-
-/* Flexbox shenanigans */
-
-#app-rendered {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+input {
+    width: 175px;
+    box-sizing: border-box;
 }
 
-@media screen and (min-width: @layout-flex-threshold) {
-    #app-rendered {
-        flex-direction: row-reverse;
-    }
 
-    #activity-bar {
-        width: 490px;
-    }
+/* Container flexing */
 
-    #profile {
-        padding-bottom: 0;
-        width: 100%;
-    }
+#container {
+    height: 100%;
+}
+
+
+/* App flexing */
+
+#app {
+    display: flex;
+    flex-direction: column;
 }
 
 
@@ -43,7 +34,6 @@ html, body {
 
 #activity-bar {
     padding: @padding-section;
-    height: 100%;
     box-sizing: border-box;
 }
 
@@ -63,5 +53,43 @@ html, body {
 
     .area {
         display: block;
+    }
+}
+
+.actions {
+    padding-bottom: 70px;
+}
+
+.action {
+    display: inline-block;
+    position: relative;
+}
+
+.action-confirmation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: white;
+}
+
+
+/* Responsive design */
+
+@media screen and (min-width: @layout-flex-threshold) {
+    #app:not(.app-anonymous) {
+        flex-direction: row-reverse;
+    }
+
+    #activity-bar {
+        width: 490px;
+    }
+
+    #profile {
+        padding-bottom: 0;
+        width: 100%;
+    }
+
+    .action-confirmation {
+        top: 100%;
     }
 }

@@ -1,7 +1,7 @@
 @import "variables";
 
 body {
-    background: @color-background-light;
+    background: @color-background-medium;
     color: @color-font-dark;
     font-family: @font-body-family;
     font-size: @font-body-size;
@@ -21,6 +21,7 @@ h1 {
 img {
     position: relative;
     border-radius: 100%;
+    overflow: hidden;
     transition: 210ms all;
     .shadow-light();
 
@@ -28,6 +29,82 @@ img {
         margin-top: -2px;
         margin-bottom: 2px;
         .shadow-heavy();
+    }
+}
+
+input {
+    margin: 0 14px;
+    padding: 11px 21px 14px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: @color-font-dark;
+    font-family: @font-body-family;
+    font-weight: 100;
+    font-size: 117%;
+    text-align: center;
+    cursor: text;
+    transition: 210ms all;
+
+    &:hover, &:active {
+        border: 1px solid @color-font-light;
+        .shadow-light();
+
+        &[type=blue] {
+            border-color: #77a;
+        }
+
+        &[type=submit] {
+            border-color: #7a7;
+        }
+    }
+
+    &[type=button],
+    &[type=submit] {
+        cursor: pointer;
+    }
+}
+
+
+/* Anonymous */
+
+#app.app-anonymous {
+    margin-top: 35px;
+    padding: 14px 28px 42px;
+    text-align: center;
+
+    & > * {
+        margin: auto;
+        max-width: @layout-flex-threshold;
+    }
+
+    h1 {
+        margin-bottom: 35px;
+    }
+}
+
+
+/* Profile */
+
+#profile {
+    background: @color-background-light;
+}
+
+.info-display-area {
+    padding-top: 21px;
+}
+
+.actions {
+    margin-top: 28px;
+}
+
+.action-confirmation {
+    opacity: 0;
+    display: none;
+    transition: 175ms opacity;
+
+    .action-expanded & {
+        display: block;
+        opacity: 1;
     }
 }
 
@@ -44,31 +121,11 @@ img {
 }
 
 
-/* Profile */
+/* Footer */
 
-.info-display-area {
-    padding-top: 21px;
-}
-
-.actions {
-    margin-top: 28px;
-}
-
-.actions input[type=button] {
-    margin: 0 14px;
-    padding: 11px 21px 14px;
-    border: 1px solid transparent;
-    background: transparent;
+#footer-wrapper {
+    padding: 14px 28px 28px;
+    background: @color-background-medium;
     color: @color-font-dark;
-    font-family: @font-body-family;
-    font-weight: 100;
-    font-size: 117%;
-    cursor: pointer;
-    transition: 210ms all;
-
-    &:hover, &:active {
-        border: 1px solid @color-font-light;
-        .shadow-light();
-    }
+    text-align: center;
 }
-

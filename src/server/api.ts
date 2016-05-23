@@ -1,8 +1,10 @@
 /// <reference path="../../typings/all.d.ts" />
 
-import * as express from "express";
 import * as bodyParser from "body-parser";
+import * as express from "express";
+import * as url from "url";
 import { IReport, ISubmission } from "../shared/actions";
+import { ILoginValues } from "../shared/login";
 import { ErrorCause, ServerError } from "./errors";
 import { KillStorage } from "./storage/kills";
 import { PlayerStorage } from "./storage/players";
@@ -20,7 +22,7 @@ interface IRouteHandler {
  */
 export class Api {
     /**
-     * Fields that must be in all submission.
+     * Fields that must be in all submissions.
      */
     private static /* readonly */ requiredSubmissionFields: string[] = [
         "data", "reporter"
@@ -43,23 +45,53 @@ export class Api {
      * @param app   The container application.
      */
     public constructor(app: any) {
+        app.use(bodyParser.json());
+
+        this.registerStorageRoutes(app, "/api/actions/kills", this.kills);
+        this.registerStorageRoutes(app, "/api/players", this.players);
+
         app.get("/api", (request: express.Request, response: express.Response): void => {
             response.send("ACK");
         });
 
-        app.use(bodyParser.json());
-        this.registerMemberRoutes(app, "/api/actions/kills", this.kills);
-        this.registerMemberRoutes(app, "/api/players", this.players);
+        app.get("/api/login", (request: express.Request, response: express.Response): void => {
+            const query: ILoginValues = url.parse(request.url, true).query;
+
+            this.players.get(query.alias)
+                // If the player exists already, the login info must match
+                .then(record => {
+                    console.log("Got record", record);
+                    if (query.nickname === record.data.nickname && query.alias === record.data.alias) {
+                        console.log("true a");
+                        response.send("true");
+                    } else {
+                        console.log("false b");
+                        response.send("false");
+                    }
+                })
+                // If the player doesn't exist, create a new one
+                .catch((error: ServerError): void => {
+                    if (error.cause !== ErrorCause.PlayerDoesNotExist) {
+                        response.send("false");
+                        return;
+                    }
+
+                    this.players.createNewFromLogin(query)
+                        .then((): void => {
+                            response.send("true");
+                        });
+                });
+        });
     }
 
     /**
-     * Registers a member storage container under a route.
+     * Registers a storage container under a route.
      * 
      * @app   The container application.
      * @param route   URI component under which the member storage will be available.
      * @param member   Storage abstraction for the database.
      */
-    private registerMemberRoutes<T>(app: any, route: string, member: StorageMember<T>): void {
+    private registerStorageRoutes<T>(app: any, route: string, member: StorageMember<T>): void {
         app.route(route)
             .get(this.generateGetRoute(member))
             .put(this.generatePutRoute(member));
@@ -73,14 +105,17 @@ export class Api {
      */
     private generateGetRoute<T>(member: StorageMember<T>): IRouteHandler {
         return (request: express.Request, response: express.Response): void => {
-            if (!request.body || Object.keys(request.body).length === 0) {
+            const query: any = url.parse(request.url, true).query;
+
+            if (Object.keys(query).length === 0) {
                 member.getAll()
                     .then(results => response.json(results))
                     .catch(error => response.sendStatus(500));
             } else {
                 member
-                    .get(member.retrieveIdFromRequest(request.body))
-                    .then(results => response.json(results));
+                    .get(member.retrieveIdFromRequest(query))
+                    .then(results => response.json(results))
+                    .catch(error => response.sendStatus(500));
             }
         };
     }

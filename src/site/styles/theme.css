@@ -1,5 +1,5 @@
 body {
-  background: #fefeff;
+  background: #ccccd0;
   color: #494949;
   font-family: "Segoe UI Semilight", "Segoe UI", "sans-serif";
   font-size: 1.17em;
@@ -21,6 +21,7 @@ h1 {
 img {
   position: relative;
   border-radius: 100%;
+  overflow: hidden;
   transition: 210ms all;
   box-shadow: 0 3px 7px #bbcccc;
 }
@@ -28,6 +29,68 @@ img:hover {
   margin-top: -2px;
   margin-bottom: 2px;
   box-shadow: 0 7px 14px 3px #aabbbb;
+}
+input {
+  margin: 0 14px;
+  padding: 11px 21px 14px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #494949;
+  font-family: "Segoe UI Semilight", "Segoe UI", "sans-serif";
+  font-weight: 100;
+  font-size: 117%;
+  text-align: center;
+  cursor: text;
+  transition: 210ms all;
+}
+input:hover,
+input:active {
+  border: 1px solid #ccccd0;
+  box-shadow: 0 3px 7px #bbcccc;
+}
+input:hover[type=blue],
+input:active[type=blue] {
+  border-color: #77a;
+}
+input:hover[type=submit],
+input:active[type=submit] {
+  border-color: #7a7;
+}
+input[type=button],
+input[type=submit] {
+  cursor: pointer;
+}
+/* Anonymous */
+#app.app-anonymous {
+  margin-top: 35px;
+  padding: 14px 28px 42px;
+  text-align: center;
+}
+#app.app-anonymous > * {
+  margin: auto;
+  max-width: 700px;
+}
+#app.app-anonymous h1 {
+  margin-bottom: 35px;
+}
+/* Profile */
+#profile {
+  background: #fefeff;
+}
+.info-display-area {
+  padding-top: 21px;
+}
+.actions {
+  margin-top: 28px;
+}
+.action-confirmation {
+  opacity: 0;
+  display: none;
+  transition: 175ms opacity;
+}
+.action-expanded .action-confirmation {
+  display: block;
+  opacity: 1;
 }
 /* Activity bar */
 #activity-bar {
@@ -37,27 +100,10 @@ img:hover {
 #activity-bar .activity:last-of-type {
   padding-bottom: 42px;
 }
-/* Profile */
-.info-display-area {
-  padding-top: 21px;
-}
-.actions {
-  margin-top: 28px;
-}
-.actions input[type=button] {
-  margin: 0 14px;
-  padding: 11px 21px 14px;
-  border: 1px solid transparent;
-  background: transparent;
+/* Footer */
+#footer-wrapper {
+  padding: 14px 28px 28px;
+  background: #ccccd0;
   color: #494949;
-  font-family: "Segoe UI Semilight", "Segoe UI", "sans-serif";
-  font-weight: 100;
-  font-size: 117%;
-  cursor: pointer;
-  transition: 210ms all;
-}
-.actions input[type=button]:hover,
-.actions input[type=button]:active {
-  border: 1px solid #ccccd0;
-  box-shadow: 0 3px 7px #bbcccc;
+  text-align: center;
 }

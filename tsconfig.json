@@ -17,14 +17,23 @@
         "src/server/storage/players.ts",
         "src/server/storage/storage.ts",
         "src/shared/actions.ts",
+        "src/shared/kills.ts",
+        "src/shared/login.ts",
+        "src/shared/players.ts",
         "src/site/scripts/index.ts",
         "src/site/scripts/main.tsx",
-        "src/site/scripts/components/app.tsx",
+        "src/site/scripts/sdk/sdk.ts",
+        "src/site/scripts/components/apps/app.tsx",
+        "src/site/scripts/components/apps/appanonymous.tsx",
+        "src/site/scripts/components/apps/apploggedin.tsx",
         "src/site/scripts/components/activitybar/activity.tsx",
         "src/site/scripts/components/activitybar/activitybar.tsx",
+        "src/site/scripts/components/footer.tsx",
+        "src/site/scripts/components/profile/actionbutton.tsx",
         "src/site/scripts/components/profile/actions.tsx",
         "src/site/scripts/components/profile/greeting.tsx",
         "src/site/scripts/components/profile/infodisplay.tsx",
-        "src/site/scripts/components/profile/profile.tsx"
+        "src/site/scripts/components/profile/profile.tsx",
+        "src/site/scripts/storage/appstorage.ts"
     ]
 }

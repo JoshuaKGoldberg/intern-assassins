@@ -3,17 +3,43 @@
 
 import * as React from "react";
 
+/**
+ * 
+ */
 export interface IInfoDisplayProps {
+    /**
+     * 
+     */
     editable?: boolean;
+
+    /**
+     * 
+     */
     info: string;
+
+    /**
+     * 
+     */
     display: string;
 }
 
+/**
+ * 
+ */
 export interface IInfoDisplayState {
+    /**
+     * 
+     */
     editing: boolean;
 }
 
+/**
+ * 
+ */
 export class InfoDisplay extends React.Component<IInfoDisplayProps, IInfoDisplayState> {
+    /**
+     * 
+     */
     public state: IInfoDisplayState = {
         editing: false
     };
@@ -24,7 +50,10 @@ export class InfoDisplay extends React.Component<IInfoDisplayProps, IInfoDisplay
     public render(): JSX.Element {
         return (
             <div className="info-display">
-                Your {this.props.info} is {this.props.display}.
+                <span>Your </span>
+                <span>{this.props.info} </span>
+                <span>is </span>
+                <strong>{this.props.display}</strong>.
             </div>);
     }
 }

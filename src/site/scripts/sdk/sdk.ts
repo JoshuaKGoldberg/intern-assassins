@@ -1,4 +1,5 @@
 import { IReport } from "../../../shared/actions";
+import { IKillClaim } from "../../../shared/kills";
 import { ILoginValues } from "../../../shared/login";
 import { IPlayer } from "../../../shared/players";
 
@@ -12,23 +13,41 @@ export class Sdk {
      * @returns A promise for whether the login was accepted.
      */
     public login(values: ILoginValues): Promise<boolean> {
-        return this.sendAjaxRequest("api/login", values);
+        return this.sendAjaxRequest("POST", "api/login", values);
     }
 
     /**
      * 
      */
-    public getPlayer(alias: string): Promise<IReport<IPlayer>> {
-        return this.sendAjaxRequest("api/players", { alias });
+    public getPlayer(alias: string, passphrase: string): Promise<IReport<IPlayer>> {
+        return this.sendAjaxRequest("GET", "api/players", { alias, passphrase });
+    }
+
+    /**
+     * Reports that a player has died.
+     * 
+     * @param alias   The player's alias.
+     */
+    public reportKillClaim(killer: string, victim: string, passphrase: string): Promise<IReport<IKillClaim>> {
+        return this.sendAjaxRequest(
+            "PUT",
+            "api/kills",
+            {
+                data: { killer, victim },
+                reporter: killer,
+                passphrase
+            });
     }
 
     /**
      * 
      */
-    private sendAjaxRequest<TData, TResponse>(endpoint: string, data?: TData): Promise<TResponse> {
-        const url: string = endpoint + "?" + Object.keys(data)
-            .map((key: string): string => `${key}=${encodeURIComponent(data[key])}`)
-            .join("&");
+    private sendAjaxRequest<TData, TResponse>(method: "GET" | "POST" | "PUT", url: string, data?: TData): Promise<TResponse> {
+        if (method === "GET") {
+            url = url + "?" + Object.keys(data)
+                .map((key: string): string => `${key}=${encodeURIComponent(data[key])}`)
+                .join("&");
+        }
 
         return new Promise((resolve, reject): void => {
             const request: XMLHttpRequest = new XMLHttpRequest();
@@ -51,8 +70,9 @@ export class Sdk {
                 resolve(response);
             };
 
-            request.open("GET", url);
-            request.send();
+            request.open(method, url);
+            request.setRequestHeader("content-type", "application/json");
+            request.send(JSON.stringify(data));
         });
     }
 }

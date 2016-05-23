@@ -8,8 +8,15 @@ import { ILoginValues, LoginValueKeys } from "../../../../shared/login";
  * 
  */
 export interface IAppAnonymousProps {
+    /**
+     * 
+     */
     sdk: Sdk;
-    onLogin(alias: string): void;
+
+    /**
+     * 
+     */
+    onLogin(values: ILoginValues): void;
 }
 
 /**
@@ -75,13 +82,14 @@ export class AppAnonymous extends React.Component<IAppAnonymousProps, IAppAnonym
         this.props.sdk.login(values)
             .then((loggedIn: boolean): void => {
                 if (loggedIn) {
-                    this.props.onLogin(values.alias);
+                    this.props.onLogin(values);
                 } else {
-                    throw new Error("Invalid login. Try again, maybe?");
+                    this.setState({
+                        errors: ["Invalid login. Try again?"]
+                    });
                 }
             })
             .catch((error: string): void => {
-                console.log("Error", error);
                 this.setState({
                     errors: [error]
                 });

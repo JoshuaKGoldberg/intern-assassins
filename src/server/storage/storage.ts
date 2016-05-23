@@ -1,6 +1,6 @@
 /// <reference path="../../../typings/all.d.ts" />
 
-import { IReport, ISubmission } from "../../shared/actions";
+import { IReport } from "../../shared/actions";
 import { Api } from "../api";
 
 /**
@@ -54,5 +54,5 @@ export abstract class StorageMember<T> {
      * @param submission   A submission targeting a report.
      * @returns The target alias from the submission.
      */
-    public abstract retrieveIdFromRequest(submission: ISubmission<T>): string;
+    public abstract retrieveIdFromRequest(submission: any): string;
 }

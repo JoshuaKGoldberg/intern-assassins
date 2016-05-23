@@ -47,31 +47,28 @@ export class Api {
     public constructor(app: any) {
         app.use(bodyParser.json());
 
-        this.registerStorageRoutes(app, "/api/actions/kills", this.kills);
+        this.registerStorageRoutes(app, "/api/kills", this.kills);
         this.registerStorageRoutes(app, "/api/players", this.players);
 
         app.get("/api", (request: express.Request, response: express.Response): void => {
             response.send("ACK");
         });
 
-        app.get("/api/login", (request: express.Request, response: express.Response): void => {
-            const query: ILoginValues = url.parse(request.url, true).query;
+        app.post("/api/login", (request: express.Request, response: express.Response): void => {
+            const query: ILoginValues = request.body;
 
             this.players.get(query.alias)
                 // If the player exists already, the login info must match
                 .then(record => {
-                    console.log("Got record", record);
                     if (query.nickname === record.data.nickname && query.alias === record.data.alias) {
-                        console.log("true a");
                         response.send("true");
                     } else {
-                        console.log("false b");
                         response.send("false");
                     }
                 })
                 // If the player doesn't exist, create a new one
                 .catch((error: ServerError): void => {
-                    if (error.cause !== ErrorCause.PlayerDoesNotExist) {
+                    if (error.cause !== ErrorCause.PlayersDoNotExist) {
                         response.send("false");
                         return;
                     }
@@ -105,7 +102,7 @@ export class Api {
      */
     private generateGetRoute<T>(member: StorageMember<T>): IRouteHandler {
         return (request: express.Request, response: express.Response): void => {
-            const query: any = url.parse(request.url, true).query;
+            const query: ILoginValues = url.parse(request.url, true).query;
 
             if (Object.keys(query).length === 0) {
                 member.getAll()
@@ -161,7 +158,7 @@ export class Api {
         return this.players.get(submission.reporter)
             .then(storedPlayer => {
                 if (storedPlayer.data.passphrase !== submission.passphrase) {
-                    throw new ServerError(ErrorCause.PlayerDoesNotExist, submission.reporter);
+                    throw new ServerError(ErrorCause.IncorrectCredentials, submission.reporter);
                 }
 
                 return this.wrapSubmission(submission);

@@ -1,6 +1,7 @@
 /// <reference path="../../../../../typings/react/index.d.ts" />
 
 import * as React from "react";
+import { IPlayer } from "../../../../shared/players";
 import { Sdk } from "../../sdk/sdk";
 import { ActivityBar } from "../activitybar/activitybar";
 import { Profile } from "../profile/profile";
@@ -12,7 +13,12 @@ export interface IAppLoggedInProps {
     /**
      * 
      */
-    alias: string;
+    player: IPlayer;
+
+    /**
+     * 
+     */
+    reportUpdate: () => void;
 
     /**
      * 
@@ -23,7 +29,7 @@ export interface IAppLoggedInProps {
 export const AppLoggedIn: React.StatelessComponent<IAppLoggedInProps> = (props: IAppLoggedInProps): JSX.Element => {
     return (
         <div id="app" className="app-logged-in">
-            <Profile alias={props.alias} sdk={props.sdk} />
+            <Profile {...props} />
             <ActivityBar />
         </div>);
 };

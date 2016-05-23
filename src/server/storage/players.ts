@@ -62,7 +62,7 @@ export class PlayerStorage extends StorageMember<IPlayer> {
             if (player) {
                 resolve(player);
             } else {
-                reject(new ServerError(ErrorCause.PlayerDoesNotExist, alias));
+                reject(new ServerError(ErrorCause.PlayersDoNotExist, alias));
             }
         });
     }
@@ -78,6 +78,7 @@ export class PlayerStorage extends StorageMember<IPlayer> {
                 const playerReport: IReport<IPlayer> = this.players.find(
                     report => report.data.alias === alias);
 
+                console.log("Finding", alias, "gives", playerReport);
                 if (!playerReport) {
                     (unfound || (unfound = [])).push(alias);
                 }
@@ -86,7 +87,7 @@ export class PlayerStorage extends StorageMember<IPlayer> {
             });
 
         return new Promise((resolve, reject) => {
-            if (unfound.length > 0) {
+            if (unfound && unfound.length > 0) {
                 reject(new ServerError(ErrorCause.PlayersDoNotExist, unfound));
             } else {
                 resolve(reports);
@@ -111,9 +112,9 @@ export class PlayerStorage extends StorageMember<IPlayer> {
      */
     public put(report: IReport<IPlayer>): Promise<IReport<IPlayer>> {
         return this.get(report.data.alias)
-            .then(ServerError.inPromise(ErrorCause.PlayerAlreadyExists, report.data.alias))
+            .then(ServerError.inPromise(ErrorCause.PlayersAlreadyExist, report.data.alias))
             .catch((error: ServerError) => {
-                if (error.cause !== ErrorCause.PlayerDoesNotExist) {
+                if (error.cause !== ErrorCause.PlayersDoNotExist) {
                     throw error;
                 }
 
@@ -136,7 +137,15 @@ export class PlayerStorage extends StorageMember<IPlayer> {
      * 
      */
     public update(report: IReport<IPlayer>): Promise<void> {
-        throw new ServerError(ErrorCause.NotImplemented);
+        const index = this.players.findIndex(
+            (checkingReport: IReport<IPlayer>): boolean => {
+                return checkingReport.data.alias === report.data.alias;
+            });
+
+        this.players.splice(index, 1);
+        this.players.push(report);
+
+        return Promise.resolve();
     }
 
     /**

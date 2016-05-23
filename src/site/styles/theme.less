@@ -36,6 +36,7 @@ input {
     margin: 0 14px;
     padding: 11px 21px 14px;
     border: 1px solid transparent;
+    border-bottom-color: @color-font-light;
     background: transparent;
     color: @color-font-dark;
     font-family: @font-body-family;
@@ -46,7 +47,7 @@ input {
     transition: 210ms all;
 
     &:hover, &:active {
-        border: 1px solid @color-font-light;
+        border-color: color-font-light;
         .shadow-light();
 
         &[type=blue] {

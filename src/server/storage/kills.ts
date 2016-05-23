@@ -2,6 +2,7 @@
 
 import { IReport } from "../../shared/actions";
 import { IKillClaim } from "../../shared/kills";
+import { IPlayer } from "../../shared/players";
 import { ErrorCause, ServerError } from "../errors";
 import { StorageMember } from "./storage";
 
@@ -54,34 +55,53 @@ export class KillStorage extends StorageMember<IKillClaim> {
             throw new ServerError(ErrorCause.PermissionDenied);
         }
 
+        let killer: IPlayer;
+        let victim: IPlayer;
+
+        console.log("Putting -> getMany", [killerAlias, victimAlias]);
         return this.api.players.getMany([killerAlias, victimAlias])
             .then(reports => {
-                const [killer, victim] = [reports[0].data, reports[1].data];
+                [killer, victim] = [reports[0].data, reports[1].data];
 
                 if (!killer.alive) {
-                    throw new ServerError(ErrorCause.PlayerIsDead, killerAlias);
+                    throw new ServerError(ErrorCause.PlayersDead, killerAlias);
                 }
 
                 if (!victim.alive) {
-                    throw new ServerError(ErrorCause.PlayerIsDead, victimAlias);
+                    throw new ServerError(ErrorCause.PlayersDead, victimAlias);
                 }
 
                 if (killer.target !== victimAlias) {
                     throw new ServerError(ErrorCause.WrongTarget, victimAlias);
                 }
 
-                return reports;
+                killer.target = victim.target;
+                victim.alive = false;
+                victim.target = undefined;
             })
-            .then((reports) => {
-                const [killer, victim] = reports;
+            .then(() => this.api.players.update({
+                data: killer,
+                reporter: killer.alias,
+                timestamp: Date.now()
+            }))
+            .then(() => this.api.players.update({
+                data: victim,
+                reporter: victim.alias,
+                timestamp: Date.now()
+            }))
+            .then(() => {
+                const killClaimReport: IReport<IKillClaim> = {
+                    data: {
+                        killer: killer.alias,
+                        victim: victim.alias
+                    },
+                    reporter: killer.alias,
+                    timestamp: Date.now()
+                };
 
-                victim.data.alive = false;
-                killer.data.target = victim.data.target;
+                this.claims.push(killClaimReport);
 
-                this.api.players.update(killer);
-                this.api.players.update(victim);
-
-                return new Promise<IReport<IKillClaim>>(undefined);
+                return killClaimReport;
             });
     }
 

@@ -34,6 +34,7 @@ input {
   margin: 0 14px;
   padding: 11px 21px 14px;
   border: 1px solid transparent;
+  border-bottom-color: #ccccd0;
   background: transparent;
   color: #494949;
   font-family: "Segoe UI Semilight", "Segoe UI", "sans-serif";
@@ -45,7 +46,7 @@ input {
 }
 input:hover,
 input:active {
-  border: 1px solid #ccccd0;
+  border-color: color-font-light;
   box-shadow: 0 3px 7px #bbcccc;
 }
 input:hover[type=blue],

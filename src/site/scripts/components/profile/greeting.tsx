@@ -17,9 +17,11 @@ const greetings: string[] = [
     "Sup {0}?"
 ];
 
+const greeting = greetings[(Math.random() * greetings.length | 0)];
+
 export const Greeting: React.StatelessComponent<IGreetingProps> = (state: IGreetingProps): JSX.Element => {
     return (
         <h1 className="greeting">
-            {greetings[(Math.random() * greetings.length | 0)].replace("{0}", state.nickname)}
+            {greeting.replace("{0}", state.nickname)}
         </h1>);
 };

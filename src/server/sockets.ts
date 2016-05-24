@@ -28,6 +28,10 @@ export class Sockets {
      * Emits an event for a kill claim report.
      */
     public emit(report: IReport<IKillClaim>): void {
-        this.ioServer.emit("report", `${report.data.killer} killed ${report.data.victim}!`);
+        const message: string = report.data.killer === report.data.victim
+            ? `${report.data.victim} appears to be dead...`
+            : `${report.data.killer} killed ${report.data.victim}!`;
+
+        this.ioServer.emit("report", message);
     }
 }

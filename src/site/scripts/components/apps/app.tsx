@@ -74,8 +74,6 @@ export class App extends React.Component<void, IAppState> {
      * 
      */
     public render(): JSX.Element {
-        console.log("Rendering", this.props, this.state);
-        console.log("storage", this.storage);
         if (this.storage.isComplete()) {
             return (
                 <AppLoggedIn
@@ -94,12 +92,10 @@ export class App extends React.Component<void, IAppState> {
      * 
      */
     private receiveLoginValues(values: ILoginValues): void {
-        console.log("Received values", values);
         this.storage.setValues(values);
 
         this.sdk.getPlayer(values.alias, values.passphrase)
             .then((report: IReport<IPlayer>): void => {
-                console.log("Got player", report);
                 this.setState({
                     player: report.data,
                     messages: this.state.messages

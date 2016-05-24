@@ -7,25 +7,27 @@ import { IReport } from "../shared/actions";
 import { IKillClaim } from "../shared/kills";
 
 /**
- * 
+ * Emits real-time socket events for new and updated reports.
  */
 export class Sockets {
     /**
-     * 
+     * Backing socket.io server.
      */
     private ioServer: SocketIO.Server;
 
     /**
      * Initializes a new instance of the Sockets class.
+     * 
+     * @param server   Backing http server.
      */
     public constructor(server: http.Server) {
         this.ioServer = socketIo(server);
     }
 
     /**
-     * 
+     * Emits an event for a kill claim report.
      */
-    public broadcast(report: IReport<IKillClaim>): void {
+    public emit(report: IReport<IKillClaim>): void {
         this.ioServer.emit("report", `${report.data.killer} killed ${report.data.victim}!`);
     }
 }

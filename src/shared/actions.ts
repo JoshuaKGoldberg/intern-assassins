@@ -17,7 +17,7 @@ export interface ISubmission<T> {
     passphrase: string;
 
     /**
-     * The intern sending this in.
+     * Alias of the player sending this in.
      */
     reporter: string;
 }
@@ -39,7 +39,7 @@ export interface IReport<T> {
     reporter: string;
 
     /**
-     * When the server received the action.
+     * When the server recognized the action.
      */
     timestamp: number;
 }

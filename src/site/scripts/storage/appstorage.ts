@@ -1,12 +1,9 @@
-export interface IPlayerStorage {
-    alias?: string;
-    passphrase?: string;
-}
+import { ILoginValues } from "../../../shared/login";
 
 /**
  * 
  */
-export class AppStorage {
+export class AppStorage implements ILoginValues {
     /**
      * 
      */
@@ -15,7 +12,12 @@ export class AppStorage {
     /**
      * 
      */
-    private static /* readonly */ keyPassPhrase: string = "Assassins::Passphrase";
+    private static /* readonly */ keyNickname: string = "Assassins::Passphrase";
+
+    /**
+     * 
+     */
+    private static /* readonly */ keyPassphrase: string = "Assassins::Passphrase";
 
     /**
      * 
@@ -34,15 +36,54 @@ export class AppStorage {
     /**
      * 
      */
+    public get nickname(): string {
+        return localStorage.getItem(AppStorage.keyNickname);
+    }
+
+    /**
+     * 
+     */
+    public set nickname(value: string) {
+        localStorage.setItem(AppStorage.keyNickname, value);
+    }
+
+    /**
+     * 
+     */
     public get passphrase(): string {
-        return localStorage.getItem(AppStorage.keyPassPhrase);
+        return localStorage.getItem(AppStorage.keyPassphrase);
     }
 
     /**
      * 
      */
     public set passphrase(value: string) {
-        localStorage.setItem(AppStorage.keyPassPhrase, value);
+        localStorage.setItem(AppStorage.keyPassphrase, value);
+    }
+
+    /**
+     * 
+     */
+    public setValues(values: ILoginValues): void {
+        [this.alias, this.nickname, this.passphrase] = [values.alias, values.nickname, values.passphrase];
+    }
+
+    /**
+     * 
+     */
+    public asObject(): ILoginValues {
+        return {
+            alias: this.alias,
+            nickname: this.nickname,
+            passphrase: this.passphrase
+        };
+    }
+
+    /**
+     * 
+     */
+    public isComplete(): boolean {
+        return !!(this.alias && this.nickname && this.passphrase);
     }
 }
 

@@ -24,11 +24,6 @@ export interface IAppLoggedInProps {
     /**
      * 
      */
-    reportUpdate: () => void;
-
-    /**
-     * 
-     */
     sdk: Sdk;
 }
 

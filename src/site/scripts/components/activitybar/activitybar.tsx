@@ -5,13 +5,22 @@
 import * as React from "react";
 import { Activity } from "./activity";
 
+/**
+ * Props for an ActivityBar component.
+ */
 export interface IActivityBarProps {
     /**
-     * 
+     * Display activity messages.
      */
     messages: string[];
 }
 
+/**
+ * Stateless component for an activity bar.
+ * 
+ * @param props   Props for an ActivityBar component.
+ * @returns The rendered compoment.
+ */
 export const ActivityBar: React.StatelessComponent<IActivityBarProps> = (props: IActivityBarProps): JSX.Element => {
     return (
         <section id="activity-bar">

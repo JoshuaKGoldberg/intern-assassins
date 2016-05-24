@@ -2,11 +2,20 @@
 
 import { IReport } from "../../../shared/actions";
 import { IKillClaim } from "../../../shared/kills";
-import { ILoginValues } from "../../../shared/login";
+import { IAdminValues, ILoginValues } from "../../../shared/login";
 import { IPlayer } from "../../../shared/players";
 
+/**
+ * One of the allowed REST methods.
+ */
 type Method = "GET" | "POST" | "PUT";
 
+/**
+ * 
+ * 
+ * @param request
+ * @returns
+ */
 interface IRequestParser<T> {
     (request: XMLHttpRequest): T;
 }
@@ -24,6 +33,17 @@ export class Sdk {
         return this.sendAjaxRequest(
             "POST",
             "api/login",
+            values,
+            Sdk.parseResponseForOkStatus);
+    }
+
+    /**
+     * 
+     */
+    public loginAdministrator(values: IAdminValues): Promise<boolean> {
+        return this.sendAjaxRequest(
+            "POST",
+            "api/admin",
             values,
             Sdk.parseResponseForOkStatus);
     }

@@ -5,33 +5,24 @@
 import * as React from "react";
 
 /**
- * 
+ * Props for an Activity component.
  */
 export interface IActivityProps {
     /**
-     * 
+     * Displayed activity message.
      */
     message: string;
 }
 
 /**
+ * Stateless component for an activity message.
  * 
+ * @param props   Props for an Activity component.
+ * @returns The rendered compoment.
  */
-export interface IActivityState {
-    // ...
-}
-
-/**
- * 
- */
-export class Activity extends React.Component<IActivityProps, IActivityState> {
-    /**
-     * 
-     */
-    public render(): JSX.Element {
-        return (
-            <div className="activity">
-                {this.props.message}
-            </div>);
-    }
-}
+export const Activity: React.StatelessComponent<IActivityProps> = (props: IActivityProps): JSX.Element => {
+    return (
+        <div className="activity">
+            {props.message}
+        </div>);
+};

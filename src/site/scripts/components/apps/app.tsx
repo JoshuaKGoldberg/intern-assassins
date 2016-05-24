@@ -7,34 +7,17 @@ import * as React from "react";
 import { IReport } from "../../../../shared/actions";
 import { IPlayer } from "../../../../shared/players";
 import { ILoginValues } from "../../../../shared/login";
-import { AppStorage, IPlayerStorage } from "../../storage/appstorage";
+import { AppStorage } from "../../storage/appstorage";
 import { Sdk } from "../../sdk/sdk";
 import { AppAnonymous } from "./appanonymous";
 import { AppLoggedIn } from "./apploggedin";
 
 /**
- * 
- */
-export interface IAppProps {
-    // ...
-}
-
-/**
- * 
+ * State for an App component.
  */
 export interface IAppState {
     /**
-     * 
-     */
-    alias?: string;
-
-    /**
-     * 
-     */
-    passphrase?: string;
-
-    /**
-     * 
+     * Currently logged in player, if not anonymous.
      */
     player?: IPlayer;
 
@@ -44,9 +27,12 @@ export interface IAppState {
     messages: string[];
 }
 
-export class App extends React.Component<IAppProps, IAppState> {
+/**
+ * 
+ */
+export class App extends React.Component<void, IAppState> {
     /**
-     * 
+     * Component state.
      */
     public state: IAppState;
 
@@ -68,42 +54,39 @@ export class App extends React.Component<IAppProps, IAppState> {
     /**
      * 
      */
-    public constructor(props?: IAppProps, context?: any) {
+    public constructor(props?: void, context?: any) {
         super(props, context);
         this.storage = new AppStorage();
         this.sdk = new Sdk();
         this.state = {
-            alias: this.storage.alias,
-            passphrase: this.storage.passphrase,
             messages: []
         };
 
-        if (this.state.alias && this.state.passphrase) {
-            this.receivePlayerUpdate();
-        }
-
         this.socket = io();
         this.socket.on("report", (reportRaw: string): void => this.receiveMessage(reportRaw));
+
+        if (this.storage.isComplete()) {
+            this.receiveLoginValues(this.storage);
+        }
     }
 
     /**
      * 
      */
     public render(): JSX.Element {
-        if (this.state.alias && this.state.passphrase) {
+        console.log("Rendering", this.props, this.state);
+        console.log("storage", this.storage);
+        if (this.storage.isComplete()) {
             return (
                 <AppLoggedIn
                     player={this.state.player}
                     messages={this.state.messages}
-                    reportUpdate={(): void => this.receivePlayerUpdate()}
-                    sdk={this.sdk}
-                />);
+                    sdk={this.sdk} />);
         } else {
             return (
                 <AppAnonymous
                     onLogin={(values: ILoginValues) => this.receiveLoginValues(values)}
-                    sdk={this.sdk}
-                />);
+                    sdk={this.sdk} />);
         }
     }
 
@@ -111,40 +94,17 @@ export class App extends React.Component<IAppProps, IAppState> {
      * 
      */
     private receiveLoginValues(values: ILoginValues): void {
-        this.storage.alias = values.alias;
-        this.storage.passphrase = values.passphrase;
-        this.setState(
-            {
-                alias: values.alias,
-                passphrase: values.passphrase,
-                messages: this.state.messages
-            },
-            (): void => this.populatePlayer(values));
-    }
+        console.log("Received values", values);
+        this.storage.setValues(values);
 
-    /**
-     * 
-     */
-    private populatePlayer(values: IPlayerStorage): void {
         this.sdk.getPlayer(values.alias, values.passphrase)
             .then((report: IReport<IPlayer>): void => {
+                console.log("Got player", report);
                 this.setState({
-                    alias: this.state.alias,
-                    passphrase: this.state.passphrase,
                     player: report.data,
                     messages: this.state.messages
                 });
             });
-    }
-
-    /**
-     * 
-     */
-    private receivePlayerUpdate(): void {
-        this.populatePlayer({
-            alias: this.state.alias,
-            passphrase: this.state.passphrase
-        });
     }
 
     /**
@@ -158,7 +118,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             { messages },
             (): void => {
                 setTimeout(
-                    (): void => this.removeReport(message),
+                    (): void => this.trimMessagesIfNecessary(),
                     60000);
             });
     }
@@ -166,12 +126,14 @@ export class App extends React.Component<IAppProps, IAppState> {
     /**
      * 
      */
-    private removeReport(message: string): void {
-        const newMessages: string[] = this.state.messages.filter(
-            (newMessage: string): boolean => newMessage !== message);
+    private trimMessagesIfNecessary(): void {
+        if (this.state.messages.length > 50) {
+            return;
+        }
 
         this.setState({
-            messages: newMessages
+            messages: this.state.messages.slice(
+                this.state.messages.length - 50)
         });
     }
 }

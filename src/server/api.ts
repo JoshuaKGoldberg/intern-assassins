@@ -5,19 +5,26 @@ import * as bodyParser from "body-parser";
 import * as express from "express";
 import * as url from "url";
 import { IReport, ISubmission } from "../shared/actions";
-import { ILoginValues } from "../shared/login";
+import { IAdminValues, ILoginValues } from "../shared/login";
 import { ErrorCause, ServerError } from "./errors";
-import { IAdmin } from "./server";
 import { KillStorage } from "./storage/kills";
 import { PlayerStorage } from "./storage/players";
 import { StorageMember } from "./storage/storage";
 
+/**
+ * Handler for a report being emitted.
+ * 
+ * @param report   The emitted report.
+ */
 export interface IReportCallback<T> {
-    (event: IReport<T>): void;
+    (report: IReport<T>): void;
 }
 
 /**
- * Handler a received request.
+ * Handler for a received request.
+ * 
+ * @param request   The received request.
+ * @param response   A corresponding response to the request.
  */
 interface IRouteHandler {
     (request: express.Request, response: express.Response): void;
@@ -47,7 +54,7 @@ export class Api {
     /**
      * Login credentials for server administrators.
      */
-    private admins: IAdmin[];
+    private admins: IAdminValues[];
 
     /**
      * Callbacks to notify of reports.
@@ -59,8 +66,9 @@ export class Api {
      * under the application.
      * 
      * @param app   The container application.
+     * @param admins   Information on administrators.
      */
-    public constructor(app: any, admins: IAdmin[]) {
+    public constructor(app: any, admins: IAdminValues[]) {
         this.admins = admins;
 
         app.use(bodyParser.json());
@@ -205,7 +213,7 @@ export class Api {
      * @returns Whether the submission was made by a server administrator.
      */
     private isSubmissionFromAdministrator<T>(submission: ISubmission<T>): boolean {
-        return !!this.admins.find((admin: IAdmin): boolean => {
+        return !!this.admins.find((admin: IAdminValues): boolean => {
             return admin.alias === submission.reporter && admin.passphrase === submission.passphrase;
         });
     }

@@ -9,11 +9,11 @@ import * as ReactDom from "react-dom";
 import { App } from "./components/apps/app";
 import { Footer } from "./components/footer";
 
-ReactDom.render(
-    <App />,
-    document.getElementById("app-wrapper"));
+const appWrapper: HTMLElement = document.getElementById("app-wrapper");
+const footerWrapper: HTMLElement = document.getElementById("footer-wrapper");
 
-ReactDom.render(
-    <Footer />,
-    document.getElementById("footer-wrapper"));
+ReactDom.render(<App />, appWrapper);
 
+ReactDom.render(<Footer />, footerWrapper);
+
+appWrapper.className = appWrapper.className.replace("loading", "");

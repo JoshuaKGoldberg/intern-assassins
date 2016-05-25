@@ -45,14 +45,25 @@ export class AppAnonymous extends React.Component<IAppAnonymousProps, IAppAnonym
         return (
             <form id="app" className="app-anonymous" onSubmit={(event: React.FormEvent) => this.handleEventSubmit(event)}>
                 <h1>Would you like to play a game?</h1>
-                {LoginValueKeys.map((refKey: string): JSX.Element => {
-                    return <input key={refKey} ref={refKey} type="text" placeholder={refKey} />;
-                })}
+
+                <input ref="alias" type="text" placeholder="alias" />
+                <input ref="nickname" type="text" placeholder="nickname" />
+                <input ref="passphrase" type="password" placeholder="passphrase" />
+
                 <input type="submit" value="submit" />
-                {this.state.errors.forEach((error: string): JSX.Element => {
-                    return <div className="error">{error}</div>;
-                })}
+                <div className="errors">
+                    {this.renderErrors()}
+                </div>
             </form>);
+    }
+
+    /**
+     * 
+     */
+    private renderErrors(): JSX.Element[] {
+        return this.state.errors.map((error: string, i: number): JSX.Element => {
+            return <div key={error} className="error">{error}</div>;
+        });
     }
 
     /**

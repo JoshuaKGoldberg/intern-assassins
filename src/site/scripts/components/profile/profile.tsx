@@ -42,12 +42,10 @@ export const Profile: React.StatelessComponent<IAppLoggedInProps> = (props: IApp
                 <Actions
                     alive={props.player.alive}
                     onDeath={(): void => {
-                        props.sdk.reportKillClaim(props.player.alias, props.player.alias, props.player.passphrase)
-                            .then((): void => props.reportUpdate());
+                        props.sdk.reportKillClaim(props.player.alias, props.player.alias, props.player.passphrase);
                     }}
                     onKill={(): void => {
-                        props.sdk.reportKillClaim(props.player.alias, props.player.target, props.player.passphrase)
-                            .then((): void => props.reportUpdate());
+                        props.sdk.reportKillClaim(props.player.alias, props.player.target, props.player.passphrase);
                     }} />
             </div>
         </section>);

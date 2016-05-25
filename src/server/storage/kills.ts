@@ -60,6 +60,7 @@ export class KillStorage extends StorageMember<IKillClaim> {
         let victim: IPlayer;
 
         return this.api.players.getMany([killerAlias, victimAlias])
+            // Validation: make sure both players are alive, and the killer is targeting the right victim
             .then(reports => {
                 [killer, victim] = [reports[0].data, reports[1].data];
 
@@ -75,6 +76,7 @@ export class KillStorage extends StorageMember<IKillClaim> {
                     throw new ServerError(ErrorCause.WrongTarget, victimAlias);
                 }
             })
+            // Add the claim to the datdabase
             .then(() => {
                 const killClaimReport: IReport<IKillClaim> = {
                     data: {
@@ -89,6 +91,7 @@ export class KillStorage extends StorageMember<IKillClaim> {
 
                 return killClaimReport;
             })
+            // Update the corresponding players
             .then((killClaimReport: IReport<IKillClaim>): Promise<IReport<IKillClaim>> => {
                 // Only change death status when the victim says so
                 if (killer.alias === victim.alias) {

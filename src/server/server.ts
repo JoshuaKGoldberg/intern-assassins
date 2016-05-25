@@ -5,6 +5,7 @@ import * as express from "express";
 import * as http from "http";
 import * as fsp from "fs-promise";
 import { IReport } from "../shared/actions";
+import { IAdminValues } from "../shared/login";
 import { Api } from "./api";
 import { Sockets } from "./sockets";
 
@@ -20,26 +21,11 @@ export interface IServerSettings {
     /**
      * Login credentials for administrators.
      */
-    admins?: IAdmin[];
+    admins?: IAdminValues[];
 }
 
 /**
- * Login information for a server admin.
- */
-export interface IAdmin {
-    /**
-     * Work alias.
-     */
-    alias: string;
-
-    /**
-     * Secret passphrase.
-     */
-    passphrase: string;
-}
-
-/**
- * Management server for the assassins game.
+ * Management server for an assassins game.
  */
 export class Server {
     /**
@@ -78,7 +64,7 @@ export class Server {
      * @param settings   User-specified server settings.
      */
     public constructor(settings: IServerSettings) {
-        this.settings = this.populateSettings(settings);
+        this.settings = settings;
 
         this.app = express();
         this.app.use(express.static("src/site"));
@@ -89,7 +75,7 @@ export class Server {
         this.sockets = new Sockets(this.server);
 
         this.api.registerReportCallback(
-            (event: IReport<any>) => this.sockets.broadcast(event));
+            (event: IReport<any>) => this.sockets.emit(event));
     }
 
     /**
@@ -105,24 +91,6 @@ export class Server {
             (): void => console.log(`Starting listening on port ${this.settings.port}...`));
 
         this.running = true;
-    }
-
-    /**
-     * Creates a version of user-provided settings with all fields.
-     * 
-     * @param settings   Original user-supplied server settings.
-     * @returns Complete settings based on the user-supplied settings.
-     */
-    private populateSettings(settings: IServerSettings): IServerSettings {
-        return {
-            port: settings.port || 3000,
-            admins: settings.admins || [
-                {
-                    alias: "jogol",
-                    passphrase: "pineapple"
-                }
-            ]
-        };
     }
 
     /**

@@ -3,7 +3,6 @@
 "use strict";
 import { IReport } from "../../shared/actions";
 import { IPlayer } from "../../shared/players";
-import { ILoginValues } from "../../shared/login";
 import { ErrorCause, ServerError } from "../errors";
 import { StorageMember } from "./storage";
 
@@ -22,7 +21,7 @@ export class PlayerStorage extends StorageMember<IPlayer> {
                 alias: "jogol",
                 alive: true,
                 nickname: "Joshypoo",
-                passphrase: "butts",
+                passphrase: "pineapple",
                 target: "kkeer"
             },
             reporter: "jogol",
@@ -33,7 +32,7 @@ export class PlayerStorage extends StorageMember<IPlayer> {
                 alias: "kkeer",
                 alive: true,
                 nickname: "KK",
-                passphrase: "butts",
+                passphrase: "pineapple",
                 target: "cgong"
             },
             reporter: "kkeer",
@@ -44,10 +43,21 @@ export class PlayerStorage extends StorageMember<IPlayer> {
                 alias: "cgong",
                 alive: true,
                 nickname: "CC",
-                passphrase: "butts",
-                target: "jogol"
+                passphrase: "pineapple",
+                target: "satyan"
             },
             reporter: "cgong",
+            timestamp: 1234567
+        },
+        {
+            data: {
+                alias: "satyan",
+                alive: true,
+                nickname: "Bae",
+                passphrase: "pineapple",
+                target: "jogol"
+            },
+            reporter: "satyan",
             timestamp: 1234567
         }
     ];
@@ -134,7 +144,10 @@ export class PlayerStorage extends StorageMember<IPlayer> {
     }
 
     /**
+     * Updates a player's information.
      * 
+     * @param report   Updated information for a player.
+     * @returns A promise for when the player is updated.
      */
     public update(report: IReport<IPlayer>): Promise<void> {
         const index = this.players.findIndex(
@@ -146,21 +159,5 @@ export class PlayerStorage extends StorageMember<IPlayer> {
         this.players.push(report);
 
         return Promise.resolve();
-    }
-
-    /**
-     * 
-     */
-    public createNewFromLogin(values: ILoginValues): Promise<IReport<IPlayer>> {
-        return this.put({
-            data: {
-                alias: values.alias,
-                alive: true,
-                nickname: values.nickname,
-                passphrase: values.passphrase
-            },
-            reporter: values.alias,
-            timestamp: Date.now()
-        });
     }
 }

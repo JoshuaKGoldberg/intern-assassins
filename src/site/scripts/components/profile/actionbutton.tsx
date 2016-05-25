@@ -15,6 +15,11 @@ export interface IActionButtonProps {
     /**
      * 
      */
+    small?: boolean;
+
+    /**
+     * 
+     */
     text: string;
 }
 
@@ -50,9 +55,15 @@ export class ActionButton extends React.Component<IActionButtonProps, IActionBut
     public render(): JSX.Element {
         let className: string = "action";
 
+        if (this.props.small) {
+            className += " action-small";
+        }
+
         if (this.state.expanded) {
             className += " action-expanded";
         }
+
+        className += ` action-${this.props.text.replace(/\s+/g, "-")}`;
 
         return (
             <div className={className}>

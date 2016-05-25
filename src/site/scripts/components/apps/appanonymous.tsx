@@ -3,7 +3,7 @@
 "use strict";
 import * as React from "react";
 import { Sdk } from "../../sdk/sdk";
-import { ILoginValues, LoginValueKeys } from "../../../../shared/login";
+import { ICredentials, CredentialKeys } from "../../../../shared/login";
 
 /**
  * 
@@ -17,7 +17,7 @@ export interface IAppAnonymousProps {
     /**
      * 
      */
-    onLogin(values: ILoginValues): void;
+    onLogin(values: ICredentials): void;
 }
 
 /**
@@ -73,10 +73,10 @@ export class AppAnonymous extends React.Component<IAppAnonymousProps, IAppAnonym
         event.preventDefault();
         event.stopPropagation();
 
-        const values: ILoginValues = {} as any;
+        const values: ICredentials = {} as any;
         const errors: string[] = [];
 
-        LoginValueKeys
+        CredentialKeys
             .forEach((refKey: string): void => {
                 const value: string = (this.refs[refKey] as any).value;
                 values[refKey] = value;
@@ -85,6 +85,8 @@ export class AppAnonymous extends React.Component<IAppAnonymousProps, IAppAnonym
                     errors.push(`You forgot your ${refKey}!`);
                 }
             });
+
+        console.log("Values", values);
 
         if (errors.length > 0) {
             this.setState({ errors });

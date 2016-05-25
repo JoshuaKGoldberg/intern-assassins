@@ -6,7 +6,7 @@ declare var io: SocketIOStatic;
 import * as React from "react";
 import { IReport } from "../../../../shared/actions";
 import { IPlayer } from "../../../../shared/players";
-import { ILoginValues } from "../../../../shared/login";
+import { ICredentials } from "../../../../shared/login";
 import { AppStorage } from "../../storage/appstorage";
 import { Sdk } from "../../sdk/sdk";
 import { AppAnonymous } from "./appanonymous";
@@ -66,7 +66,7 @@ export class App extends React.Component<void, IAppState> {
         this.socket.on("report", (reportRaw: string): void => this.receiveMessage(reportRaw));
 
         if (this.storage.isComplete()) {
-            this.receiveLoginValues(this.storage);
+            this.receiveLoginValues(this.storage.asObject());
         }
     }
 
@@ -83,7 +83,7 @@ export class App extends React.Component<void, IAppState> {
         } else {
             return (
                 <AppAnonymous
-                    onLogin={(values: ILoginValues) => this.receiveLoginValues(values)}
+                    onLogin={(values: ICredentials) => this.receiveLoginValues(values)}
                     sdk={this.sdk} />);
         }
     }
@@ -91,10 +91,10 @@ export class App extends React.Component<void, IAppState> {
     /**
      * 
      */
-    private receiveLoginValues(values: ILoginValues): void {
+    private receiveLoginValues(values: ICredentials): void {
         this.storage.setValues(values);
 
-        this.sdk.getPlayer(values.alias, values.passphrase)
+        this.sdk.getPlayer(values)
             .then((report: IReport<IPlayer>): void => {
                 this.setState({
                     player: report.data,

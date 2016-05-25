@@ -1,9 +1,9 @@
-import { ILoginValues } from "../../../shared/login";
+import { ICredentials } from "../../../shared/login";
 
 /**
  * 
  */
-export class AppStorage implements ILoginValues {
+export class AppStorage implements ICredentials {
     /**
      * 
      */
@@ -12,7 +12,7 @@ export class AppStorage implements ILoginValues {
     /**
      * 
      */
-    private static /* readonly */ keyNickname: string = "Assassins::Passphrase";
+    private static /* readonly */ keyNickname: string = "Assassins::Nickname";
 
     /**
      * 
@@ -64,14 +64,14 @@ export class AppStorage implements ILoginValues {
     /**
      * 
      */
-    public setValues(values: ILoginValues): void {
+    public setValues(values: ICredentials): void {
         [this.alias, this.nickname, this.passphrase] = [values.alias, values.nickname, values.passphrase];
     }
 
     /**
      * 
      */
-    public asObject(): ILoginValues {
+    public asObject(): ICredentials {
         return {
             alias: this.alias,
             nickname: this.nickname,

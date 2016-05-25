@@ -11,42 +11,64 @@ import { InfoDisplay } from "./infodisplay";
 /**
  * 
  */
-export const Profile: React.StatelessComponent<IAppLoggedInProps> = (props: IAppLoggedInProps): JSX.Element => {
-    if (!props.player) {
+export class Profile extends React.Component<IAppLoggedInProps, void> {
+    public render(): JSX.Element {
+        if (!this.props.player) {
+            return (
+                <section id="profile" className="loading">
+                    loading profile...
+                </section>);
+        }
+
+        if (!this.props.player.nickname) {
+            return (
+                <section id="profile" className="loading">
+                    loading profile for {this.props.player.nickname}...
+                </section>);
+        }
+
         return (
-            <section id="profile" className="loading">
-                loading profile...
+            <section id="profile">
+                <div className="area greeting-area">
+                    <Greeting nickname={this.props.player.nickname} />
+                </div>
+
+                <div className="area info-display-area">
+                    <InfoDisplay info="alias" display={this.props.player.alias} />
+                    <InfoDisplay info="nickname" display={this.props.player.nickname} editable={true} />
+                    <InfoDisplay info="target" display={this.props.player.target} />
+                </div>
+
+                <div class="area">
+                    <Actions
+                        alive={this.props.player.alive}
+                        onDeath={(): void => this.onDeath()}
+                        onKill={(): void => this.onKill()} />
+                </div>
             </section>);
     }
 
-    if (!props.player.nickname) {
-        return (
-            <section id="profile" className="loading">
-                loading profile for {props.player.nickname}...
-            </section>);
+    /**
+     * 
+     */
+    private onDeath(): void {
+        this.props.sdk.reportKillClaim(
+            this.props.player,
+            {
+                killer: this.props.player.alias,
+                victim: this.props.player.alias
+            });
     }
 
-    return (
-        <section id="profile">
-            <div className="area greeting-area">
-                <Greeting nickname={props.player.nickname} />
-            </div>
-
-            <div className="area info-display-area">
-                <InfoDisplay info="alias" display={props.player.alias} />
-                <InfoDisplay info="nickname" display={props.player.nickname} editable={true} />
-                <InfoDisplay info="target" display={props.player.target} />
-            </div>
-
-            <div class="area">
-                <Actions
-                    alive={props.player.alive}
-                    onDeath={(): void => {
-                        props.sdk.reportKillClaim(props.player.alias, props.player.alias, props.player.passphrase);
-                    }}
-                    onKill={(): void => {
-                        props.sdk.reportKillClaim(props.player.alias, props.player.target, props.player.passphrase);
-                    }} />
-            </div>
-        </section>);
-};
+    /**
+     * 
+     */
+    private onKill(): void {
+        this.props.sdk.reportKillClaim(
+            this.props.player,
+            {
+                killer: this.props.player.alias,
+                victim: this.props.player.target
+            });
+    }
+}

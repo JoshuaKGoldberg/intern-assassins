@@ -1,11 +1,11 @@
 "use strict";
 
-import { ILoginValues } from "./login";
+import { ICredentials } from "./login";
 
 /**
  * Database model representation of a player.
  */
-export interface IPlayer extends ILoginValues {
+export interface IPlayer extends ICredentials {
     /**
      * Whether the player is currently alive.
      */

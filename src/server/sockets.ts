@@ -28,6 +28,7 @@ export class Sockets {
      * Emits an event for a kill claim report.
      */
     public emit(report: IReport<IKillClaim>): void {
+        console.log("Emitting", report);
         const message: string = report.data.killer === report.data.victim
             ? `${report.data.victim} appears to be dead...`
             : `${report.data.killer} killed ${report.data.victim}!`;

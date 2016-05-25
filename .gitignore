@@ -38,4 +38,4 @@ node_modules
 !gulpfile.js
 
 # Server settings
-!assassins.json
+assassins.json

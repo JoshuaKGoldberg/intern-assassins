@@ -3,7 +3,7 @@
 /**
  * Values used to log in as a player.
  */
-export interface ILoginValues {
+export interface ICredentials {
     /**
      * Alias of a player.
      */
@@ -21,21 +21,6 @@ export interface ILoginValues {
 }
 
 /**
- * Values used to log in as an administrator.
- */
-export interface IAdminValues {
-    /**
-     * Alias of an admin.
-     */
-    alias: string;
-
-    /**
-     * Secret passphrase of an admin.
-     */
-    passphrase: string;
-}
-
-/**
  * Keys required to exist in login attempt data.
  */
-export const LoginValueKeys: string[] = ["alias", "nickname", "passphrase"];
+export const CredentialKeys: string[] = ["alias", "nickname", "passphrase"];

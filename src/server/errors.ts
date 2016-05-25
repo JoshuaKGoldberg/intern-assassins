@@ -31,7 +31,7 @@ export class ServerError extends Error {
      * @param args   Any arguments to display with the cause.
      */
     constructor(cause: ErrorCause, ...args: any[]) {
-        const message = ErrorCause[cause] + args.join(", ");
+        const message = `${ErrorCause[cause]}: ${args.join(", ")}`;
         super(message);
         this.cause = cause;
     }

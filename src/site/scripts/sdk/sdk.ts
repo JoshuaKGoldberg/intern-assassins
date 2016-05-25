@@ -2,7 +2,7 @@
 
 import { IReport } from "../../../shared/actions";
 import { IKillClaim } from "../../../shared/kills";
-import { IAdminValues, ILoginValues } from "../../../shared/login";
+import { ICredentials } from "../../../shared/login";
 import { IPlayer } from "../../../shared/players";
 
 /**
@@ -29,33 +29,25 @@ export class Sdk {
      * 
      * @returns A promise for whether the login was accepted.
      */
-    public login(values: ILoginValues): Promise<boolean> {
+    public login(credentials: ICredentials): Promise<boolean> {
         return this.sendAjaxRequest(
             "POST",
             "api/login",
-            values,
+            {
+                data: credentials,
+                credentials
+            },
             Sdk.parseResponseForOkStatus);
     }
 
     /**
      * 
      */
-    public loginAdministrator(values: IAdminValues): Promise<boolean> {
-        return this.sendAjaxRequest(
-            "POST",
-            "api/admin",
-            values,
-            Sdk.parseResponseForOkStatus);
-    }
-
-    /**
-     * 
-     */
-    public getPlayer(alias: string, passphrase: string): Promise<IReport<IPlayer>> {
+    public getPlayer(credentials: ICredentials): Promise<IReport<IPlayer>> {
         return this.sendAjaxRequest(
             "GET",
             "api/players",
-            { alias, passphrase },
+            credentials,
             Sdk.parseResponseForJsonData);
     }
 
@@ -64,14 +56,13 @@ export class Sdk {
      * 
      * @param alias   The player's alias.
      */
-    public reportKillClaim(killer: string, victim: string, passphrase: string): Promise<IReport<IKillClaim>> {
+    public reportKillClaim(credentials: ICredentials, claim: IKillClaim): Promise<IReport<IKillClaim>> {
         return this.sendAjaxRequest(
             "PUT",
             "api/kills",
             {
-                data: { killer, victim },
-                reporter: killer,
-                passphrase
+                data: claim,
+                credentials
             },
             Sdk.parseResponseForJsonData);
     }

@@ -2,20 +2,21 @@
 
 "use strict";
 import { IReport } from "../../shared/actions";
+import { ICredentials } from "../../shared/login";
 import { IPlayer } from "../../shared/players";
 import { ErrorCause, ServerError } from "../errors";
-import { StorageMember } from "./storage";
+import { StorageTable } from "./storagetable";
 
 /**
  * Mock database storage for players.
  * 
  * @todo Use MongoDB...
  */
-export class PlayerStorage extends StorageMember<IPlayer> {
+export class PlayersTable extends StorageTable<IReport<IPlayer>> {
     /**
      * All known players.
      */
-    public /* readonly */ players: IReport<IPlayer>[] = [
+    private /* readonly */ players: IReport<IPlayer>[] = [
         {
             data: {
                 alias: "jogol",
@@ -63,26 +64,43 @@ export class PlayerStorage extends StorageMember<IPlayer> {
     ];
 
     /**
-     * @param alias   Alias of a player.
-     * @returns A promise for the player with the alias.
+     * @returns Path to this part of the global api.
      */
-    public get(alias: string): Promise<IReport<IPlayer>> {
-        return new Promise((resolve, reject) => {
-            const player = this.players.find(report => report.data.alias === alias);
-
-            if (player) {
-                resolve(player);
-            } else {
-                reject(new ServerError(ErrorCause.PlayersDoNotExist, alias));
-            }
-        });
+    public getRoute(): string {
+        return "players";
     }
 
     /**
+     * Retrieves a player.
+     * 
+     * @param credentials   Login values for authentication.
+     * @param alias   Alias of a player.
+     * @returns A promise for the player with the alias.
+     */
+    public get(credentials: ICredentials): Promise<IReport<IPlayer>> {
+        const player = this.players.find(report => report.data.alias === credentials.alias);
+
+        if (!player) {
+            throw new ServerError(ErrorCause.PlayersDoNotExist, credentials.alias);
+        }
+
+        if (
+            player.data.nickname !== credentials.nickname
+            || player.data.passphrase !== credentials.passphrase) {
+            throw new ServerError(ErrorCause.IncorrectCredentials);
+        }
+
+        return Promise.resolve(player);
+    }
+
+    /**
+     * Retrieves multiple players.
+     * 
+     * @param credentials   Login values for authentication.
      * @param alias   Aliases of players.
      * @returns A promise for the players with the aliases.
      */
-    public getMany(aliases: string[]): Promise<IReport<IPlayer>[]> {
+    public getMany(credentials: ICredentials, aliases: string[]): Promise<IReport<IPlayer>[]> {
         let unfound: string[];
         const reports: IReport<IPlayer>[] = aliases.map(
             (alias: string): IReport<IPlayer> => {
@@ -103,34 +121,6 @@ export class PlayerStorage extends StorageMember<IPlayer> {
                 resolve(reports);
             }
         });
-    }
-
-    /**
-     * @returns A promise for all players.
-     */
-    public getAll(): Promise<IReport<IPlayer>[]> {
-        return new Promise((resolve, reject) => {
-            resolve(this.players);
-        });
-    }
-
-    /**
-     * Adds a new player to the database.
-     * 
-     * @param report   A player to add.
-     * @returns A promise for the player, if added successfully.
-     */
-    public put(report: IReport<IPlayer>): Promise<IReport<IPlayer>> {
-        return this.get(report.data.alias)
-            .then(ServerError.inPromise(ErrorCause.PlayersAlreadyExist, report.data.alias))
-            .catch((error: ServerError) => {
-                if (error.cause !== ErrorCause.PlayersDoNotExist) {
-                    throw error;
-                }
-
-                this.players.push(report);
-                return report;
-            });
     }
 
     /**

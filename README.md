@@ -17,7 +17,7 @@ Under `src/server` is an `expressjs` server.
 ## Running
 
 Settings for the server are read from `assassins.json` at startup.
-This file contains the server `port` and a list of server `admins`. 
+This file contains the server `port`.
 
 Before running the app, copy `assassins.default.json` to `assassins.json`.
 You'll also need to build first.

@@ -1,4 +1,5 @@
 "use strict";
+import { ICredentials } from "./login";
 
 /**
  * A user submission of data, along with their credentials.
@@ -12,14 +13,9 @@ export interface ISubmission<T> {
     data: T;
 
     /**
-     * The reporter's passphrase, for verification.
+     * Verification for the submitting user.
      */
-    passphrase: string;
-
-    /**
-     * Alias of the player sending this in.
-     */
-    reporter: string;
+    credentials: ICredentials;
 }
 
 /**

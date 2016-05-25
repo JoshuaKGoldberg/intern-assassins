@@ -5,7 +5,6 @@ import * as express from "express";
 import * as http from "http";
 import * as fsp from "fs-promise";
 import { IReport } from "../shared/actions";
-import { IAdminValues } from "../shared/login";
 import { Api } from "./api";
 import { Sockets } from "./sockets";
 
@@ -17,11 +16,6 @@ export interface IServerSettings {
      * Which port to use, if not the default.
      */
     port?: number;
-
-    /**
-     * Login credentials for administrators.
-     */
-    admins?: IAdminValues[];
 }
 
 /**
@@ -70,7 +64,7 @@ export class Server {
         this.app.use(express.static("src/site"));
         this.app.use("/node_modules", express.static("node_modules"));
 
-        this.api = new Api(this.app, this.settings.admins);
+        this.api = new Api(this.app);
         this.server = http.createServer(this.app);
         this.sockets = new Sockets(this.server);
 

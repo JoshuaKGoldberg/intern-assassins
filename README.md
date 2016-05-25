@@ -13,20 +13,6 @@ It's served by an `expressjs` server.
 
 Under `src/server` is an `expressjs` server.
 
-
-## Running
-
-Settings for the server are read from `assassins.json` at startup.
-This file contains the server `port` and a list of server `admins`. 
-
-Before running the app, copy `assassins.default.json` to `assassins.json`.
-You'll also need to build first.
-
-```shell
-node src\main
-```
-
-
 ## Build Process
 
 [Gulp](http://gulpjs.com/) is used to automate building, which requires [Node.js](http://node.js.org).
@@ -38,6 +24,18 @@ To build from scratch, install Node.js and run the following commands:
 npm install -g gulp
 npm install
 gulp
+```
+
+## Running
+
+Settings for the server are read from `assassins.json` at startup.
+This file contains the server `port` and a list of server `admins`. 
+
+Before running the app, copy `assassins.default.json` to `assassins.json`.
+You'll also need to build first.
+
+``` shell
+node src\main
 ```
 
 ### Individual Gulp tasks

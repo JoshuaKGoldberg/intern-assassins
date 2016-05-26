@@ -1,5 +1,5 @@
 body {
-  background: #ccccd0;
+  background: #eaeaea;
   color: #494949;
   font-family: "Segoe UI Semilight", "Segoe UI", "sans-serif";
   font-size: 1.17em;
@@ -101,7 +101,8 @@ input[type=submit] {
 /* Footer */
 #footer-wrapper {
   padding: 14px 28px 28px;
-  background: #ccccd0;
+  background: #eaeaea;
   color: #494949;
+  font-family: "Segoe UI Light";
   text-align: center;
 }

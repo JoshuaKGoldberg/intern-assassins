@@ -4,53 +4,71 @@
 import * as React from "react";
 
 /**
- * 
+ * Props for an ActionButton component.
  */
 export interface IActionButtonProps {
     /**
-     * 
+     * Action to take when activated.
      */
     action: () => void;
 
     /**
-     * 
+     * Whether the button is small.
      */
     small?: boolean;
 
     /**
-     * 
+     * Textual display.
      */
     text: string;
 }
 
 /**
- * 
+ * State for an ActionButton component.
  */
 export interface IActionButtonState {
     /**
-     * 
+     * How long until this can be activated.
      */
     delay?: number;
 
     /**
-     * 
+     * Whether this has had its confirmation expanded.
      */
     expanded: boolean;
+
+    /**
+     * Confirmation text, chosen at random.
+     */
+    confirmation: string;
 }
 
 /**
- * 
+ * A component for an actionable button.
  */
 export class ActionButton extends React.Component<IActionButtonProps, IActionButtonState> {
     /**
-     * 
+     * Possible confirmation texts.
+     */
+    private static /* readonly */ confirmations: string[] = [
+        "Are you sure",
+        "For real?",
+        "O rly?",
+        "You sure?"
+    ];
+
+    /**
+     * State for the component.
      */
     public state: IActionButtonState = {
+        confirmation: ActionButton.confirmations[Math.random() * ActionButton.confirmations.length | 0],
         expanded: false
     };
 
     /**
+     * Renders the component.
      * 
+     * @returns The rendered component.
      */
     public render(): JSX.Element {
         let className: string = "action";
@@ -67,15 +85,17 @@ export class ActionButton extends React.Component<IActionButtonProps, IActionBut
 
         return (
             <div className={className}>
-                {this.renderActionButton()}
-                {this.renderActionConfirmation()}
+                {this.renderButton()}
+                {this.renderConfirmation()}
             </div>);
     }
 
     /**
+     * Renders the input button.
      * 
+     * @returns The rendered input button.
      */
-    private renderActionButton(): JSX.Element {
+    private renderButton(): JSX.Element {
         return (
             <input
                 className="action-button"
@@ -85,9 +105,11 @@ export class ActionButton extends React.Component<IActionButtonProps, IActionBut
     }
 
     /**
+     * Renders the confirmation button.
      * 
+     * @returns The rendered confirmation button.
      */
-    private renderActionConfirmation(): JSX.Element {
+    private renderConfirmation(): JSX.Element {
         let onClick: () => void;
         let value: string;
 
@@ -99,7 +121,7 @@ export class ActionButton extends React.Component<IActionButtonProps, IActionBut
                 this.props.action();
                 this.toggleExpansion();
             };
-            value = "For real?";
+            value = this.state.confirmation;
         }
 
         return (
@@ -111,11 +133,12 @@ export class ActionButton extends React.Component<IActionButtonProps, IActionBut
     }
 
     /**
-     * 
+     * Toggles whether this is expanded for a confirmation button.
      */
     private toggleExpansion(): void {
         if (this.state.expanded) {
             this.setState({
+                confirmation: this.state.confirmation,
                 expanded: false
             });
 
@@ -123,6 +146,7 @@ export class ActionButton extends React.Component<IActionButtonProps, IActionBut
         }
 
         this.setState({
+            confirmation: this.state.confirmation,
             expanded: true,
             delay: 3
         });
@@ -133,6 +157,7 @@ export class ActionButton extends React.Component<IActionButtonProps, IActionBut
                     clearInterval(interval);
                 } else {
                     this.setState({
+                        confirmation: this.state.confirmation,
                         expanded: true,
                         delay: this.state.delay - 1
                     });

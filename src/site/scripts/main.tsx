@@ -13,7 +13,6 @@ const appWrapper: HTMLElement = document.getElementById("app-wrapper");
 const footerWrapper: HTMLElement = document.getElementById("footer-wrapper");
 
 ReactDom.render(<App />, appWrapper);
-
 ReactDom.render(<Footer />, footerWrapper);
 
 appWrapper.className = appWrapper.className.replace("loading", "");

@@ -9,31 +9,33 @@ import { ActionButton } from "../profile/actionbutton";
 import { Profile } from "../profile/profile";
 
 /**
- * 
+ * Props for an AppLoggedIn component.
  */
 export interface IAppLoggedInProps {
     /**
-     * 
+     * Information on the user.
      */
     player: IPlayer;
 
     /**
-     * 
+     * Recently pushed notification messages.
      */
     messages: string[];
 
     /**
-     * 
+     * Wrapper around the server API.
      */
     sdk: Sdk;
 }
 
 /**
- * 
+ * Application component for a logged in user.
  */
 export class AppLoggedIn extends React.Component<IAppLoggedInProps, void> {
     /**
      * Renders the component.
+     * 
+     * @returns The rendered component.
      */
     public render(): JSX.Element {
         return (

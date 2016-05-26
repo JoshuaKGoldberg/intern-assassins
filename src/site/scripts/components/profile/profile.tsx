@@ -9,9 +9,14 @@ import { Greeting } from "./greeting";
 import { InfoDisplay } from "./infodisplay";
 
 /**
- * 
+ * Component for a user's profile page.
  */
 export class Profile extends React.Component<IAppLoggedInProps, void> {
+    /**
+     * Renders the component.
+     * 
+     * @returns The rendered component.
+     */
     public render(): JSX.Element {
         if (!this.props.player) {
             return (
@@ -49,7 +54,7 @@ export class Profile extends React.Component<IAppLoggedInProps, void> {
     }
 
     /**
-     * 
+     * Handler for the user reporting their own death.
      */
     private onDeath(): void {
         this.props.sdk.reportKillClaim(
@@ -61,7 +66,7 @@ export class Profile extends React.Component<IAppLoggedInProps, void> {
     }
 
     /**
-     * 
+     * Handler for the user reporting they've scored a kill.
      */
     private onKill(): void {
         this.props.sdk.reportKillClaim(

@@ -22,37 +22,40 @@ export interface IAppState {
     player?: IPlayer;
 
     /**
-     * 
+     * Recently pushed notification messages.
      */
     messages: string[];
 }
 
 /**
- * 
+ * Component for the entire container application.
  */
 export class App extends React.Component<void, IAppState> {
     /**
-     * Component state.
+     * State for the component.
      */
     public state: IAppState;
 
     /**
-     * 
+     * Client-side storage for login credentials.
      */
     private storage: AppStorage;
 
     /**
-     * 
+     * Wrapper around the server API.
      */
     private sdk: Sdk;
 
     /**
-     * 
+     * Real-time socket.io server.
      */
     private socket: SocketIO.Server;
 
     /**
+     * Initializes a new instance of the App class.
      * 
+     * @param props   Props for the component.
+     * @param context   Optional container context.
      */
     public constructor(props?: void, context?: any) {
         super(props, context);
@@ -66,12 +69,14 @@ export class App extends React.Component<void, IAppState> {
         this.socket.on("report", (reportRaw: string): void => this.receiveMessage(reportRaw));
 
         if (this.storage.isComplete()) {
-            this.receiveLoginValues(this.storage.asObject());
+            this.receiveLoginValues(this.storage.asCredentials());
         }
     }
 
     /**
+     * Renders the component.
      * 
+     * @returns The rendered component.
      */
     public render(): JSX.Element {
         if (this.storage.isComplete()) {
@@ -89,7 +94,9 @@ export class App extends React.Component<void, IAppState> {
     }
 
     /**
+     * Handler for a successful login.
      * 
+     * @param values   User login credentials.
      */
     private receiveLoginValues(values: ICredentials): void {
         this.storage.setValues(values);
@@ -104,32 +111,14 @@ export class App extends React.Component<void, IAppState> {
     }
 
     /**
-     * 
+     * Receives a notification message.
      */
     private receiveMessage(message: string): void {
         const messages: string[] = this.state.messages.slice();
         messages.push(message);
 
-        this.setState(
-            { messages },
-            (): void => {
-                setTimeout(
-                    (): void => this.trimMessagesIfNecessary(),
-                    60000);
-            });
-    }
-
-    /**
-     * 
-     */
-    private trimMessagesIfNecessary(): void {
-        if (this.state.messages.length > 50) {
-            return;
-        }
-
         this.setState({
-            messages: this.state.messages.slice(
-                this.state.messages.length - 50)
+            messages: messages
         });
     }
 }

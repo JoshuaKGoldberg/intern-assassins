@@ -11,22 +11,23 @@ import { IPlayer } from "../../../shared/players";
 type Method = "GET" | "POST" | "PUT";
 
 /**
+ * Parses a request for a type of response.
  * 
- * 
- * @param request
- * @returns
+ * @param request   A completed XMLHttpRequest.
+ * @returns The request's result.
  */
-interface IRequestParser<T> {
+interface IResponseParser<T> {
     (request: XMLHttpRequest): T;
 }
 
 /**
- * @todo Use Swagger instead...
+ * Wrapper around the server API.
  */
 export class Sdk {
     /**
+     * Checks whether login information is valid.
      * 
-     * 
+     * @param credentials   The submitting user credentials.
      * @returns A promise for whether the login was accepted.
      */
     public login(credentials: ICredentials): Promise<boolean> {
@@ -34,14 +35,17 @@ export class Sdk {
             "POST",
             "api/login",
             {
-                data: credentials,
-                credentials
+                credentials: credentials,
+                data: credentials
             },
             Sdk.parseResponseForOkStatus);
     }
 
     /**
+     * Retrieves a player's information.
      * 
+     * @param credentials   The submitting user credentials.
+     * @returns A promise for the player.
      */
     public getPlayer(credentials: ICredentials): Promise<IReport<IPlayer>> {
         return this.sendAjaxRequest(
@@ -54,23 +58,31 @@ export class Sdk {
     /**
      * Reports that a player has died.
      * 
+     * @param credentials   The submitting user credentials.
      * @param alias   The player's alias.
+     * @returns A promise for the created kill claim, if successful.
      */
     public reportKillClaim(credentials: ICredentials, claim: IKillClaim): Promise<IReport<IKillClaim>> {
         return this.sendAjaxRequest(
             "PUT",
             "api/kills",
             {
-                data: claim,
-                credentials
+                credentials: credentials,
+                data: claim
             },
             Sdk.parseResponseForJsonData);
     }
 
     /**
+     * Sends an ajax request to the server and parses the response.
      * 
+     * @param method   What REST method to use.
+     * @param url   The API endpoint locator.
+     * @param data   Contents of the request.
+     * @param parser   What response parser to apply to the request.
+     * @returns A promise for the type of response.
      */
-    private sendAjaxRequest<TData, TResponse>(method: Method, url: string, data: TData, parser: IRequestParser<TResponse>): Promise<TResponse> {
+    private sendAjaxRequest<TData, TResponse>(method: Method, url: string, data: TData, parser: IResponseParser<TResponse>): Promise<TResponse> {
         if (method === "GET") {
             url = url + "?" + Object.keys(data)
                 .map((key: string): string => `${key}=${encodeURIComponent(data[key])}`)
@@ -100,14 +112,20 @@ export class Sdk {
     }
 
     /**
+     * Parses a request for whether it was 200 OK.
      * 
+     * @param request   A completed XMLHttpRequest.
+     * @returns Whether the request was 200 OK.
      */
     private static parseResponseForOkStatus(request: XMLHttpRequest): boolean {
         return request.status === 200;
     }
 
     /**
+     * Parses a request for a type of response.
      * 
+     * @param request   A completed XMLHttpRequest.
+     * @returns The request's response text as an object.
      */
     private static parseResponseForJsonData<T>(request: XMLHttpRequest): T {
         return JSON.parse(request.responseText);

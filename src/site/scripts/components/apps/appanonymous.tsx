@@ -6,44 +6,51 @@ import { Sdk } from "../../sdk/sdk";
 import { ICredentials, CredentialKeys } from "../../../../shared/login";
 
 /**
- * 
+ * Props for an AppAnonymous component.
  */
 export interface IAppAnonymousProps {
     /**
-     * 
+     * Wrapper around the server API.
      */
     sdk: Sdk;
 
     /**
+     * Handler for a successful login.
      * 
+     * @param values   User login credentials.
      */
     onLogin(values: ICredentials): void;
 }
 
 /**
- * 
+ * State for an AppAnonymous component.
  */
 export interface IAppAnonymousState {
+    /**
+     * Errors from invalid login credentials.
+     */
     errors: string[];
 }
 
 /**
- * 
+ * Application component for an anonymous user.
  */
 export class AppAnonymous extends React.Component<IAppAnonymousProps, IAppAnonymousState> {
     /**
-     * 
+     * State for the component.
      */
     public state: IAppAnonymousState = {
         errors: []
     };
 
     /**
+     * Renders the component.
      * 
+     * @returns The rendered component.
      */
     public render(): JSX.Element {
         return (
-            <form id="app" className="app-anonymous" onSubmit={(event: React.FormEvent) => this.handleEventSubmit(event)}>
+            <form id="app" className="app-anonymous" onSubmit={(event: React.FormEvent) => this.handleSubmit(event)}>
                 <h1>Would you like to play a game?</h1>
 
                 <input ref="alias" type="text" placeholder="alias" />
@@ -58,7 +65,9 @@ export class AppAnonymous extends React.Component<IAppAnonymousProps, IAppAnonym
     }
 
     /**
+     * Renders any errors.
      * 
+     * @returns The rendered errors.
      */
     private renderErrors(): JSX.Element[] {
         return this.state.errors.map((error: string, i: number): JSX.Element => {
@@ -67,9 +76,11 @@ export class AppAnonymous extends React.Component<IAppAnonymousProps, IAppAnonym
     }
 
     /**
+     * Handles the user submitting login credentials.
      * 
+     * @param event   The triggering event.
      */
-    private handleEventSubmit(event: React.FormEvent): void {
+    private handleSubmit(event: React.FormEvent): void {
         event.preventDefault();
         event.stopPropagation();
 
@@ -85,8 +96,6 @@ export class AppAnonymous extends React.Component<IAppAnonymousProps, IAppAnonym
                     errors.push(`You forgot your ${refKey}!`);
                 }
             });
-
-        console.log("Values", values);
 
         if (errors.length > 0) {
             this.setState({ errors });

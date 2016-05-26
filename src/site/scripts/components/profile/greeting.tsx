@@ -3,10 +3,16 @@
 "use strict";
 import * as React from "react";
 
+/**
+ * Props for a Greeting component.
+ */
 export interface IGreetingProps {
     nickname: string;
 }
 
+/**
+ * Possible greetings, where "{0}" is replaced with a nickname.
+ */
 const greetings: string[] = [
     "Hey, {0}!",
     "Heya, {0}!",
@@ -17,8 +23,14 @@ const greetings: string[] = [
     "Sup {0}?"
 ];
 
+/**
+ * One of the allowed greetings, chosen at random.
+ */
 const greeting = greetings[(Math.random() * greetings.length | 0)];
 
+/**
+ * Component for a happy greeting.
+ */
 export const Greeting: React.StatelessComponent<IGreetingProps> = (state: IGreetingProps): JSX.Element => {
     return (
         <h1 className="greeting">

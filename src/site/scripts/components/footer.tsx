@@ -5,7 +5,7 @@
 import * as React from "react";
 
 /**
- * 
+ * Component for an end-of-page footer.
  */
 export const Footer: React.StatelessComponent<void> = (): JSX.Element => {
     return (

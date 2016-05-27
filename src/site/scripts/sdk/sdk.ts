@@ -56,6 +56,32 @@ export class Sdk {
     }
 
     /**
+     * Retrieves all users' information.
+     * 
+     * @param credentials   The submitting user credentials.
+     * @returns A promise for all users.
+     * @todo Implement this.
+     */
+    public getUsers(credentials: ICredentials): Promise<IReport<IUser>[]> {
+        return Promise.resolve(
+            [
+                {
+                    data: {
+                        admin: false,
+                        alias: "kkeer",
+                        alive: true,
+                        nickname: "KK",
+                        passphrase: "pineapple",
+                        target: "cgong"
+                    },
+                    reporter: credentials.alias,
+                    timestamp: Date.now()
+                }
+            ]
+        );
+    }
+
+    /**
      * Reports that a user has died.
      * 
      * @param credentials   The submitting user credentials.

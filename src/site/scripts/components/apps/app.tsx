@@ -9,8 +9,9 @@ import { IUser } from "../../../../shared/users";
 import { ICredentials } from "../../../../shared/login";
 import { AppStorage } from "../../storage/appstorage";
 import { Sdk } from "../../sdk/sdk";
+import { AppAdmin } from "./appadmin";
 import { AppAnonymous } from "./appanonymous";
-import { AppLoggedIn } from "./apploggedin";
+import { AppUser } from "./appuser";
 
 /**
  * State for an App component.
@@ -80,17 +81,24 @@ export class App extends React.Component<void, IAppState> {
      */
     public render(): JSX.Element {
         if (this.storage.isComplete()) {
+            if (this.state.user && this.state.user.admin) {
+                return (
+                    <AppAdmin
+                        sdk={this.sdk}
+                        user={this.state.user} />);
+            }
+
             return (
-                <AppLoggedIn
-                    user={this.state.user}
+                <AppUser
                     messages={this.state.messages}
-                    sdk={this.sdk} />);
-        } else {
-            return (
-                <AppAnonymous
-                    onLogin={(values: ICredentials) => this.receiveLoginValues(values)}
-                    sdk={this.sdk} />);
+                    sdk={this.sdk}
+                    user={this.state.user} />);
         }
+
+        return (
+            <AppAnonymous
+                onLogin={(values: ICredentials) => this.receiveLoginValues(values)}
+                sdk={this.sdk} />);
     }
 
     /**

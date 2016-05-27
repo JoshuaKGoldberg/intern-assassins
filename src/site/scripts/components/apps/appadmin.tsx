@@ -3,24 +3,19 @@
 "use strict";
 import * as React from "react";
 import { IUser } from "../../../../shared/users";
-import { Sdk } from "../../sdk/sdk";
-import { ActivityBar } from "../activitybar/activitybar";
 import { ActionButton } from "../profile/actionbutton";
-import { Profile } from "../profile/profile";
+import { Greeting } from "../profile/greeting";
+import { Sdk } from "../../sdk/sdk";
+import { UsersTable } from "../admin/userstable";
 
 /**
- * Props for an AppLoggedIn component.
+ * Props for an AppAdmin component.
  */
-export interface IAppLoggedInProps {
+export interface IAppAdminProps {
     /**
      * Information on the user.
      */
     user: IUser;
-
-    /**
-     * Recently pushed notification messages.
-     */
-    messages: string[];
 
     /**
      * Wrapper around the server API.
@@ -31,7 +26,7 @@ export interface IAppLoggedInProps {
 /**
  * Application component for a logged in user.
  */
-export class AppLoggedIn extends React.Component<IAppLoggedInProps, void> {
+export class AppAdmin extends React.Component<IAppAdminProps, void> {
     /**
      * Renders the component.
      * 
@@ -39,10 +34,10 @@ export class AppLoggedIn extends React.Component<IAppLoggedInProps, void> {
      */
     public render(): JSX.Element {
         return (
-            <div id="app" className="app-logged-in">
+            <div id="app" className="app-admin">
                 <ActionButton text="x" small action={(): void => this.logOut()} />
-                <Profile {...this.props} />
-                <ActivityBar messages={this.props.messages} />
+                <Greeting admin={this.props.user.admin} nickname={this.props.user.nickname} />
+                <UsersTable sdk={this.props.sdk} user={this.props.user} />
             </div>);
     }
 

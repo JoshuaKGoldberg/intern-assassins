@@ -12,6 +12,7 @@
         "src/server/server.ts",
         "src/server/sockets.ts",
         "src/server/storage/killclaimstable.ts",
+        "src/server/storage/usertable.ts",
         "src/server/storage/userstable.ts",
         "src/server/storage/storagetable.ts",
         "src/shared/actions.ts",

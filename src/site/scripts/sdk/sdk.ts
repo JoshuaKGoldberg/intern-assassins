@@ -50,7 +50,7 @@ export class Sdk {
     public getUser(credentials: ICredentials): Promise<IReport<IUser>> {
         return this.sendAjaxRequest(
             "GET",
-            "api/users",
+            "api/user",
             credentials,
             Sdk.parseResponseForJsonData);
     }
@@ -63,22 +63,11 @@ export class Sdk {
      * @todo Implement this.
      */
     public getUsers(credentials: ICredentials): Promise<IReport<IUser>[]> {
-        return Promise.resolve(
-            [
-                {
-                    data: {
-                        admin: false,
-                        alias: "kkeer",
-                        alive: true,
-                        nickname: "KK",
-                        passphrase: "pineapple",
-                        target: "cgong"
-                    },
-                    reporter: credentials.alias,
-                    timestamp: Date.now()
-                }
-            ]
-        );
+        return this.sendAjaxRequest(
+            "GET",
+            "api/users",
+            credentials,
+            Sdk.parseResponseForJsonData);
     }
 
     /**

@@ -8,6 +8,7 @@ import { IReport, ISubmission } from "../shared/actions";
 import { ICredentials, CredentialKeys } from "../shared/login";
 import { ServerError } from "./errors";
 import { KillClaimsTable } from "./storage/killclaimstable";
+import { UserTable } from "./storage/usertable";
 import { UsersTable } from "./storage/userstable";
 import { StorageTable } from "./storage/storagetable";
 
@@ -40,6 +41,11 @@ export class Api {
     public /* readonly */ kills: KillClaimsTable = new KillClaimsTable(this);
 
     /**
+     * Storage for single user operations..
+     */
+    public /* readonly */ user: UserTable = new UserTable(this);
+
+    /**
      * Storage for users.
      */
     public /* readonly */ users: UsersTable = new UsersTable(this);
@@ -62,12 +68,13 @@ export class Api {
         });
 
         this.registerStorageRoutes(app, this.kills);
+        this.registerStorageRoutes(app, this.user);
         this.registerStorageRoutes(app, this.users);
 
         app.post("/api/login", (request: express.Request, response: express.Response): void => {
             const credentials: ICredentials = request.body.credentials;
 
-            this.users.get(credentials)
+            this.user.get(credentials)
                 // Case: user alias exists in the database, does the info match?
                 .then(record => {
                     if (

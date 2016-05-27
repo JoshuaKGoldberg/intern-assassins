@@ -44,7 +44,7 @@ export class KillClaimsTable extends StorageTable<IReport<IKillClaim>> {
                     throw new ServerError(ErrorCause.PermissionDenied);
                 }
 
-                return this.api.users.getMany(credentials, [claim.killer, claim.victim])
+                return this.api.users.getByAlias(credentials, [claim.killer, claim.victim])
                     .then(users => {
                         [killer, victim] = [users[0].data, users[1].data];
 

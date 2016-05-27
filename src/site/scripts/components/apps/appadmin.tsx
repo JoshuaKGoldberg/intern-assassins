@@ -35,9 +35,11 @@ export class AppAdmin extends React.Component<IAppAdminProps, void> {
     public render(): JSX.Element {
         return (
             <div id="app" className="app-admin">
-                <ActionButton text="x" small action={(): void => this.logOut()} />
-                <Greeting admin={this.props.user.admin} nickname={this.props.user.nickname} />
-                <UsersTable sdk={this.props.sdk} user={this.props.user} />
+                <section id="profile">
+                    <ActionButton text="x" small action={(): void => this.logOut()} />
+                    <Greeting admin={this.props.user.admin} nickname={this.props.user.nickname} />
+                    <UsersTable sdk={this.props.sdk} user={this.props.user} />
+                </section>
             </div>);
     }
 

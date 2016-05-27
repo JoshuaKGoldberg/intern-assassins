@@ -80,14 +80,16 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
         }
 
         return (
-            <table>
-                <thead>
-                    {this.renderHead()}
-                </thead>
-                <tbody>
-                    {this.renderBody()}
-                </tbody>
-            </table>);
+            <div id="administration">
+                <table>
+                    <thead>
+                        {this.renderHead()}
+                    </thead>
+                    <tbody>
+                        {this.renderBody()}
+                    </tbody>
+                </table>
+            </div>);
     }
 
     /**
@@ -121,7 +123,7 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
      * 
      */
     private renderUser(user: IUser): JSX.Element[] {
-        return Object.keys(user)
+        return Object.keys(user) // use preset keys in shared, not object.keys
             .map((key: string, i: number): JSX.Element => {
                 return <td key={i}>{user[key]}</td>;
             });

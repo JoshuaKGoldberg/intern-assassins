@@ -19,6 +19,7 @@ export class UsersTable extends StorageTable<IReport<IUser>> {
     private /* readonly */ users: IReport<IUser>[] = [
         {
             data: {
+                admin: true,
                 alias: "jogol",
                 alive: true,
                 nickname: "Joshypoo",

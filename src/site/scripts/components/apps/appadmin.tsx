@@ -7,7 +7,7 @@ import { ActionButton } from "../profile/actionbutton";
 import { Greeting } from "../profile/greeting";
 import { InfoDisplay } from "../profile/infodisplay";
 import { Sdk } from "../../sdk/sdk";
-import { UsersTable } from "../admin/userstable";
+import { UsersTables } from "../admin/userstables";
 
 /**
  * Props for an AppAdmin component.
@@ -46,7 +46,7 @@ export class AppAdmin extends React.Component<IAppAdminProps, void> {
                         <InfoDisplay info="biography" display={this.props.user.biography} editable={true} large={true} />
                     </div>
 
-                    <UsersTable sdk={this.props.sdk} user={this.props.user} />
+                    <UsersTables sdk={this.props.sdk} user={this.props.user} />
                 </section>
             </div>);
     }

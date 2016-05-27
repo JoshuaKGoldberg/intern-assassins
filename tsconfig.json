@@ -27,6 +27,7 @@
         "src/site/scripts/components/apps/appanonymous.tsx",
         "src/site/scripts/components/apps/appuser.tsx",
         "src/site/scripts/components/admin/userstable.tsx",
+        "src/site/scripts/components/admin/userstables.tsx",
         "src/site/scripts/components/activitybar/activity.tsx",
         "src/site/scripts/components/activitybar/activitybar.tsx",
         "src/site/scripts/components/footer.tsx",

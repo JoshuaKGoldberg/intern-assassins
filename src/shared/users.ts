@@ -26,8 +26,3 @@ export interface IUser extends ICredentials {
      */
     target?: string;
 }
-
-/**
- * Fields to display on admin pages, in order.
- */
-export const DisplayFields: string[] = ["alias", "nickname", "alive", "target"];

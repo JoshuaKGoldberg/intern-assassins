@@ -2,21 +2,21 @@
 
 "use strict";
 import { IReport } from "../../shared/actions";
-import { CredentialKeys, ICredentials } from "../../shared/login";
-import { IPlayer } from "../../shared/players";
+import { ICredentials } from "../../shared/login";
+import { IUser } from "../../shared/users";
 import { ErrorCause, ServerError } from "../errors";
 import { StorageTable } from "./storagetable";
 
 /**
- * Mock database storage for players.
+ * Mock database storage for users.
  * 
  * @todo Use MongoDB...
  */
-export class PlayersTable extends StorageTable<IReport<IPlayer>> {
+export class UsersTable extends StorageTable<IReport<IUser>> {
     /**
-     * All known players.
+     * All known users.
      */
-    private /* readonly */ players: IReport<IPlayer>[] = [
+    private /* readonly */ users: IReport<IUser>[] = [
         {
             data: {
                 alias: "jogol",
@@ -67,53 +67,53 @@ export class PlayersTable extends StorageTable<IReport<IPlayer>> {
      * @returns Path to this part of the global api.
      */
     public getRoute(): string {
-        return "players";
+        return "users";
     }
 
     /**
-     * Retrieves a player.
+     * Retrieves a user.
      * 
      * @param credentials   Login values for authentication.
-     * @param alias   Alias of a player.
-     * @returns A promise for the player with the alias.
+     * @param alias   Alias of a user.
+     * @returns A promise for the user with the alias.
      * @remarks This can't call validateUserSubmission, because that calls this.
      */
-    public get(credentials: ICredentials): Promise<IReport<IPlayer>> {
+    public get(credentials: ICredentials): Promise<IReport<IUser>> {
         this.validateCredentials(credentials);
 
-        const player = this.players.find(report => report.data.alias === credentials.alias);
+        const user = this.users.find(report => report.data.alias === credentials.alias);
 
-        if (!player) {
-            throw new ServerError(ErrorCause.PlayerDoesNotExist, credentials.alias);
+        if (!user) {
+            throw new ServerError(ErrorCause.UserDoesNotExist, credentials.alias);
         }
 
-        return Promise.resolve(player);
+        return Promise.resolve(user);
     }
 
     /**
-     * Retrieves multiple players.
+     * Retrieves multiple users.
      * 
      * @param credentials   Login values for authentication.
-     * @param alias   Aliases of players.
-     * @returns A promise for the players with the aliases.
+     * @param alias   Aliases of users.
+     * @returns A promise for the users with the aliases.
      */
-    public getMany(credentials: ICredentials, aliases: string[]): Promise<IReport<IPlayer>[]> {
+    public getMany(credentials: ICredentials, aliases: string[]): Promise<IReport<IUser>[]> {
         let unfound: string[];
-        const reports: IReport<IPlayer>[] = aliases.map(
-            (alias: string): IReport<IPlayer> => {
-                const playerReport: IReport<IPlayer> = this.players.find(
+        const reports: IReport<IUser>[] = aliases.map(
+            (alias: string): IReport<IUser> => {
+                const userReport: IReport<IUser> = this.users.find(
                     report => report.data.alias === alias);
 
-                if (!playerReport) {
+                if (!userReport) {
                     (unfound || (unfound = [])).push(alias);
                 }
 
-                return playerReport;
+                return userReport;
             });
 
         return new Promise((resolve, reject) => {
             if (unfound && unfound.length > 0) {
-                reject(new ServerError(ErrorCause.PlayersDoNotExist, unfound));
+                reject(new ServerError(ErrorCause.UsersDoNotExist, unfound));
             } else {
                 resolve(reports);
             }
@@ -121,9 +121,9 @@ export class PlayersTable extends StorageTable<IReport<IPlayer>> {
     }
 
     /**
-     * Retrieves a unique alias for a player.
+     * Retrieves a unique alias for a user.
      * 
-     * @param submission   A submission targeting a player.
+     * @param submission   A submission targeting a user.
      * @returns The target id (alias) from the submission.
      */
     public retrieveIdFromRequest(submission: any): string {
@@ -131,19 +131,19 @@ export class PlayersTable extends StorageTable<IReport<IPlayer>> {
     }
 
     /**
-     * Updates a player's information.
+     * Updates a user's information.
      * 
-     * @param report   Updated information for a player.
-     * @returns A promise for when the player is updated.
+     * @param report   Updated information for a user.
+     * @returns A promise for when the user is updated.
      */
-    public update(report: IReport<IPlayer>): Promise<void> {
-        const index = this.players.findIndex(
-            (checkingReport: IReport<IPlayer>): boolean => {
+    public update(report: IReport<IUser>): Promise<void> {
+        const index = this.users.findIndex(
+            (checkingReport: IReport<IUser>): boolean => {
                 return checkingReport.data.alias === report.data.alias;
             });
 
-        this.players.splice(index, 1);
-        this.players.push(report);
+        this.users.splice(index, 1);
+        this.users.push(report);
 
         return Promise.resolve();
     }

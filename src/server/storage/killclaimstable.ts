@@ -3,7 +3,7 @@
 "use strict";
 import { IReport } from "../../shared/actions";
 import { IKillClaim } from "../../shared/kills";
-import { IPlayer } from "../../shared/players";
+import { IUser } from "../../shared/users";
 import { ICredentials } from "../../shared/login";
 import { ErrorCause, ServerError } from "../errors";
 import { StorageTable } from "./storagetable";
@@ -34,40 +34,40 @@ export class KillClaimsTable extends StorageTable<IReport<IKillClaim>> {
      * @returns A promise for the kill claim, if added successfully.
      */
     public put(credentials: ICredentials, claim: IKillClaim): Promise<IReport<IKillClaim>> {
-        let killer: IPlayer;
-        let victim: IPlayer;
+        let killer: IUser;
+        let victim: IUser;
 
         return this.validateUserSubmission(credentials)
-            .then(player => {
+            .then(user => {
                 // You can only claim a kill on yourself or your target
-                if (player.alias !== claim.victim && player.alias !== claim.killer) {
+                if (user.alias !== claim.victim && user.alias !== claim.killer) {
                     throw new ServerError(ErrorCause.PermissionDenied);
                 }
 
-                return this.api.players.getMany(credentials, [claim.killer, claim.victim])
-                    .then(players => {
-                        [killer, victim] = [players[0].data, players[1].data];
+                return this.api.users.getMany(credentials, [claim.killer, claim.victim])
+                    .then(users => {
+                        [killer, victim] = [users[0].data, users[1].data];
 
                         if (!killer.alive) {
-                            throw new ServerError(ErrorCause.PlayersDead, killer.alias);
+                            throw new ServerError(ErrorCause.UsersDead, killer.alias);
                         }
 
                         if (!victim.alive) {
-                            throw new ServerError(ErrorCause.PlayersDead, victim.alias);
+                            throw new ServerError(ErrorCause.UsersDead, victim.alias);
                         }
 
                         return [killer, victim];
                     });
             })
             // Add the submission to the database
-            .then((players) => {
+            .then((users) => {
                 const report = this.wrapSubmission(credentials, claim);
 
                 this.claims.push(report);
 
                 return report;
             })
-            // Update the corresponding players
+            // Update the corresponding users
             .then((report: IReport<IKillClaim>): Promise<IReport<IKillClaim>> => {
                 // Only change death status when the victim says so
                 if (killer.alias === victim.alias) {
@@ -76,13 +76,13 @@ export class KillClaimsTable extends StorageTable<IReport<IKillClaim>> {
                     killer.target = victim.target;
                 }
 
-                return this.api.players
+                return this.api.users
                     .update({
                         data: killer,
                         reporter: killer.alias,
                         timestamp: Date.now()
                     })
-                    .then(() => this.api.players.update({
+                    .then(() => this.api.users.update({
                         data: victim,
                         reporter: victim.alias,
                         timestamp: Date.now()

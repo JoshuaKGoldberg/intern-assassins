@@ -1,21 +1,21 @@
 "use strict";
 
 /**
- * Values used to log in as a player.
+ * Values used to log in as a user.
  */
 export interface ICredentials {
     /**
-     * Alias of a player.
+     * Alias of a user.
      */
     alias: string;
 
     /**
-     * Friendly nickname of a player.
+     * Friendly nickname of a user.
      */
     nickname: string;
 
     /**
-     * Secret passphrase of a player.
+     * Secret passphrase of a user.
      */
     passphrase: string;
 }

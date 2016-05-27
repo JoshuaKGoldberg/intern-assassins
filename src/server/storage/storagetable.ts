@@ -2,7 +2,7 @@
 
 "use strict";
 import { IReport } from "../../shared/actions";
-import { IPlayer } from "../../shared/players";
+import { IUser } from "../../shared/users";
 import { CredentialKeys, ICredentials } from "../../shared/login";
 import { ErrorCause, ServerError } from "../errors";
 import { Api } from "../api";
@@ -34,7 +34,7 @@ export abstract class StorageTable<T> {
 
     /**
      * @param credentials   Login values for verification.
-     * @param alias   Alias of a player.
+     * @param alias   Alias of a user.
      * @returns A promise for the data with the id.
      */
     public get(credentials: ICredentials, query: any): Promise<T> {
@@ -106,16 +106,16 @@ export abstract class StorageTable<T> {
      * 
      * @type T   The type of information being submitted.
      * @param credentials   Login values for authentication.
-     * @returns A promise for a submitting player, if authenticated.
+     * @returns A promise for a submitting user, if authenticated.
      */
-    protected validateUserSubmission<T>(credentials: ICredentials): Promise<IPlayer> {
-        return this.api.players.get(credentials)
-            .then(storedPlayer => {
-                if (storedPlayer.data.passphrase !== credentials.passphrase) {
+    protected validateUserSubmission<T>(credentials: ICredentials): Promise<IUser> {
+        return this.api.users.get(credentials)
+            .then(storedUser => {
+                if (storedUser.data.passphrase !== credentials.passphrase) {
                     throw new ServerError(ErrorCause.IncorrectCredentials);
                 }
 
-                return storedPlayer.data;
+                return storedUser.data;
             });
     }
 

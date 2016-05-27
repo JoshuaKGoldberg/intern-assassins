@@ -18,35 +18,35 @@ export class Profile extends React.Component<IAppLoggedInProps, void> {
      * @returns The rendered component.
      */
     public render(): JSX.Element {
-        if (!this.props.player) {
+        if (!this.props.user) {
             return (
                 <section id="profile" className="loading">
                     loading profile...
                 </section>);
         }
 
-        if (!this.props.player.nickname) {
+        if (!this.props.user.nickname) {
             return (
                 <section id="profile" className="loading">
-                    loading profile for {this.props.player.nickname}...
+                    loading profile for {this.props.user.nickname}...
                 </section>);
         }
 
         return (
             <section id="profile">
                 <div className="area greeting-area">
-                    <Greeting nickname={this.props.player.nickname} />
+                    <Greeting nickname={this.props.user.nickname} />
                 </div>
 
                 <div className="area info-display-area">
-                    <InfoDisplay info="alias" display={this.props.player.alias} />
-                    <InfoDisplay info="nickname" display={this.props.player.nickname} editable={true} />
-                    <InfoDisplay info="target" display={this.props.player.target} />
+                    <InfoDisplay info="alias" display={this.props.user.alias} />
+                    <InfoDisplay info="nickname" display={this.props.user.nickname} editable={true} />
+                    <InfoDisplay info="target" display={this.props.user.target} />
                 </div>
 
                 <div class="area">
                     <Actions
-                        alive={this.props.player.alive}
+                        alive={this.props.user.alive}
                         onDeath={(): void => this.onDeath()}
                         onKill={(): void => this.onKill()} />
                 </div>
@@ -58,10 +58,10 @@ export class Profile extends React.Component<IAppLoggedInProps, void> {
      */
     private onDeath(): void {
         this.props.sdk.reportKillClaim(
-            this.props.player,
+            this.props.user,
             {
-                killer: this.props.player.alias,
-                victim: this.props.player.alias
+                killer: this.props.user.alias,
+                victim: this.props.user.alias
             });
     }
 
@@ -70,10 +70,10 @@ export class Profile extends React.Component<IAppLoggedInProps, void> {
      */
     private onKill(): void {
         this.props.sdk.reportKillClaim(
-            this.props.player,
+            this.props.user,
             {
-                killer: this.props.player.alias,
-                victim: this.props.player.target
+                killer: this.props.user.alias,
+                victim: this.props.user.target
             });
     }
 }

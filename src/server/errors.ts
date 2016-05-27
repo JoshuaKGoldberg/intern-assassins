@@ -10,12 +10,12 @@ export enum ErrorCause {
     MissingFields,
     NotImplemented,
     PermissionDenied,
-    PlayerDoesNotExist,
-    PlayersDoNotExist,
-    PlayerAlreadyExists,
-    PlayersAlreadyExist,
-    PlayerDead,
-    PlayersDead,
+    UserDoesNotExist,
+    UsersDoNotExist,
+    UserAlreadyExists,
+    UsersAlreadyExist,
+    UserDead,
+    UsersDead,
     WrongTarget
 }
 

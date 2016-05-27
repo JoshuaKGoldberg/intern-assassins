@@ -4,19 +4,19 @@
 import * as React from "react";
 import { Sdk } from "../../sdk/sdk";
 import { IReport } from "../../../../shared/actions";
-import { IUser } from "../../../../shared/users";
+import { DisplayFields, IUser } from "../../../../shared/users";
 
 /**
  * Props for a UsersTable component.
  */
 export interface IUsersTableProps {
     /**
-     * 
+     * Wrapper around the server API.
      */
     sdk: Sdk;
 
     /**
-     * 
+     * Information on the user.
      */
     user: IUser;
 }
@@ -100,7 +100,7 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
      * @returns The rendered head component.
      */
     private renderHead(): JSX.Element[] {
-        return Object.keys(this.state.users[0])
+        return DisplayFields
             .map((key: string, i: number): JSX.Element => {
                 return <th key={i}>{key}</th>;
             });
@@ -125,7 +125,7 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
      * 
      */
     private renderUser(user: IUser): JSX.Element[] {
-        return Object.keys(user) // use preset keys in shared, not object.keys
+        return DisplayFields
             .map((key: string, i: number): JSX.Element => {
                 return <td key={i}>{user[key].toString()}</td>;
             });

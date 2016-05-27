@@ -22,6 +22,7 @@ export class UsersTable extends StorageTable<IReport<IUser>[]> {
                 admin: true,
                 alias: "jogol",
                 alive: true,
+                biography: "I like long walks on the beach and Kahlua... and I'm all out of long walks on the beach.",
                 nickname: "Joshypoo",
                 passphrase: "pineapple",
                 target: "kkeer"
@@ -34,6 +35,7 @@ export class UsersTable extends StorageTable<IReport<IUser>[]> {
                 admin: false,
                 alias: "kkeer",
                 alive: true,
+                biography: "Do you know the muffin man?",
                 nickname: "KK",
                 passphrase: "pineapple",
                 target: "cgong"
@@ -46,6 +48,7 @@ export class UsersTable extends StorageTable<IReport<IUser>[]> {
                 admin: false,
                 alias: "cgong",
                 alive: true,
+                biography: "The muffin man?",
                 nickname: "CC",
                 passphrase: "pineapple",
                 target: "satyan"
@@ -58,6 +61,7 @@ export class UsersTable extends StorageTable<IReport<IUser>[]> {
                 admin: false,
                 alias: "satyan",
                 alive: true,
+                biography: "The muffin man!",
                 nickname: "Bae",
                 passphrase: "pineapple",
                 target: "kkeer"

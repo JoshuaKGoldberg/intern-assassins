@@ -17,7 +17,17 @@ export interface IUser extends ICredentials {
     alive: boolean;
 
     /**
+     * Life story, condensed.
+     */
+    biography: string;
+
+    /**
      * Who this person is hunting, if still alive.
      */
     target?: string;
 }
+
+/**
+ * Fields to display on admin pages, in order.
+ */
+export const DisplayFields: string[] = ["alias", "nickname", "alive", "target"];

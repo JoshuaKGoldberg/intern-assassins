@@ -10,7 +10,6 @@ import { StorageTable } from "./storagetable";
  * Mock database storage for single user operations.
  */
 export class UserTable extends StorageTable<IReport<IUser>> {
-
     /**
      * @returns Path to this part of the global api.
      */

@@ -5,6 +5,7 @@ import * as React from "react";
 import { IUser } from "../../../../shared/users";
 import { ActionButton } from "../profile/actionbutton";
 import { Greeting } from "../profile/greeting";
+import { InfoDisplay } from "../profile/infodisplay";
 import { Sdk } from "../../sdk/sdk";
 import { UsersTable } from "../admin/userstable";
 
@@ -37,7 +38,14 @@ export class AppAdmin extends React.Component<IAppAdminProps, void> {
             <div id="app" className="app-admin">
                 <section id="profile">
                     <ActionButton text="x" small action={(): void => this.logOut()} />
-                    <Greeting admin={this.props.user.admin} nickname={this.props.user.nickname} />
+                    <div className="area greeting-area">
+                        <Greeting admin={this.props.user.admin} nickname={this.props.user.nickname} />
+                    </div>
+
+                    <div className="area info-display-area">
+                        <InfoDisplay info="biography" display={this.props.user.biography} editable={true} large={true} />
+                    </div>
+
                     <UsersTable sdk={this.props.sdk} user={this.props.user} />
                 </section>
             </div>);

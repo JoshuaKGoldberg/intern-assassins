@@ -3,7 +3,7 @@
 "use strict";
 import { IReport } from "../../shared/actions";
 import { IPlayer } from "../../shared/players";
-import { ICredentials } from "../../shared/login";
+import { CredentialKeys, ICredentials } from "../../shared/login";
 import { ErrorCause, ServerError } from "../errors";
 import { Api } from "../api";
 
@@ -82,6 +82,22 @@ export abstract class StorageTable<T> {
      */
     protected retrieveIdFromRequest(submission: any): string {
         throw new ServerError(ErrorCause.NotImplemented);
+    }
+
+    /**
+     * Ensures credentials are completely filled out.
+     * 
+     * @param credentials   Login credentials from a request.
+     */
+    protected validateCredentials(credentials: ICredentials): void {
+        const missingFields: string[] = CredentialKeys.filter(
+            (key: string) => typeof credentials[key] === "undefined");
+
+        if (missingFields.length === 0) {
+            return;
+        }
+
+        throw new ServerError(ErrorCause.MissingFields, missingFields);
     }
 
     /**

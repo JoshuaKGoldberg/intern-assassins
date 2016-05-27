@@ -115,10 +115,36 @@ export class Api {
      */
     private registerStorageRoutes(app: any, member: StorageTable<any>): void {
         app.route("/api/" + member.getRoute())
-            .get(this.generateGetRoute(member))
-            .delete(this.generateDeleteRoute(member))
-            .post(this.generatePostRoute(member))
-            .put(this.generatePutRoute(member));
+            .get(this.wrapRouteHandler(this.generateGetRoute(member)))
+            .delete(this.wrapRouteHandler(this.generateDeleteRoute(member)))
+            .post(this.wrapRouteHandler(this.generatePostRoute(member)))
+            .put(this.wrapRouteHandler(this.generatePutRoute(member)));
+    }
+
+    /**
+     * Safely wraps a route handler in a try/catch, for pretty 500 responses.
+     * 
+     * @param request   The received request.
+     * @param response   A corresponding response to the request.
+     * @returns A wrapped handler for a received request.
+     */
+    private wrapRouteHandler<TSubmission, TData>(handler: IRouteHandler): IRouteHandler {
+        return (request: express.Request, response: express.Response): void => {
+            try {
+                handler(request, response);
+            } catch (error) {
+                const details: any = {
+                    error: error.message
+                };
+
+                if (error instanceof ServerError) {
+                    details.information = error.information;
+                    details.lifeAdvise = error.lifeAdvise;
+                }
+
+                response.status(500).json(details);
+            }
+        }
     }
 
     /**
@@ -132,12 +158,7 @@ export class Api {
             const submission: ISubmission<TSubmission> = this.parseGetSubmission<TSubmission>(request.url);
 
             member.get(submission.credentials, submission.data)
-                .then((results: TData) => response.json(results))
-                .catch(error => response
-                    .status(500)
-                    .json({
-                        error: error.message
-                    }));
+                .then((results: TData) => response.json(results));
         };
     }
 
@@ -150,12 +171,7 @@ export class Api {
     private generateDeleteRoute<TSubmission, TData>(member: StorageTable<TData>): IRouteHandler {
         return (request: express.Request, response: express.Response): void => {
             member.delete(request.body.credentials, request.body.data)
-                .then((results: TData) => response.json(results))
-                .catch(error => response
-                    .status(500)
-                    .json({
-                        error: error.message
-                    }));
+                .then((results: TData) => response.json(results));
         };
     }
 
@@ -168,12 +184,7 @@ export class Api {
     private generatePostRoute<TSubmission, TData>(member: StorageTable<TData>): IRouteHandler {
         return (request: express.Request, response: express.Response): void => {
             member.post(request.body.credentials, request.body.data)
-                .then((results: TData) => response.json(results))
-                .catch(error => response
-                    .status(500)
-                    .json({
-                        error: error.message
-                    }));
+                .then((results: TData) => response.json(results));
         };
     }
 
@@ -186,19 +197,15 @@ export class Api {
     private generatePutRoute<TSubmission, TData>(member: StorageTable<TData>): IRouteHandler {
         return (request: express.Request, response: express.Response): void => {
             member.put(request.body.credentials, request.body.data)
-                .then((results: TData) => response.json(results))
-                .catch(error => response
-                    .status(500)
-                    .json({
-                        error: error.message
-                    }));
+                .then((results: TData) => response.json(results));
         };
     }
 
     /**
+     * Parses query parameters out of a GET submission.
      * 
-     * 
-     * @remarks For performance,
+     * @param query   A raw user query.
+     * @returns The equivalent user submission, with credentials and data.
      */
     private parseGetSubmission<T>(query: string): ISubmission<T> {
         const queryValues: any = url.parse(query, true).query;
@@ -214,6 +221,9 @@ export class Api {
             data[dataValueKey] = queryValues[dataValueKey];
         }
 
-        return { credentials, data };
+        return {
+            credentials: credentials,
+            data: data
+        };
     }
 }

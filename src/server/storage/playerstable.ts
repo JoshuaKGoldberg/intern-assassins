@@ -2,7 +2,7 @@
 
 "use strict";
 import { IReport } from "../../shared/actions";
-import { ICredentials } from "../../shared/login";
+import { CredentialKeys, ICredentials } from "../../shared/login";
 import { IPlayer } from "../../shared/players";
 import { ErrorCause, ServerError } from "../errors";
 import { StorageTable } from "./storagetable";
@@ -76,18 +76,15 @@ export class PlayersTable extends StorageTable<IReport<IPlayer>> {
      * @param credentials   Login values for authentication.
      * @param alias   Alias of a player.
      * @returns A promise for the player with the alias.
+     * @remarks This can't call validateUserSubmission, because that calls this.
      */
     public get(credentials: ICredentials): Promise<IReport<IPlayer>> {
+        this.validateCredentials(credentials);
+
         const player = this.players.find(report => report.data.alias === credentials.alias);
 
         if (!player) {
-            throw new ServerError(ErrorCause.PlayersDoNotExist, credentials.alias);
-        }
-
-        if (
-            player.data.nickname !== credentials.nickname
-            || player.data.passphrase !== credentials.passphrase) {
-            throw new ServerError(ErrorCause.IncorrectCredentials);
+            throw new ServerError(ErrorCause.PlayerDoesNotExist, credentials.alias);
         }
 
         return Promise.resolve(player);

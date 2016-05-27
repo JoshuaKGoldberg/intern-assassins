@@ -35,7 +35,7 @@ export class Profile extends React.Component<IAppLoggedInProps, void> {
         return (
             <section id="profile">
                 <div className="area greeting-area">
-                    <Greeting nickname={this.props.user.nickname} />
+                    <Greeting admin={this.props.user.admin} nickname={this.props.user.nickname} />
                 </div>
 
                 <div className="area info-display-area">

@@ -7,4 +7,5 @@ import { Server } from "./server/server";
 const settingsFileName: string = "assassins.json";
 
 Server.createFromFile(settingsFileName)
-    .then((server: Server): void => server.run());
+    .then((server: Server): void => server.run())
+    .catch(error => console.error(`${error}\n:(`));

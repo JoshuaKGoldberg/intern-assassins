@@ -94,11 +94,19 @@ export class Server {
      * @returns Promise for a new Server.
      */
     public static createFromFile(filePath: string): Promise<Server> {
-        return fsp.readFile(filePath)
-            .then((data: Buffer): Server => new Server(JSON.parse(data.toString())))
-            .catch((error: Error): void => {
-                console.error("Could not create server.");
-                console.error(error);
+        return fsp.exists(filePath)
+            .then(exists => {
+                if (!exists) {
+                    throw new Error(`'${filePath}' not found.\nMake sure you copied '${filePath.replace(".json", ".default.json")}' to '${filePath}'.`);
+                }
+            })
+            .then(() => {
+                return fsp.readFile(filePath)
+                    .then((data: Buffer): Server => new Server(JSON.parse(data.toString())))
+                    .catch((error: Error): void => {
+                        console.error("Could not create server.");
+                        console.error(error);
+                    });
             });
     }
 }

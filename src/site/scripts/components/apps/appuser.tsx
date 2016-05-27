@@ -9,9 +9,9 @@ import { ActionButton } from "../profile/actionbutton";
 import { Profile } from "../profile/profile";
 
 /**
- * Props for an AppLoggedIn component.
+ * Props for an AppUser component.
  */
-export interface IAppLoggedInProps {
+export interface IAppUserProps {
     /**
      * Information on the user.
      */
@@ -31,7 +31,7 @@ export interface IAppLoggedInProps {
 /**
  * Application component for a logged in user.
  */
-export class AppLoggedIn extends React.Component<IAppLoggedInProps, void> {
+export class AppUser extends React.Component<IAppUserProps, void> {
     /**
      * Renders the component.
      * 
@@ -39,7 +39,7 @@ export class AppLoggedIn extends React.Component<IAppLoggedInProps, void> {
      */
     public render(): JSX.Element {
         return (
-            <div id="app" className="app-logged-in">
+            <div id="app" className="app-user">
                 <ActionButton text="x" small action={(): void => this.logOut()} />
                 <Profile {...this.props} />
                 <ActivityBar messages={this.props.messages} />

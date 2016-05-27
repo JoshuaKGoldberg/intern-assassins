@@ -8,6 +8,7 @@ export enum ErrorCause {
     IncorrectCredentials,
     MissingField,
     MissingFields,
+    NotAuthorized,
     NotImplemented,
     PermissionDenied,
     UserDoesNotExist,

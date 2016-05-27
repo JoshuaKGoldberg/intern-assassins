@@ -12,7 +12,7 @@ import { StorageTable } from "./storagetable";
  * 
  * @todo Use MongoDB...
  */
-export class UsersTable extends StorageTable<IReport<IUser>> {
+export class UsersTable extends StorageTable<IReport<IUser>[]> {
     /**
      * All known users.
      */
@@ -31,6 +31,7 @@ export class UsersTable extends StorageTable<IReport<IUser>> {
         },
         {
             data: {
+                admin: false,
                 alias: "kkeer",
                 alive: true,
                 nickname: "KK",
@@ -42,6 +43,7 @@ export class UsersTable extends StorageTable<IReport<IUser>> {
         },
         {
             data: {
+                admin: false,
                 alias: "cgong",
                 alive: true,
                 nickname: "CC",
@@ -53,11 +55,12 @@ export class UsersTable extends StorageTable<IReport<IUser>> {
         },
         {
             data: {
+                admin: false,
                 alias: "satyan",
                 alive: true,
                 nickname: "Bae",
                 passphrase: "pineapple",
-                target: "jogol"
+                target: "kkeer"
             },
             reporter: "satyan",
             timestamp: 1234567
@@ -72,23 +75,14 @@ export class UsersTable extends StorageTable<IReport<IUser>> {
     }
 
     /**
-     * Retrieves a user.
+     * Retrieves all users.
      * 
      * @param credentials   Login values for authentication.
-     * @param alias   Alias of a user.
-     * @returns A promise for the user with the alias.
-     * @remarks This can't call validateUserSubmission, because that calls this.
+     * @returns A promise for all users.
      */
-    public get(credentials: ICredentials): Promise<IReport<IUser>> {
-        this.validateCredentials(credentials);
-
-        const user = this.users.find(report => report.data.alias === credentials.alias);
-
-        if (!user) {
-            throw new ServerError(ErrorCause.UserDoesNotExist, credentials.alias);
-        }
-
-        return Promise.resolve(user);
+    public get(credentials: ICredentials): Promise<IReport<IUser>[]> {
+        return this.validateAdminSubmission(credentials)
+            .then(() => this.users);
     }
 
     /**
@@ -98,7 +92,7 @@ export class UsersTable extends StorageTable<IReport<IUser>> {
      * @param alias   Aliases of users.
      * @returns A promise for the users with the aliases.
      */
-    public getMany(credentials: ICredentials, aliases: string[]): Promise<IReport<IUser>[]> {
+    public getByAlias(credentials: ICredentials, aliases: string[]): Promise<IReport<IUser>[]> {
         let unfound: string[];
         const reports: IReport<IUser>[] = aliases.map(
             (alias: string): IReport<IUser> => {
@@ -122,13 +116,23 @@ export class UsersTable extends StorageTable<IReport<IUser>> {
     }
 
     /**
-     * Retrieves a unique alias for a user.
+     * Retrieves a single user.
      * 
-     * @param submission   A submission targeting a user.
-     * @returns The target id (alias) from the submission.
+     * @param credentials   Login values for authentication.
+     * @param alias   Alias of a user.
+     * @returns A promise for the user with the alias.
+     * @remarks This can't call validateUserSubmission, because that calls this.
      */
-    public retrieveIdFromRequest(submission: any): string {
-        return submission.alias;
+    public getSingle(credentials: ICredentials): Promise<IReport<IUser>> {
+        this.validateCredentials(credentials);
+
+        const user = this.users.find(report => report.data.alias === credentials.alias);
+
+        if (!user) {
+            throw new ServerError(ErrorCause.UserDoesNotExist, credentials.alias);
+        }
+
+        return Promise.resolve(user);
     }
 
     /**

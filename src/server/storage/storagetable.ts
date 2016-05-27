@@ -75,16 +75,6 @@ export abstract class StorageTable<T> {
     }
 
     /**
-     * Retrieves a unique id for a submission.
-     * 
-     * @param submission   A submission targeting a piece of data.
-     * @returns The target alias from the submission.
-     */
-    protected retrieveIdFromRequest(submission: any): string {
-        throw new ServerError(ErrorCause.NotImplemented);
-    }
-
-    /**
      * Ensures credentials are completely filled out.
      * 
      * @param credentials   Login credentials from a request.
@@ -109,13 +99,32 @@ export abstract class StorageTable<T> {
      * @returns A promise for a submitting user, if authenticated.
      */
     protected validateUserSubmission<T>(credentials: ICredentials): Promise<IUser> {
-        return this.api.users.get(credentials)
+        return this.api.user.get(credentials)
             .then(storedUser => {
                 if (storedUser.data.passphrase !== credentials.passphrase) {
                     throw new ServerError(ErrorCause.IncorrectCredentials);
                 }
 
                 return storedUser.data;
+            });
+    }
+
+    /**
+     * Ensures a submission contains the correct passphrase for its admin
+     * reporter before wrapping it in a report.
+     * 
+     * @type T   The type of information being submitted.
+     * @param credentials   Login values for authentication.
+     * @returns A promise for a submitting admin, if authenticated.
+     */
+    protected validateAdminSubmission<T>(credentials: ICredentials): Promise<IUser> {
+        return this.validateUserSubmission(credentials)
+            .then((user: IUser): IUser => {
+                if (!user.admin) {
+                    throw new ServerError(ErrorCause.NotAuthorized);
+                }
+
+                return user;
             });
     }
 

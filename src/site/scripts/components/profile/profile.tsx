@@ -3,7 +3,7 @@
 
 "use strict";
 import * as React from "react";
-import { IAppLoggedInProps } from "../apps/apploggedin";
+import { IAppUserProps } from "../apps/appuser";
 import { Actions } from "./actions";
 import { Greeting } from "./greeting";
 import { InfoDisplay } from "./infodisplay";
@@ -11,7 +11,7 @@ import { InfoDisplay } from "./infodisplay";
 /**
  * Component for a user's profile page.
  */
-export class Profile extends React.Component<IAppLoggedInProps, void> {
+export class Profile extends React.Component<IAppUserProps, void> {
     /**
      * Renders the component.
      * 

@@ -50,6 +50,21 @@ export class Sdk {
     public getUser(credentials: ICredentials): Promise<IReport<IUser>> {
         return this.sendAjaxRequest(
             "GET",
+            "api/user",
+            credentials,
+            Sdk.parseResponseForJsonData);
+    }
+
+    /**
+     * Retrieves all users' information.
+     * 
+     * @param credentials   The submitting user credentials.
+     * @returns A promise for all users.
+     * @todo Implement this.
+     */
+    public getUsers(credentials: ICredentials): Promise<IReport<IUser>[]> {
+        return this.sendAjaxRequest(
+            "GET",
             "api/users",
             credentials,
             Sdk.parseResponseForJsonData);

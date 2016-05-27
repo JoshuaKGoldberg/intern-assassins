@@ -30,7 +30,7 @@ export interface IReport<T> {
     data: T;
 
     /**
-     * The player reporting this action.
+     * The user reporting this action.
      */
     reporter: string;
 

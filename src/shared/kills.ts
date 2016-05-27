@@ -1,11 +1,11 @@
 "use strict";
 
 /**
- * A player claiming to have killed or been killed.
+ * A user claiming to have killed or been killed.
  */
 export interface IKillClaim {
     /**
-     * Which player became a murderer.
+     * Which user became a murderer.
      */
     killer: string;
 

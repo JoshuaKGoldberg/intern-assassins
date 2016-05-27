@@ -3,7 +3,7 @@
 import { IReport } from "../../../shared/actions";
 import { IKillClaim } from "../../../shared/kills";
 import { ICredentials } from "../../../shared/login";
-import { IPlayer } from "../../../shared/players";
+import { IUser } from "../../../shared/users";
 
 /**
  * One of the allowed REST methods.
@@ -42,24 +42,24 @@ export class Sdk {
     }
 
     /**
-     * Retrieves a player's information.
+     * Retrieves a user's information.
      * 
      * @param credentials   The submitting user credentials.
-     * @returns A promise for the player.
+     * @returns A promise for the user.
      */
-    public getPlayer(credentials: ICredentials): Promise<IReport<IPlayer>> {
+    public getUser(credentials: ICredentials): Promise<IReport<IUser>> {
         return this.sendAjaxRequest(
             "GET",
-            "api/players",
+            "api/users",
             credentials,
             Sdk.parseResponseForJsonData);
     }
 
     /**
-     * Reports that a player has died.
+     * Reports that a user has died.
      * 
      * @param credentials   The submitting user credentials.
-     * @param alias   The player's alias.
+     * @param alias   The user's alias.
      * @returns A promise for the created kill claim, if successful.
      */
     public reportKillClaim(credentials: ICredentials, claim: IKillClaim): Promise<IReport<IKillClaim>> {

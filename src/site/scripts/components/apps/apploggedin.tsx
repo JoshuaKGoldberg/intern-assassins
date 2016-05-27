@@ -2,7 +2,7 @@
 
 "use strict";
 import * as React from "react";
-import { IPlayer } from "../../../../shared/players";
+import { IUser } from "../../../../shared/users";
 import { Sdk } from "../../sdk/sdk";
 import { ActivityBar } from "../activitybar/activitybar";
 import { ActionButton } from "../profile/actionbutton";
@@ -15,7 +15,7 @@ export interface IAppLoggedInProps {
     /**
      * Information on the user.
      */
-    player: IPlayer;
+    user: IUser;
 
     /**
      * Recently pushed notification messages.

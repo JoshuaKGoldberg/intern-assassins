@@ -8,7 +8,7 @@ import { IReport, ISubmission } from "../shared/actions";
 import { ICredentials, CredentialKeys } from "../shared/login";
 import { ServerError } from "./errors";
 import { KillClaimsTable } from "./storage/killclaimstable";
-import { PlayersTable } from "./storage/playerstable";
+import { UsersTable } from "./storage/userstable";
 import { StorageTable } from "./storage/storagetable";
 
 /**
@@ -40,9 +40,9 @@ export class Api {
     public /* readonly */ kills: KillClaimsTable = new KillClaimsTable(this);
 
     /**
-     * Storage for players.
+     * Storage for users.
      */
-    public /* readonly */ players: PlayersTable = new PlayersTable(this);
+    public /* readonly */ users: UsersTable = new UsersTable(this);
 
     /**
      * Callbacks to notify of reports.
@@ -62,13 +62,13 @@ export class Api {
         });
 
         this.registerStorageRoutes(app, this.kills);
-        this.registerStorageRoutes(app, this.players);
+        this.registerStorageRoutes(app, this.users);
 
         app.post("/api/login", (request: express.Request, response: express.Response): void => {
             const credentials: ICredentials = request.body.credentials;
 
-            this.players.get(credentials)
-                // Case: player alias exists in the database, does the info match?
+            this.users.get(credentials)
+                // Case: user alias exists in the database, does the info match?
                 .then(record => {
                     if (
                         credentials.nickname === record.data.nickname
@@ -79,7 +79,7 @@ export class Api {
                         response.sendStatus(401);
                     }
                 })
-                // Case: player alias does not exist in the database
+                // Case: user alias does not exist in the database
                 .catch((error: ServerError): void => {
                     response.sendStatus(401);
                 });
@@ -144,7 +144,7 @@ export class Api {
 
                 response.status(500).json(details);
             }
-        }
+        };
     }
 
     /**

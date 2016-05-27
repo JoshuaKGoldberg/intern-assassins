@@ -5,7 +5,7 @@
 declare var io: SocketIOStatic;
 import * as React from "react";
 import { IReport } from "../../../../shared/actions";
-import { IPlayer } from "../../../../shared/players";
+import { IUser } from "../../../../shared/users";
 import { ICredentials } from "../../../../shared/login";
 import { AppStorage } from "../../storage/appstorage";
 import { Sdk } from "../../sdk/sdk";
@@ -17,9 +17,9 @@ import { AppLoggedIn } from "./apploggedin";
  */
 export interface IAppState {
     /**
-     * Currently logged in player, if not anonymous.
+     * Currently logged in user, if not anonymous.
      */
-    player?: IPlayer;
+    user?: IUser;
 
     /**
      * Recently pushed notification messages.
@@ -82,7 +82,7 @@ export class App extends React.Component<void, IAppState> {
         if (this.storage.isComplete()) {
             return (
                 <AppLoggedIn
-                    player={this.state.player}
+                    user={this.state.user}
                     messages={this.state.messages}
                     sdk={this.sdk} />);
         } else {
@@ -101,10 +101,10 @@ export class App extends React.Component<void, IAppState> {
     private receiveLoginValues(values: ICredentials): void {
         this.storage.setValues(values);
 
-        this.sdk.getPlayer(values)
-            .then((report: IReport<IPlayer>): void => {
+        this.sdk.getUser(values)
+            .then((report: IReport<IUser>): void => {
                 this.setState({
-                    player: report.data,
+                    user: report.data,
                     messages: this.state.messages
                 });
             });

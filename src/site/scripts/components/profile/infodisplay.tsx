@@ -9,6 +9,11 @@ import * as React from "react";
  */
 export interface IInfoDisplayProps {
     /**
+     * Displayed value of the info, such as "jogol".
+     */
+    display: string;
+
+    /**
      * Whether the info is editable.
      * 
      * @todo Implement this?
@@ -21,9 +26,9 @@ export interface IInfoDisplayProps {
     info: string;
 
     /**
-     * Displayed value of the info, such as "jogol".
+     * Whether the display needs a large text area.
      */
-    display: string;
+    large?: boolean;
 }
 
 /**
@@ -53,12 +58,18 @@ export class InfoDisplay extends React.Component<IInfoDisplayProps, IInfoDisplay
      * @returns The rendered component.
      */
     public render(): JSX.Element {
+        let className: string = "info-display";
+
+        if (this.props.large) {
+            className += "info-display-large";
+        }
+
         return (
-            <div className="info-display">
+            <div className={className}>
                 <span>Your </span>
                 <span>{this.props.info} </span>
                 <span>is </span>
-                <strong>{this.props.display}</strong>.
+                <div className="display">{this.props.display}</div>.
             </div>);
     }
 }

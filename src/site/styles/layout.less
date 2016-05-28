@@ -98,8 +98,21 @@ input {
 .app-admin {
     table {
         margin: 0 auto 35px;
-        width: 100%;
         max-width: @layout-width-maximum;
+
+        th {
+            padding-bottom: 7px;
+            border-bottom: 1px solid @color-shadow-medium;
+        }
+
+        td {
+            padding: 14px 28px;
+        }
+    }
+
+    em {
+        display: block;
+        padding-bottom: 28px;
     }
 }
 

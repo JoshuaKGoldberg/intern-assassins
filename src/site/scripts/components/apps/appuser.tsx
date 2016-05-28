@@ -13,6 +13,11 @@ import { Profile } from "../profile/profile";
  */
 export interface IAppUserProps {
     /**
+     * Wrapper around the server API.
+     */
+    sdk: Sdk;
+
+    /**
      * Information on the user.
      */
     user: IUser;
@@ -21,11 +26,6 @@ export interface IAppUserProps {
      * Recently pushed notification messages.
      */
     messages: string[];
-
-    /**
-     * Wrapper around the server API.
-     */
-    sdk: Sdk;
 }
 
 /**

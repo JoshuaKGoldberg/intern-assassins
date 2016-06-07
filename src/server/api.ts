@@ -8,6 +8,7 @@ import { IReport, ISubmission } from "../shared/actions";
 import { ICredentials, CredentialKeys } from "../shared/login";
 import { ServerError } from "./errors";
 import { KillClaimsTable } from "./storage/killclaimstable";
+import { NotificationsTable } from "./storage/notificationstable";
 import { UserTable } from "./storage/usertable";
 import { UsersTable } from "./storage/userstable";
 import { StorageTable } from "./storage/storagetable";
@@ -41,7 +42,12 @@ export class Api {
     public /* readonly */ kills: KillClaimsTable = new KillClaimsTable(this);
 
     /**
-     * Storage for single user operations..
+     * Storage for emitted notifications.
+     */
+    public /* readonly */ notifications: NotificationsTable = new NotificationsTable(this);
+
+    /**
+     * Storage for single user operations.
      */
     public /* readonly */ user: UserTable = new UserTable(this);
 

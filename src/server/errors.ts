@@ -17,7 +17,8 @@ export enum ErrorCause {
     UsersAlreadyExist,
     UserDead,
     UsersDead,
-    WrongTarget
+    WrongTarget,
+    ClaimAlreadyExists
 }
 
 /**

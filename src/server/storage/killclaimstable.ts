@@ -63,7 +63,11 @@ export class KillClaimsTable extends StorageTable<IReport<IKillClaim>> {
             .then((users) => {
                 const report = this.wrapSubmission(credentials, claim);
 
-                this.claims.push(report);
+                if (this.claims.some(c => c.data.killer === claim.killer && c.data.victim === claim.victim)) {
+                    throw new ServerError(ErrorCause.ClaimAlreadyExists, victim.alias);
+                } else {
+                    this.claims.push(report);
+                }
 
                 return report;
             })

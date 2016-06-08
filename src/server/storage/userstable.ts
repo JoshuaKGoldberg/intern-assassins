@@ -68,6 +68,19 @@ export class UsersTable extends StorageTable<IReport<IUser>[]> {
             },
             reporter: "satyan",
             timestamp: 1234567
+        },
+        {
+            data: {
+                admin: false,
+                alias: "roper",
+                alive: true,
+                biography: "The muffin man!",
+                nickname: "Bobby",
+                passphrase: "banana",
+                target: "kkeer"
+            },
+            reporter: "roper",
+            timestamp: 1234567
         }
     ];
 

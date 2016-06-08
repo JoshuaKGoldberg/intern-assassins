@@ -3,8 +3,6 @@
 "use strict";
 import * as http from "http";
 import * as socketIo from "socket.io";
-import { IReport } from "../shared/actions";
-import { IKillClaim } from "../shared/kills";
 
 /**
  * Emits real-time socket events for new and updated reports.

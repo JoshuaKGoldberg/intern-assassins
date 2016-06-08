@@ -3,8 +3,6 @@
 "use strict";
 import * as http from "http";
 import * as socketIo from "socket.io";
-import { IReport } from "../shared/actions";
-import { IKillClaim } from "../shared/kills";
 
 /**
  * Emits real-time socket events for new and updated reports.
@@ -25,13 +23,9 @@ export class Sockets {
     }
 
     /**
-     * Emits an event for a kill claim report.
+     * Emits a message.
      */
-    public emit(report: IReport<IKillClaim>): void {
-        const message: string = report.data.killer === report.data.victim
-            ? `${report.data.victim} appears to be dead...`
-            : `${report.data.killer} killed ${report.data.victim}!`;
-
+    public emit(message: string): void {
         this.ioServer.emit("report", message);
     }
 }

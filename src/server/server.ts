@@ -69,7 +69,14 @@ export class Server {
         this.sockets = new Sockets(this.server);
 
         this.api.registerReportCallback(
-            (event: IReport<any>) => this.sockets.emit(event));
+            (report: IReport<any>) => {
+                const message: string = report.data.killer === report.data.victim
+                    ? `${report.data.victim} appears to be dead...`
+                    : `${report.data.killer} killed ${report.data.victim}!`;
+
+                this.sockets.emit(message);
+                this.api.notifications.storeEmittedMessage(message, report);
+            });
     }
 
     /**

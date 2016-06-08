@@ -8,11 +8,11 @@ import { ErrorCause, ServerError } from "../errors";
 import { Api } from "../api";
 
 /**
- * Stores a single type of data in a database.
+ * Exposes a single type of data from a database.
  * 
  * @type T   The type of data being stored.
  */
-export abstract class StorageTable<T> {
+export abstract class Endpoint<T> {
     /**
      * The parent Api using this storage.
      */
@@ -42,7 +42,7 @@ export abstract class StorageTable<T> {
     }
 
     /**
-     * Deletes a piece of data from the table.
+     * Deletes a piece of data.
      * 
      * @param credentials   Login values for verification.
      * @param data   Data to delete.
@@ -53,7 +53,7 @@ export abstract class StorageTable<T> {
     }
 
     /**
-     * Posts a new piece of data to the table.
+     * Posts a piece of data.
      * 
      * @param credentials   Login values for verification.
      * @param data   Data to post.
@@ -64,7 +64,7 @@ export abstract class StorageTable<T> {
     }
 
     /**
-     * Puts a new piece of data into the table.
+     * Puts a new piece of data.
      * 
      * @param credentials   Login values for verification.
      * @param data   Data to put.
@@ -99,7 +99,7 @@ export abstract class StorageTable<T> {
      * @returns A promise for a submitting user, if authenticated.
      */
     protected validateUserSubmission<T>(credentials: ICredentials): Promise<IUser> {
-        return this.api.user.get(credentials)
+        return this.api.endpoints.user.get(credentials)
             .then(storedUser => {
                 if (storedUser.data.passphrase !== credentials.passphrase) {
                     throw new ServerError(ErrorCause.IncorrectCredentials);

@@ -5,14 +5,14 @@ import { IReport } from "../../shared/actions";
 import { ICredentials } from "../../shared/login";
 import { IUser } from "../../shared/users";
 import { ErrorCause, ServerError } from "../errors";
-import { StorageTable } from "./storagetable";
+import { Endpoint } from "./endpoint";
 
 /**
  * Mock database storage for users.
  * 
  * @todo Use MongoDB...
  */
-export class UsersTable extends StorageTable<IReport<IUser>[]> {
+export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
     /**
      * All known users.
      */

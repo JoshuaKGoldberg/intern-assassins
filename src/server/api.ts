@@ -7,11 +7,8 @@ import * as url from "url";
 import { IReport, ISubmission } from "../shared/actions";
 import { ICredentials, CredentialKeys } from "../shared/login";
 import { ServerError } from "./errors";
-import { KillClaimsTable } from "./storage/killclaimstable";
-import { NotificationsTable } from "./storage/notificationstable";
-import { UserTable } from "./storage/usertable";
-import { UsersTable } from "./storage/userstable";
-import { StorageTable } from "./storage/storagetable";
+import { Endpoint } from "./endpoints/endpoint";
+import { Endpoints } from "./endpoints/endpoints";
 
 /**
  * Handler for a report being emitted.
@@ -33,28 +30,13 @@ interface IRouteHandler {
 }
 
 /**
- * Routes requests to internal storage.
+ * Routes requests to the appropriate endpoint.
  */
 export class Api {
     /**
-     * Storage for kill claims.
+     * Bag for API endpoints.
      */
-    public /* readonly */ kills: KillClaimsTable = new KillClaimsTable(this);
-
-    /**
-     * Storage for emitted notifications.
-     */
-    public /* readonly */ notifications: NotificationsTable = new NotificationsTable(this);
-
-    /**
-     * Storage for single user operations.
-     */
-    public /* readonly */ user: UserTable = new UserTable(this);
-
-    /**
-     * Storage for users.
-     */
-    public /* readonly */ users: UsersTable = new UsersTable(this);
+    public /* readonly */ endpoints: Endpoints;
 
     /**
      * Callbacks to notify of reports.
@@ -73,14 +55,16 @@ export class Api {
             response.send("ACK");
         });
 
-        this.registerStorageRoutes(app, this.kills);
-        this.registerStorageRoutes(app, this.user);
-        this.registerStorageRoutes(app, this.users);
+        this.endpoints = new Endpoints(this);
+        this.registerEndpointRoutes(app, this.endpoints.kills);
+        this.registerEndpointRoutes(app, this.endpoints.notifications);
+        this.registerEndpointRoutes(app, this.endpoints.user);
+        this.registerEndpointRoutes(app, this.endpoints.users);
 
         app.post("/api/login", (request: express.Request, response: express.Response): void => {
             const credentials: ICredentials = request.body.credentials;
 
-            this.user.get(credentials)
+            this.endpoints.user.get(credentials)
                 // Case: user alias exists in the database, does the info match?
                 .then(record => {
                     if (
@@ -124,14 +108,14 @@ export class Api {
      * 
      * @app   The container application.
      * @param route   URI component under which the member storage will be available.
-     * @param member   Storage abstraction for the database.
+     * @param endpoint   Storage abstraction for the database.
      */
-    private registerStorageRoutes(app: any, member: StorageTable<any>): void {
-        app.route("/api/" + member.getRoute())
-            .get(this.wrapRouteHandler(this.generateGetRoute(member)))
-            .delete(this.wrapRouteHandler(this.generateDeleteRoute(member)))
-            .post(this.wrapRouteHandler(this.generatePostRoute(member)))
-            .put(this.wrapRouteHandler(this.generatePutRoute(member)));
+    private registerEndpointRoutes(app: any, endpoint: Endpoint<any>): void {
+        app.route("/api/" + endpoint.getRoute())
+            .get(this.wrapRouteHandler(this.generateGetRoute(endpoint)))
+            .delete(this.wrapRouteHandler(this.generateDeleteRoute(endpoint)))
+            .post(this.wrapRouteHandler(this.generatePostRoute(endpoint)))
+            .put(this.wrapRouteHandler(this.generatePutRoute(endpoint)));
     }
 
     /**
@@ -166,7 +150,7 @@ export class Api {
      * @param member   A storage member to defer to.
      * @returns A GET route handler.
      */
-    private generateGetRoute<TSubmission, TData>(member: StorageTable<TData>): IRouteHandler {
+    private generateGetRoute<TSubmission, TData>(member: Endpoint<TData>): IRouteHandler {
         return (request: express.Request, response: express.Response): void => {
             const submission: ISubmission<TSubmission> = this.parseGetSubmission<TSubmission>(request.url);
 
@@ -181,7 +165,7 @@ export class Api {
      * @param member   A storage member to defer to.
      * @returns A DELETE route handler.
      */
-    private generateDeleteRoute<TSubmission, TData>(member: StorageTable<TData>): IRouteHandler {
+    private generateDeleteRoute<TSubmission, TData>(member: Endpoint<TData>): IRouteHandler {
         return (request: express.Request, response: express.Response): void => {
             member.delete(request.body.credentials, request.body.data)
                 .then((results: TData) => response.json(results));
@@ -194,7 +178,7 @@ export class Api {
      * @param member   A storage member to defer to.
      * @returns A POST route handler.
      */
-    private generatePostRoute<TSubmission, TData>(member: StorageTable<TData>): IRouteHandler {
+    private generatePostRoute<TSubmission, TData>(member: Endpoint<TData>): IRouteHandler {
         return (request: express.Request, response: express.Response): void => {
             member.post(request.body.credentials, request.body.data)
                 .then((results: TData) => response.json(results));
@@ -207,7 +191,7 @@ export class Api {
      * @param member   A storage member to defer to.
      * @returns A PUT route handler.
      */
-    private generatePutRoute<TSubmission, TData>(member: StorageTable<TData>): IRouteHandler {
+    private generatePutRoute<TSubmission, TData>(member: Endpoint<TData>): IRouteHandler {
         return (request: express.Request, response: express.Response): void => {
             member.put(request.body.credentials, request.body.data)
                 .then((results: TData) => response.json(results));

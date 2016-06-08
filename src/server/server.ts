@@ -75,7 +75,7 @@ export class Server {
                     : `${report.data.killer} killed ${report.data.victim}!`;
 
                 this.sockets.emit(message);
-                this.api.notifications.storeEmittedMessage(message, report);
+                this.api.endpoints.notifications.storeEmittedMessage(message, report);
             });
     }
 

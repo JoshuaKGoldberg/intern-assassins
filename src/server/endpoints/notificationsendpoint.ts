@@ -2,12 +2,12 @@
 
 "use strict";
 import { IReport } from "../../shared/actions";
-import { StorageTable } from "./storagetable";
+import { Endpoint } from "./endpoint";
 
 /**
  * Mock database storage for emitted notifications.
  */
-export class NotificationsTable extends StorageTable<IReport<string>> {
+export class NotificationsEndpoint extends Endpoint<IReport<string>> {
     /**
      * All known messages.
      */

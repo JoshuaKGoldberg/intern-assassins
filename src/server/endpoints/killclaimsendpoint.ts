@@ -6,14 +6,14 @@ import { IKillClaim } from "../../shared/kills";
 import { IUser } from "../../shared/users";
 import { ICredentials } from "../../shared/login";
 import { ErrorCause, ServerError } from "../errors";
-import { StorageTable } from "./storagetable";
+import { Endpoint } from "./endpoint";
 
 /**
  * Mock database storage for kill claims.
  * 
  * @todo Use MongoDB...
  */
-export class KillClaimsTable extends StorageTable<IReport<IKillClaim>> {
+export class KillClaimsEndpoint extends Endpoint<IReport<IKillClaim>> {
     /**
      * Past kills, ordered from oldest to newest.
      */
@@ -44,7 +44,7 @@ export class KillClaimsTable extends StorageTable<IReport<IKillClaim>> {
                     throw new ServerError(ErrorCause.PermissionDenied);
                 }
 
-                return this.api.users.getByAlias(credentials, [claim.killer, claim.victim])
+                return this.api.endpoints.users.getByAlias(credentials, [claim.killer, claim.victim])
                     .then(users => {
                         [killer, victim] = [users[0].data, users[1].data];
 
@@ -76,13 +76,13 @@ export class KillClaimsTable extends StorageTable<IReport<IKillClaim>> {
                     killer.target = victim.target;
                 }
 
-                return this.api.users
+                return this.api.endpoints.users
                     .update({
                         data: killer,
                         reporter: killer.alias,
                         timestamp: Date.now()
                     })
-                    .then(() => this.api.users.update({
+                    .then(() => this.api.endpoints.users.update({
                         data: victim,
                         reporter: victim.alias,
                         timestamp: Date.now()

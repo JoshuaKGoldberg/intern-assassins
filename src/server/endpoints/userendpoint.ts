@@ -25,6 +25,6 @@ export class UserEndpoint extends Endpoint<IReport<IUser>> {
      * @returns A promise for the user with the alias.
      */
     public get(credentials: ICredentials): Promise<IReport<IUser>> {
-        return this.api.endpoints.users.getSingle(credentials);
+        return this.api.endpoints.users.getByCredentials(credentials);
     }
 }

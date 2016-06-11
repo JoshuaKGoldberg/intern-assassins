@@ -3,9 +3,8 @@
 "use strict";
 import * as bodyParser from "body-parser";
 import * as express from "express";
-import * as url from "url";
-import { IReport, ISubmission } from "../shared/actions";
-import { ICredentials, CredentialKeys } from "../shared/login";
+import { IReport } from "../shared/actions";
+import { ICredentials } from "../shared/login";
 import { Database } from "./database";
 import { ServerError } from "./errors";
 import { Endpoint } from "./endpoints/endpoint";
@@ -59,13 +58,12 @@ export class Api {
         this.endpoints = new Endpoints(this, database);
         this.registerEndpointRoutes(app, this.endpoints.kills);
         this.registerEndpointRoutes(app, this.endpoints.notifications);
-        this.registerEndpointRoutes(app, this.endpoints.user);
         this.registerEndpointRoutes(app, this.endpoints.users);
 
         app.post("/api/login", async (request: express.Request, response: express.Response) => {
             const credentials: ICredentials = request.body.credentials;
 
-            const record = await this.endpoints.user.get(credentials)
+            const record = await this.endpoints.users.getByCredentials(credentials)
                 // Case: user alias does not exist in the database
                 .catch((error: ServerError): void => {
                     response.sendStatus(401);
@@ -112,10 +110,10 @@ export class Api {
      */
     private registerEndpointRoutes(app: any, endpoint: Endpoint<any>): void {
         app.route("/api/" + endpoint.getRoute())
-            .get(this.wrapRouteHandler(this.generateGetRoute(endpoint)))
-            .delete(this.wrapRouteHandler(this.generateDeleteRoute(endpoint)))
-            .post(this.wrapRouteHandler(this.generatePostRoute(endpoint)))
-            .put(this.wrapRouteHandler(this.generatePutRoute(endpoint)));
+            .delete(this.wrapRouteHandler(this.generateRoute("delete", endpoint)))
+            .get(this.wrapRouteHandler(this.generateRoute("get", endpoint)))
+            .post(this.wrapRouteHandler(this.generateRoute("post", endpoint)))
+            .put(this.wrapRouteHandler(this.generateRoute("put", endpoint)));
     }
 
     /**
@@ -145,82 +143,15 @@ export class Api {
     }
 
     /**
-     * Generates GET route handling for a storage member.
+     * Generates route handling for a storage member route.
      * 
      * @param member   A storage member to defer to.
-     * @returns A GET route handler.
+     * @returns A route handler.
      */
-    private generateGetRoute<TSubmission, TData>(member: Endpoint<TData>): IRouteHandler {
+    private generateRoute<TSubmission, TData>(route: "delete" | "get" | "post" | "put", member: Endpoint<TData>): IRouteHandler {
         return (request: express.Request, response: express.Response): void => {
-            const submission: ISubmission<TSubmission> = this.parseGetSubmission<TSubmission>(request.url);
-
-            member.get(submission.credentials, submission.data)
+            member.route(route, request.body.credentials, request.body.data)
                 .then((results: TData) => response.json(results));
-        };
-    }
-
-    /**
-     * Generates DELETE route handling for a storage member.
-     * 
-     * @param member   A storage member to defer to.
-     * @returns A DELETE route handler.
-     */
-    private generateDeleteRoute<TSubmission, TData>(member: Endpoint<TData>): IRouteHandler {
-        return (request: express.Request, response: express.Response): void => {
-            member.delete(request.body.credentials, request.body.data)
-                .then((results: TData) => response.json(results));
-        };
-    }
-
-    /**
-     * Generates POST route handling for a storage member.
-     * 
-     * @param member   A storage member to defer to.
-     * @returns A POST route handler.
-     */
-    private generatePostRoute<TSubmission, TData>(member: Endpoint<TData>): IRouteHandler {
-        return (request: express.Request, response: express.Response): void => {
-            member.post(request.body.credentials, request.body.data)
-                .then((results: TData) => response.json(results));
-        };
-    }
-
-    /**
-     * Generates PUT route handling for a storage member.
-     * 
-     * @param member   A storage member to defer to.
-     * @returns A PUT route handler.
-     */
-    private generatePutRoute<TSubmission, TData>(member: Endpoint<TData>): IRouteHandler {
-        return (request: express.Request, response: express.Response): void => {
-            member.put(request.body.credentials, request.body.data)
-                .then((results: TData) => response.json(results));
-        };
-    }
-
-    /**
-     * Parses query parameters out of a GET submission.
-     * 
-     * @param query   A raw user query.
-     * @returns The equivalent user submission, with credentials and data.
-     */
-    private parseGetSubmission<T>(query: string): ISubmission<T> {
-        const queryValues: any = url.parse(query, true).query;
-        const credentials: ICredentials = {} as ICredentials;
-        const data: T = {} as T;
-
-        for (const loginValueKey of CredentialKeys) {
-            credentials[loginValueKey] = queryValues[loginValueKey];
-            delete queryValues[loginValueKey];
-        }
-
-        for (const dataValueKey in queryValues) {
-            data[dataValueKey] = queryValues[dataValueKey];
-        }
-
-        return {
-            credentials: credentials,
-            data: data
         };
     }
 }

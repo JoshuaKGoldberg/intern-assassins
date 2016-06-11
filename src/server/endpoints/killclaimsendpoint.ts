@@ -15,11 +15,6 @@ import { Endpoint } from "./endpoint";
  */
 export class KillClaimsEndpoint extends Endpoint<IReport<IKillClaim>> {
     /**
-     * Past kills, ordered from oldest to newest.
-     */
-    private claims: IReport<IKillClaim>[] = [];
-
-    /**
      * @returns Path to this part of the global api.
      */
     public getRoute(): string {
@@ -33,62 +28,54 @@ export class KillClaimsEndpoint extends Endpoint<IReport<IKillClaim>> {
      * @param claim   A kill claim to add.
      * @returns A promise for the kill claim, if added successfully.
      */
-    public put(credentials: ICredentials, claim: IKillClaim): Promise<IReport<IKillClaim>> {
+    public async put(credentials: ICredentials, claim: IKillClaim): Promise<IReport<IKillClaim>> {
+        const user = await this.validateUserSubmission(credentials);
+
+        // You can only claim a kill on yourself or your target
+        if (user.alias !== claim.victim && user.alias !== claim.killer) {
+            throw new ServerError(ErrorCause.PermissionDenied);
+        }
+
+        // Retrieve the killer and victim users
+        const userReports = this.api.endpoints.users.getByAliases(credentials, [claim.killer, claim.victim]);
         let killer: IUser;
         let victim: IUser;
+        [killer, victim] = [userReports[0].data, userReports[1].data];
 
-        return this.validateUserSubmission(credentials)
-            .then(user => {
-                // You can only claim a kill on yourself or your target
-                if (user.alias !== claim.victim && user.alias !== claim.killer) {
-                    throw new ServerError(ErrorCause.PermissionDenied);
-                }
+        if (!killer.alive) {
+            throw new ServerError(ErrorCause.UsersDead, killer.alias);
+        }
 
-                return this.api.endpoints.users.getByAlias(credentials, [claim.killer, claim.victim])
-                    .then(users => {
-                        [killer, victim] = [users[0].data, users[1].data];
+        if (!victim.alive) {
+            throw new ServerError(ErrorCause.UsersDead, victim.alias);
+        }
 
-                        if (!killer.alive) {
-                            throw new ServerError(ErrorCause.UsersDead, killer.alias);
-                        }
+        // Add the claim to the database
+        const report = this.wrapSubmission(credentials, claim);
+        await this.collection.insertOne(report);
 
-                        if (!victim.alive) {
-                            throw new ServerError(ErrorCause.UsersDead, victim.alias);
-                        }
+        // Only change death status when the victim says so
+        if (killer.alias === victim.alias) {
+            victim.alive = false;
+        } else {
+            killer.target = victim.target;
+        }
 
-                        return [killer, victim];
-                    });
+        // Update the corresponding users
+        this.api.endpoints.users
+            .update({
+                data: killer,
+                reporter: killer.alias,
+                timestamp: Date.now()
             })
-            // Add the submission to the database
-            .then((users) => {
-                const report = this.wrapSubmission(credentials, claim);
+            .then(() => this.api.endpoints.users.update({
+                data: victim,
+                reporter: victim.alias,
+                timestamp: Date.now()
+            }))
+            .then(() => this.api.fireReportCallback(report))
+            .then(() => report);
 
-                this.claims.push(report);
-
-                return report;
-            })
-            // Update the corresponding users
-            .then((report: IReport<IKillClaim>): Promise<IReport<IKillClaim>> => {
-                // Only change death status when the victim says so
-                if (killer.alias === victim.alias) {
-                    victim.alive = false;
-                } else {
-                    killer.target = victim.target;
-                }
-
-                return this.api.endpoints.users
-                    .update({
-                        data: killer,
-                        reporter: killer.alias,
-                        timestamp: Date.now()
-                    })
-                    .then(() => this.api.endpoints.users.update({
-                        data: victim,
-                        reporter: victim.alias,
-                        timestamp: Date.now()
-                    }))
-                    .then(() => this.api.fireReportCallback(report))
-                    .then(() => report);
-            });
+        return report;
     }
 }

@@ -23,7 +23,7 @@ export abstract class Endpoint<T> {
     /**
      * MongoDB database collection.
      */
-    private collection: Collection;
+    protected collection: Collection;
 
     /**
      * Initializes a new instance of the StorageMember class.
@@ -84,6 +84,28 @@ export abstract class Endpoint<T> {
     }
 
     /**
+     * 
+     */
+    public route(route: string, credentials: ICredentials, data: any): Promise<T> {
+        switch (route) {
+            case "delete":
+                return this.delete(credentials, data);
+
+            case "get":
+                return this.get(credentials, data);
+
+            case "post":
+                return this.post(credentials, data);
+
+            case "put":
+                return this.put(credentials, data);
+
+            default:
+                throw new Error(`Unknown route: '${route}'.`);
+        }
+    }
+
+    /**
      * Ensures credentials are completely filled out.
      * 
      * @param credentials   Login credentials from a request.
@@ -108,7 +130,7 @@ export abstract class Endpoint<T> {
      * @returns A promise for a submitting user, if authenticated.
      */
     protected validateUserSubmission<T>(credentials: ICredentials): Promise<IUser> {
-        return this.api.endpoints.user.get(credentials)
+        return this.api.endpoints.users.getByCredentials(credentials)
             .then(storedUser => {
                 if (storedUser.data.passphrase !== credentials.passphrase) {
                     throw new ServerError(ErrorCause.IncorrectCredentials);

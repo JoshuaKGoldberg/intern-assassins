@@ -4,6 +4,7 @@
 import * as express from "express";
 import * as http from "http";
 import { IReport } from "../shared/actions";
+import { IUser } from "../shared/users";
 import { Api } from "./api";
 import { Sockets } from "./sockets";
 import { Database } from "./database";
@@ -13,9 +14,19 @@ import { Database } from "./database";
  */
 export interface IServerSettings {
     /**
+     * Administrators to add when resetting the database.
+     */
+    admins?: IUser[];
+
+    /**
      * Port for the web server.
      */
     port: number;
+
+    /**
+     * Whether to reset the database history.
+     */
+    reset?: boolean;
 }
 
 /**
@@ -53,11 +64,6 @@ export class Server {
     private sockets: Sockets;
 
     /**
-     * Whether the server is currently running.
-     */
-    private running: boolean = false;
-
-    /**
      * Initializes a new instance of the Server class.
      * 
      * @param settings   User-specified server settings.
@@ -83,20 +89,20 @@ export class Server {
                 this.sockets.emit(message);
                 this.api.endpoints.notifications.storeEmittedMessage(message, report);
             });
+
     }
 
     /**
-     * Starts listening for requests.
+     * Starts the server listening for requests.
      */
     public run(): void {
-        if (this.running) {
-            throw new Error("Server is already running!");
+        if (this.settings.reset) {
+            this.database.drop();
+            this.api.endpoints.users.putAdmins(this.settings.admins);
         }
 
         this.server.listen(
             this.settings.port,
             (): void => console.log(`Starting listening on port ${this.settings.port}...`));
-
-        this.running = true;
     }
 }

@@ -3,7 +3,7 @@
     "directory": "interns",
     "port": 27017
   },
-  "web": {
+  "server": {
     "port": 3000
   }
 }

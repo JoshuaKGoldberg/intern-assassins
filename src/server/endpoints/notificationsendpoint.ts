@@ -9,11 +9,6 @@ import { Endpoint } from "./endpoint";
  */
 export class NotificationsEndpoint extends Endpoint<IReport<string>> {
     /**
-     * All known messages.
-     */
-    private messages: IReport<string>[] = [];
-
-    /**
      * @returns Path to this part of the global api.
      */
     public getRoute(): string {
@@ -27,14 +22,14 @@ export class NotificationsEndpoint extends Endpoint<IReport<string>> {
      * @param report   An associated report.
      * @returns A newly generated report for the message.
      */
-    public storeEmittedMessage(message: string, report: IReport<any>): IReport<string> {
+    public async storeEmittedMessage(message: string, report: IReport<any>): Promise<IReport<string>> {
         const messageReport = {
             data: message,
             reporter: report.reporter,
             timestamp: report.timestamp
         };
 
-        this.messages.push(messageReport);
+        await this.collection.insertOne(messageReport);
 
         return messageReport;
     }

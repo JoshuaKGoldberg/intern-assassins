@@ -14,64 +14,6 @@ import { Endpoint } from "./endpoint";
  */
 export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
     /**
-     * All known users.
-     */
-    private /* readonly */ users: IReport<IUser>[] = [
-        {
-            data: {
-                admin: true,
-                alias: "jogol",
-                alive: true,
-                biography: "I like long walks on the beach and Kahlua... and I'm all out of long walks on the beach.",
-                nickname: "Joshypoo",
-                passphrase: "pineapple",
-                target: "kkeer"
-            },
-            reporter: "jogol",
-            timestamp: 1234567
-        },
-        {
-            data: {
-                admin: false,
-                alias: "kkeer",
-                alive: true,
-                biography: "Do you know the muffin man?",
-                nickname: "KK",
-                passphrase: "pineapple",
-                target: "cgong"
-            },
-            reporter: "kkeer",
-            timestamp: 1234567
-        },
-        {
-            data: {
-                admin: false,
-                alias: "cgong",
-                alive: true,
-                biography: "The muffin man?",
-                nickname: "CC",
-                passphrase: "pineapple",
-                target: "satyan"
-            },
-            reporter: "cgong",
-            timestamp: 1234567
-        },
-        {
-            data: {
-                admin: false,
-                alias: "satyan",
-                alive: true,
-                biography: "The muffin man!",
-                nickname: "Bae",
-                passphrase: "pineapple",
-                target: "kkeer"
-            },
-            reporter: "satyan",
-            timestamp: 1234567
-        }
-    ];
-
-    /**
      * @returns Path to this part of the global api.
      */
     public getRoute(): string {
@@ -86,7 +28,7 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
      */
     public get(credentials: ICredentials): Promise<IReport<IUser>[]> {
         return this.validateAdminSubmission(credentials)
-            .then(() => this.users);
+            .then(() => this.collection.find().toArray());
     }
 
     /**
@@ -96,41 +38,40 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
      * @param alias   Aliases of users.
      * @returns A promise for the users with the aliases.
      */
-    public getByAlias(credentials: ICredentials, aliases: string[]): Promise<IReport<IUser>[]> {
-        let unfound: string[];
-        const reports: IReport<IUser>[] = aliases.map(
-            (alias: string): IReport<IUser> => {
-                const userReport: IReport<IUser> = this.users.find(
-                    report => report.data.alias === alias);
-
-                if (!userReport) {
-                    (unfound || (unfound = [])).push(alias);
+    public async getByAliases(credentials: ICredentials, aliases: string[]): Promise<IReport<IUser>[]> {
+        const users = await this.collection
+            .find({
+                "data.alias": {
+                    $in: aliases
                 }
+            })
+            .toArray();
 
-                return userReport;
-            });
+        if (users.length === aliases.length) {
+            return Promise.resolve(users);
+        }
 
-        return new Promise((resolve, reject) => {
-            if (unfound && unfound.length > 0) {
-                reject(new ServerError(ErrorCause.UsersDoNotExist, unfound));
-            } else {
-                resolve(reports);
-            }
-        });
+        const missing: string[] = users
+            .map((user: IReport<IUser>): string => user.data.alias)
+            .filter((alias: string): boolean => aliases.indexOf(alias) === -1);
+
+        throw new ServerError(ErrorCause.UsersDoNotExist, missing);
     }
 
     /**
-     * Retrieves a single user.
+     * Retrieves a user by their credentials.
      * 
      * @param credentials   Login values for authentication.
      * @param alias   Alias of a user.
      * @returns A promise for the user with the alias.
      * @remarks This can't call validateUserSubmission, because that calls this.
      */
-    public getSingle(credentials: ICredentials): Promise<IReport<IUser>> {
+    public async getByCredentials(credentials: ICredentials): Promise<IReport<IUser>> {
         this.validateCredentials(credentials);
 
-        const user = this.users.find(report => report.data.alias === credentials.alias);
+        const user: IReport<IUser> = await this.collection.findOne({
+            data: credentials
+        });
 
         if (!user) {
             throw new ServerError(ErrorCause.UserDoesNotExist, credentials.alias);
@@ -145,15 +86,36 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
      * @param report   Updated information for a user.
      * @returns A promise for when the user is updated.
      */
-    public update(report: IReport<IUser>): Promise<void> {
-        const index = this.users.findIndex(
-            (checkingReport: IReport<IUser>): boolean => {
-                return checkingReport.data.alias === report.data.alias;
-            });
+    public update(report: IReport<IUser>): Promise<any> {
+        return this.collection.updateOne(
+            {
+                "data.alias": report.data.alias
+            },
+            report.data);
+    }
 
-        this.users.splice(index, 1);
-        this.users.push(report);
-
-        return Promise.resolve();
+    /**
+     * Adds users as administrators to the database.
+     * 
+     * @param users   Users to be added as administrators.
+     * @returns A promise for adding the users.
+     */
+    public putAdmins(users: IUser[]): Promise<any> {
+        return this.collection.insertMany(
+            users.map(
+                (user: IUser): IReport<IUser> => {
+                    return {
+                        data: {
+                            admin: true,
+                            alias: user.alias,
+                            alive: true,
+                            biography: user.biography,
+                            nickname: user.nickname,
+                            passphrase: user.passphrase
+                        },
+                        reporter: "",
+                        timestamp: Date.now()
+                    };
+                }));
     }
 }

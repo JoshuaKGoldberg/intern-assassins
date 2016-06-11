@@ -24,7 +24,7 @@ export class Endpoints {
     public /* readonly */ notifications: NotificationsEndpoint;
 
     /**
-     * Storage for single user operations.
+     * Storage for single user user operations.
      */
     public /* readonly */ user: UserEndpoint;
 
@@ -39,20 +39,15 @@ export class Endpoints {
     private api: Api;
 
     /**
-     * Wrapper around a MongoDB database.
-     */
-    private database: Database;
-
-    /**
      * Initializes a new instance of the Endpoint class.
      * 
      * @param api   Api to route requests.
      */
     public constructor(api: Api, database: Database) {
         this.api = api;
-        this.kills = new KillClaimsEndpoint(api, this.database);
-        this.notifications = new NotificationsEndpoint(api, this.database);
-        this.user = new UserEndpoint(api, this.database);
-        this.users = new UsersEndpoint(api, this.database);
+        this.kills = new KillClaimsEndpoint(api, database);
+        this.notifications = new NotificationsEndpoint(api, database);
+        this.user = new UserEndpoint(api, database);
+        this.users = new UsersEndpoint(api, database);
     }
 }

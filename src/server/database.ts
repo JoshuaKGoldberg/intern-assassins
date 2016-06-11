@@ -45,6 +45,13 @@ export class Database {
     }
 
     /**
+     * Clears the database.
+     */
+    public drop(): void {
+        this.db.dropDatabase();
+    }
+
+    /**
      * Asynchronously creates a new instance of the Database class.
      * 
      * @param settings   Settings to connect to a MongoDB database.
@@ -52,7 +59,6 @@ export class Database {
      */
     public static create(settings: IDatabaseSettings): Promise<Database> {
         const url = `mongodb://localhost:${settings.port}/${settings.directory}`;
-        console.log(`Connecting to server at ${url}.`);
 
         return new Promise<Database>((resolve, reject) => {
             MongoClient.connect(url, (error: MongoError, db: Db): void => {
@@ -60,7 +66,7 @@ export class Database {
                     throw error;
                 }
 
-                console.log(`Connected to server at ${url}.`);
+                console.log(`Connected to database at ${url}.`);
                 resolve(new Database(db));
             });
         });

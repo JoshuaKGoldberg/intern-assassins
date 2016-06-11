@@ -1,11 +1,13 @@
 /// <reference path="../../../typings/all.d.ts" />
 
 "use strict";
+import { Collection } from "mongodb";
 import { IReport } from "../../shared/actions";
 import { IUser } from "../../shared/users";
 import { CredentialKeys, ICredentials } from "../../shared/login";
 import { ErrorCause, ServerError } from "../errors";
 import { Api } from "../api";
+import { Database } from "../database";
 
 /**
  * Exposes a single type of data from a database.
@@ -19,12 +21,19 @@ export abstract class Endpoint<T> {
     public /* readonly */ api: Api;
 
     /**
+     * MongoDB database collection.
+     */
+    private collection: Collection;
+
+    /**
      * Initializes a new instance of the StorageMember class.
      * 
      * @param api   The parent Api using this storage.
+     * @param database   Wrapper around a MongoDB database.
      */
-    constructor(api: Api) {
+    constructor(api: Api, database: Database) {
         this.api = api;
+        this.collection = database.getCollection(this.getRoute());
     }
 
     /**

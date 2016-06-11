@@ -3,19 +3,19 @@
 "use strict";
 import * as express from "express";
 import * as http from "http";
-import * as fsp from "fs-promise";
 import { IReport } from "../shared/actions";
 import { Api } from "./api";
 import { Sockets } from "./sockets";
+import { Database } from "./database";
 
 /**
  * Settings to initialize a new Server.
  */
 export interface IServerSettings {
     /**
-     * Which port to use, if not the default.
+     * Port for the web server.
      */
-    port?: number;
+    port: number;
 }
 
 /**
@@ -43,6 +43,11 @@ export class Server {
     private api: Api;
 
     /**
+     * MongoDB database.
+     */
+    private database: Database;
+
+    /**
      * Real-time push notifications for activity.
      */
     private sockets: Sockets;
@@ -57,14 +62,15 @@ export class Server {
      * 
      * @param settings   User-specified server settings.
      */
-    public constructor(settings: IServerSettings) {
+    public constructor(settings: IServerSettings, database: Database) {
         this.settings = settings;
+        this.database = database;
 
         this.app = express();
         this.app.use(express.static("src/site"));
         this.app.use("/node_modules", express.static("node_modules"));
 
-        this.api = new Api(this.app);
+        this.api = new Api(this.app, this.database);
         this.server = http.createServer(this.app);
         this.sockets = new Sockets(this.server);
 
@@ -92,28 +98,5 @@ export class Server {
             (): void => console.log(`Starting listening on port ${this.settings.port}...`));
 
         this.running = true;
-    }
-
-    /**
-     * Loads a settings file to create a Server.
-     * 
-     * @param filePath   Settings file path.
-     * @returns Promise for a new Server.
-     */
-    public static createFromFile(filePath: string): Promise<Server> {
-        return fsp.exists(filePath)
-            .then(exists => {
-                if (!exists) {
-                    throw new Error(`'${filePath}' not found.\nMake sure you copied '${filePath.replace(".json", ".default.json")}' to '${filePath}'.`);
-                }
-            })
-            .then(() => {
-                return fsp.readFile(filePath)
-                    .then((data: Buffer): Server => new Server(JSON.parse(data.toString())))
-                    .catch((error: Error): void => {
-                        console.error("Could not create server.");
-                        console.error(error);
-                    });
-            });
     }
 }

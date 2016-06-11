@@ -6,6 +6,7 @@ import * as express from "express";
 import * as url from "url";
 import { IReport, ISubmission } from "../shared/actions";
 import { ICredentials, CredentialKeys } from "../shared/login";
+import { Database } from "./database";
 import { ServerError } from "./errors";
 import { Endpoint } from "./endpoints/endpoint";
 import { Endpoints } from "./endpoints/endpoints";
@@ -49,37 +50,36 @@ export class Api {
      * 
      * @param app   The container application.
      */
-    public constructor(app: any) {
+    public constructor(app: any, database: Database) {
         app.use(bodyParser.json());
         app.get("/api", (request: express.Request, response: express.Response): void => {
             response.send("ACK");
         });
 
-        this.endpoints = new Endpoints(this);
+        this.endpoints = new Endpoints(this, database);
         this.registerEndpointRoutes(app, this.endpoints.kills);
         this.registerEndpointRoutes(app, this.endpoints.notifications);
         this.registerEndpointRoutes(app, this.endpoints.user);
         this.registerEndpointRoutes(app, this.endpoints.users);
 
-        app.post("/api/login", (request: express.Request, response: express.Response): void => {
+        app.post("/api/login", async (request: express.Request, response: express.Response) => {
             const credentials: ICredentials = request.body.credentials;
 
-            this.endpoints.user.get(credentials)
-                // Case: user alias exists in the database, does the info match?
-                .then(record => {
-                    if (
-                        credentials.nickname === record.data.nickname
-                        && credentials.alias === record.data.alias
-                        && credentials.passphrase === record.data.passphrase) {
-                        response.sendStatus(200);
-                    } else {
-                        response.sendStatus(401);
-                    }
-                })
+            const record = await this.endpoints.user.get(credentials)
                 // Case: user alias does not exist in the database
                 .catch((error: ServerError): void => {
                     response.sendStatus(401);
                 });
+
+            // Case: user alias exists in the database, but the info doesn't match does the info match?
+            if (
+                credentials.nickname !== record.data.nickname
+                || credentials.alias !== record.data.alias
+                || credentials.passphrase !== record.data.passphrase) {
+                response.sendStatus(401);
+            }
+
+            response.sendStatus(200);
         });
     }
 

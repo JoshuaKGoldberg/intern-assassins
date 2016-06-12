@@ -1,5 +1,6 @@
 const browserify = require("browserify");
 const gulp = require("gulp");
+const cucumber = require("gulp-cucumber");
 const less = require("gulp-less");
 const mocha = require("gulp-mocha");
 const runSequence = require("run-sequence");
@@ -27,12 +28,23 @@ gulp.task("less", () => {
         .pipe(gulp.dest("src/site"));
 });
 
-gulp.task("test", () => {
-    return gulp
-        .src("test/tests.js")
+gulp.task("test:unit", () => {
+    return gulp.src("test/unit/tests.js")
         .pipe(mocha({
             reporter: "spec"
         }));
+});
+
+gulp.task("test:integration", () => {
+    return gulp.src("test/integration/features/*.feature")
+        .pipe(cucumber({
+            "steps": "test/integration/steps/*.js",
+            "support": "test/integration/support/*.js"
+        }));
+});
+
+gulp.task("test", callback => {
+    runSequence(["test:unit", "test:integration"], callback);
 });
 
 gulp.task("tsc", () => {
@@ -56,6 +68,6 @@ gulp.task("watch", () => {
     gulp.watch(["src/site/**/*.less"], ["less"]);
 });
 
-gulp.task("default", ["less", "tsc", "tslint"], cb => {
-    runSequence(["browserify", "test"], cb);
+gulp.task("default", ["less", "tsc", "tslint"], callback => {
+    runSequence(["browserify", "test"], callback);
 });

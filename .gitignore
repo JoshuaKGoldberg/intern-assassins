@@ -36,7 +36,10 @@ node_modules
 **/*.css
 **/*.js
 **/*.js.map
+
+# Build and test files
 !gulpfile.js
+!test/**/*.js
 
 # Server settings
 assassins.json

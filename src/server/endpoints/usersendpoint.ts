@@ -61,7 +61,18 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
             })
             .toArray();
 
-        if (users.length === aliases.length) {
+        const foundAliases: string[] = users.map(
+            (report: IReport<IUser>): string => report.data.alias);
+
+        let aliasMissing: boolean = false;
+        for (let i: number = 0; i < aliases.length; i += 1) {
+            if (foundAliases.indexOf(aliases[i]) === -1) {
+                aliasMissing = true;
+                break;
+            }
+        }
+
+        if (!aliasMissing) {
             return Promise.resolve(users);
         }
 

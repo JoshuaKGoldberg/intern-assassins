@@ -87,9 +87,7 @@ export class Server {
 
         this.api.registerReportCallback(
             (report: IReport<any>) => {
-                const message: string = report.data.killer === report.data.victim
-                    ? `${report.data.victim} appears to be dead...`
-                    : `${report.data.killer} killed ${report.data.victim}!`;
+                const message: string = `${report.data.victim} is dead!`;
 
                 this.sockets.emit(message);
                 this.api.endpoints.notifications.storeEmittedMessage(message, report);

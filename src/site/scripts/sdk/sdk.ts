@@ -99,6 +99,7 @@ export class Sdk {
     private sendAjaxRequest<TData, TResponse>(method: Method, url: string, credentials: ICredentials, data: TData, parser: IResponseParser<TResponse>): Promise<TResponse> {
         return new Promise((resolve, reject): void => {
             const request: XMLHttpRequest = new XMLHttpRequest();
+            const body: string = JSON.stringify({ credentials, data });
 
             request.onerror = (event: Event): void => reject(event);
             request.onreadystatechange = (): void => {
@@ -113,9 +114,14 @@ export class Sdk {
                 }
             };
 
-            request.open(method, url);
-            request.setRequestHeader("content-type", "application/json");
-            request.send(JSON.stringify({ credentials, data }));
+            if (method === "GET") {
+                request.open(method, url + "?body=" + body);
+                request.send();
+            } else {
+                request.open(method, url);
+                request.setRequestHeader("content-type", "application/json");
+                request.send(body);
+            }
         });
     }
 

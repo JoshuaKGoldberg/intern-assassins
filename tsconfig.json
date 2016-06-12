@@ -35,7 +35,6 @@
         "src/site/scripts/components/activitybar/activity.tsx",
         "src/site/scripts/components/activitybar/activitybar.tsx",
         "src/site/scripts/components/footer.tsx",
-        "src/site/scripts/components/header.tsx",
         "src/site/scripts/components/profile/actionbutton.tsx",
         "src/site/scripts/components/profile/actions.tsx",
         "src/site/scripts/components/profile/greeting.tsx",

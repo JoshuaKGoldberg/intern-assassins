@@ -58,6 +58,7 @@ export class Api {
         this.registerEndpointRoutes(app, this.endpoints.kills);
         this.registerEndpointRoutes(app, this.endpoints.login);
         this.registerEndpointRoutes(app, this.endpoints.notifications);
+        this.registerEndpointRoutes(app, this.endpoints.user);
         this.registerEndpointRoutes(app, this.endpoints.users);
     }
 
@@ -130,8 +131,38 @@ export class Api {
      */
     private generateRoute<TSubmission, TData>(route: "delete" | "get" | "post" | "put", member: Endpoint<TData>): IRouteHandler {
         return (request: express.Request, response: express.Response): void => {
-            member.route(route, request.body.credentials, request.body.data, response)
-                .then((results: TData) => response.json(results));
+            const body: any = this.getBodyFromRequest(request);
+
+            member.route(route, body.credentials, body.data, response)
+                .then((results: TData) => response.json(results))
+                .catch((error: Error): void => {
+                    console.log(`Error: ${error.message}\n${error.stack}\n:(`);
+                    response.sendStatus(500);
+                });
         };
+    }
+
+    /**
+     * Retrieves a POJO body from a request.
+     * 
+     * @param request   An Express request.
+     * @returns The request's body data (by default, an empty object).
+     * @remarks The W3C spec prefers not to have form data in GET requests
+     *          so we pass a stringified body in request.query for them.
+     */
+    private getBodyFromRequest(request: express.Request): any {
+        for (const _ in request.body) {
+            if (request.body.hasOwnProperty(_)) {
+                return request.body;
+            }
+        }
+
+        const body: string | Object = request.query.body;
+
+        if (typeof body === "string") {
+            return JSON.parse(body) || {};
+        }
+
+        return body || {};
     }
 }

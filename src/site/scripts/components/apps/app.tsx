@@ -115,6 +115,9 @@ export class App extends React.Component<void, IAppState> {
                     user: report.data,
                     messages: this.state.messages
                 });
+            })
+            .catch((error: Error): void => {
+                console.log("Error!", error);
             });
     }
 

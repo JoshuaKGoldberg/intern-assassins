@@ -71,3 +71,8 @@ gulp.task("watch", () => {
 gulp.task("default", ["less", "tsc", "tslint"], callback => {
     runSequence(["browserify", "test"], callback);
 });
+
+// Hack for hanging integration tests: https://github.com/gulpjs/gulp/issues/167
+gulp.on("stop", () => {
+    process.nextTick(() => process.exit(0));
+});

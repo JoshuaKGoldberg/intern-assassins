@@ -1,3 +1,8 @@
+const expect = require("chai").expect;
+const request = require("request-promise");
+const createTestMongoDb = require("./testmongodb");
+const promiseTestServer = require("./testserver");
+
 /**
  * Valid credentials for user types.
  */
@@ -19,31 +24,45 @@ const userTypeCredentials = {
  * Generators for credentials per user type.
  */
 const credentialLookups = {
-    incorrect: () => {
+    incorrect: function () {
         return {
             alias: "nope",
             nickname: "nope",
             passphrase: "nope"
         };
     },
-    missing: () => {
+    missing: function () {
         return {};
     },
-    my: () => userTypeCredentials[this.userType],
+    my: function () {
+        return userTypeCredentials[this.userType];
+    },
 };
 
-module.exports = function () {
+/**
+ * World for testing login actions.
+ */
+class LoginWorld {
     /**
      * Sets the user type.
      * 
      * @param {string} userType
      */
-    this.setUserType = userType => {
+    setUserType(userType) {
         if (!userTypeCredentials[userType]) {
             throw new Error(`Unknown userType: '${userType}'.`);
         }
 
         this.userType = userType;
+        this.credentials = userTypeCredentials[userType];
+
+        if (userType === "user") {
+            return this.server.api.endpoints.users.importUsers([this.credentials]);
+        }
+
+        if (userType === "admin") {
+            return this.server.api.endpoints.users.importAdmins([this.credentials]);
+        }
     };
 
     /**
@@ -51,7 +70,7 @@ module.exports = function () {
      * 
      * @param {string} credentialsType
      */
-    this.getCredentials = credentialsType => {
+    getCredentials(credentialsType) {
         if (!credentialLookups[credentialsType]) {
             throw new Error(`Unknown credentialsType: '${credentialsType}'.`);
         }
@@ -61,17 +80,48 @@ module.exports = function () {
 
     /**
      * Sends a login request.
+     * 
+     * @param {object} credentials
      */
-    this.sendLoginRequest = () => {
-        // ...
+    sendLoginRequest(credentials) {
+        const options = {
+            method: "POST",
+            uri: `http://localhost:${this.server.settings.port}/api/login`,
+            body: {
+                credentials: credentials,
+                data: credentials
+            },
+            json: true,
+            transform: (_, response) => {
+                this.response = response;
+            }
+        };
+
+        return request(options).catch(function () {});
     };
 
     /**
      * Asserts a code matches what was received by the last request.
      * 
-     * @param code   An expected response code.
+     * @param {string} code   An expected response code.
      */
-    this.assertResponseCode = code => {
-        // ...
+    assertResponseCode(code) {
+        expect(this.response.statusCode.toString()).to.be.equal(code);
     };
+}
+
+module.exports = function () {
+    this.Before(function (scenario) {
+        this.mongoCloser = createTestMongoDb(scenario);
+        return promiseTestServer().then(server => {
+            server.run();
+            this.server = server;
+        });
+    });
+
+    this.After(function () {
+        this.mongoCloser();
+    });
+
+    this.World = LoginWorld;
 };

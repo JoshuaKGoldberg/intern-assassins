@@ -16,6 +16,11 @@ export interface IDatabaseSettings {
      * Port for the MongoDB database.
      */
     port: number;
+
+    /**
+     * Whether to skip logging status messages.
+     */
+    quiet: boolean;
 };
 
 /**
@@ -57,16 +62,18 @@ export class Database {
      * @param settings   Settings to connect to a MongoDB database.
      * @returns A new instance of the Database class.
      */
-    public static create(settings: IDatabaseSettings): Promise<Database> {
+    public static async create(settings: IDatabaseSettings): Promise<Database> {
         const url = `mongodb://localhost:${settings.port}/${settings.directory}`;
 
-        return new Promise<Database>((resolve, reject) => {
+        return await new Promise<Database>((resolve, reject) => {
             MongoClient.connect(url, (error: MongoError, db: Db): void => {
                 if (error) {
                     throw error;
                 }
 
-                console.log(`Connected to database at ${url}.`);
+                if (!settings.quiet) {
+                    console.log(`Connected to database at ${url}.`);
+                }
                 resolve(new Database(db));
             });
         });

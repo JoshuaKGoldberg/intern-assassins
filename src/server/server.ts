@@ -2,9 +2,11 @@
 
 "use strict";
 import * as express from "express";
+import * as fsp from "fs-promise";
 import * as http from "http";
 import { IReport } from "../shared/actions";
 import { IUser } from "../shared/users";
+import { IAssassinsSettings } from "../main";
 import { Api } from "./api";
 import { Sockets } from "./sockets";
 import { Database } from "./database";
@@ -24,6 +26,11 @@ export interface IServerSettings {
     port: number;
 
     /**
+     * Whether to skip logging status messages.
+     */
+    quiet: boolean;
+
+    /**
      * Whether to reset the database history.
      */
     reset?: boolean;
@@ -39,24 +46,24 @@ export interface IServerSettings {
  */
 export class Server {
     /**
+     * User-specified server settings.
+     */
+    public /* readonly */ settings: IServerSettings;
+
+    /**
+     * Request router to internal storage.
+     */
+    public /* readonly */ api: Api;
+
+    /**
      * Running express application responding to requests.
      */
     private app: any;
 
     /**
-     * User-specified server settings.
-     */
-    private settings: IServerSettings;
-
-    /**
      * Running http server routing requests to the app.
      */
     private server: http.Server;
-
-    /**
-     * Request router to internal storage.
-     */
-    private api: Api;
 
     /**
      * MongoDB database.
@@ -72,8 +79,9 @@ export class Server {
      * Initializes a new instance of the Server class.
      * 
      * @param settings   User-specified server settings.
+     * @param database   Wrapper around a MongoDB database.
      */
-    public constructor(settings: IServerSettings, database: Database) {
+    /* private */ constructor(settings: IServerSettings, database: Database) {
         this.settings = settings;
         this.database = database;
 
@@ -104,7 +112,7 @@ export class Server {
 
             if (this.settings.admins) {
                 console.log(`Importing ${this.settings.admins.length} admin(s).`);
-                this.api.endpoints.users.importAdmin(this.settings.admins);
+                this.api.endpoints.users.importAdmins(this.settings.admins);
             }
 
             if (this.settings.users) {
@@ -115,6 +123,40 @@ export class Server {
 
         this.server.listen(
             this.settings.port,
-            (): void => console.log(`Starting listening on port ${this.settings.port}...`));
+            (): void => {
+                if (!this.settings.quiet) {
+                    console.log(`Starting listening on port ${this.settings.port}...`);
+                }
+            });
+    }
+
+    /**
+     * Creates a server and database from reading a settings file.
+     * 
+     * @param filePath   Path to the settings file.
+     * @returns A promise for a new running server.
+     */
+    public static async createFromFile(filePath: string): Promise<Server> {
+        const settings: IAssassinsSettings = await fsp.exists(filePath)
+            .then(exists => {
+                if (!exists) {
+                    throw new Error(`'${filePath}' not found.\nMake sure you copied '${filePath.replace(".json", ".default.json")}' to '${filePath}'.`);
+                }
+            })
+            .then(() => fsp.readFile(filePath))
+            .then((data: Buffer) => JSON.parse(data.toString()));
+
+        return await Server.createFromSettings(settings);
+    }
+
+    /**
+     * Creates a server and database from a settings object.
+     * 
+     * @param settings   Settings for the server and database.
+     * @returns A promise for a new running server.
+     */
+    public static async createFromSettings(settings: IAssassinsSettings): Promise<Server> {
+        const database = await Database.create(settings.database);
+        return new Server(settings.server, database);
     }
 }

@@ -151,7 +151,7 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
      * @param users   Users to be imported as administrators.
      * @returns A promise for importing the users.
      */
-    public importAdmin(users: IUser[]): Promise<any> {
+    public importAdmins(users: IUser[]): Promise<any> {
         return this.collection.insertMany(
             users.map(
                 (user: IUser): IReport<IUser> => {

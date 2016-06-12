@@ -102,12 +102,12 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
      * @param report   Updated information for a user.
      * @returns A promise for when the user is updated.
      */
-    public update(report: IReport<IUser>): Promise<any> {
+    public async update(report: IReport<IUser>): Promise<any> {
         return this.collection.updateOne(
             {
                 "data.alias": report.data.alias
             },
-            report.data);
+            report);
     }
 
     /**

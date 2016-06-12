@@ -37,7 +37,7 @@ export class KillClaimsEndpoint extends Endpoint<IReport<IKillClaim>> {
         }
 
         // Retrieve the killer and victim users
-        const userReports = this.api.endpoints.users.getByAliases(credentials, [claim.killer, claim.victim]);
+        const userReports = await this.api.endpoints.users.getByAliases(credentials, [claim.killer, claim.victim]);
         let killer: IUser;
         let victim: IUser;
         [killer, victim] = [userReports[0].data, userReports[1].data];
@@ -45,7 +45,6 @@ export class KillClaimsEndpoint extends Endpoint<IReport<IKillClaim>> {
         if (!killer.alive) {
             throw new ServerError(ErrorCause.UsersDead, killer.alias);
         }
-
         if (!victim.alive) {
             throw new ServerError(ErrorCause.UsersDead, victim.alias);
         }
@@ -62,20 +61,18 @@ export class KillClaimsEndpoint extends Endpoint<IReport<IKillClaim>> {
         }
 
         // Update the corresponding users
-        this.api.endpoints.users
-            .update({
-                data: killer,
-                reporter: killer.alias,
-                timestamp: Date.now()
-            })
-            .then(() => this.api.endpoints.users.update({
-                data: victim,
-                reporter: victim.alias,
-                timestamp: Date.now()
-            }))
-            .then(() => this.api.fireReportCallback(report))
-            .then(() => report);
+        await this.api.endpoints.users.update({
+            data: killer,
+            reporter: killer.alias,
+            timestamp: Date.now()
+        });
+        await this.api.endpoints.users.update({
+            data: victim,
+            reporter: victim.alias,
+            timestamp: Date.now()
+        });
 
+        this.api.fireReportCallback(report);
         return report;
     }
 }

@@ -27,6 +27,11 @@ export interface IServerSettings {
      * Whether to reset the database history.
      */
     reset?: boolean;
+
+    /**
+     * Users to add when resetting the database.
+     */
+    users?: IUser[];
 }
 
 /**
@@ -98,7 +103,16 @@ export class Server {
     public run(): void {
         if (this.settings.reset) {
             this.database.drop();
-            this.api.endpoints.users.putAdmins(this.settings.admins);
+
+            if (this.settings.admins) {
+                console.log(`Importing ${this.settings.admins.length} admin(s).`);
+                this.api.endpoints.users.importAdmin(this.settings.admins);
+            }
+
+            if (this.settings.users) {
+                console.log(`Importing ${this.settings.users.length} user(s).`);
+                this.api.endpoints.users.importUsers(this.settings.users);
+            }
         }
 
         this.server.listen(

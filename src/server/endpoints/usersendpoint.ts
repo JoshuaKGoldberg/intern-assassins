@@ -26,9 +26,23 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
      * @param credentials   Login values for authentication.
      * @returns A promise for all users.
      */
-    public get(credentials: ICredentials): Promise<IReport<IUser>[]> {
-        return this.validateAdminSubmission(credentials)
-            .then(() => this.collection.find().toArray());
+    public async get(credentials: ICredentials): Promise<IReport<IUser>[]> {
+        await this.validateAdminSubmission(credentials);
+
+        return this.collection.find().toArray();
+    }
+
+    /**
+     * Adds users to the database.
+     * 
+     * @param credentials   Login values for authentication.
+     * @param users   Users to add.
+     * @returns A promise for addingthe users.
+     */
+    public async put(credentials: ICredentials, users: IReport<IUser>[]): Promise<any> {
+        await this.validateAdminSubmission(credentials);
+
+        return this.collection.insertMany(users);
     }
 
     /**
@@ -97,12 +111,37 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
     }
 
     /**
-     * Adds users as administrators to the database.
+     * Imports users into the database.
      * 
-     * @param users   Users to be added as administrators.
-     * @returns A promise for adding the users.
+     * @param users   Users to be imported as administrators.
+     * @returns A promise for importing the users.
      */
-    public putAdmins(users: IUser[]): Promise<any> {
+    public importUsers(users: IUser[]): Promise<any> {
+        return this.collection.insertMany(
+            users.map(
+                (user: IUser): IReport<IUser> => {
+                    return {
+                        data: {
+                            alias: user.alias,
+                            alive: true,
+                            biography: user.biography,
+                            nickname: user.nickname,
+                            passphrase: user.passphrase,
+                            target: user.target
+                        },
+                        reporter: "",
+                        timestamp: Date.now()
+                    };
+                }));
+    }
+
+    /**
+     * Imports users as administrators to the database.
+     * 
+     * @param users   Users to be imported as administrators.
+     * @returns A promise for importing the users.
+     */
+    public importAdmin(users: IUser[]): Promise<any> {
         return this.collection.insertMany(
             users.map(
                 (user: IUser): IReport<IUser> => {

@@ -48,6 +48,14 @@ export class KillClaimsEndpoint extends Endpoint<IReport<IKillClaim>> {
             throw new ServerError(ErrorCause.UsersDead, victim.alias);
         }
 
+        // Don't allow duplicate claims
+        if (this.collection.findOne({
+                "data.killer": claim.killer,
+                "data.victim": claim.victim
+            })) {
+            throw new ServerError(ErrorCause.ClaimAlreadyExists, victim.alias);
+        }
+
         // Add the claim to the database
         const report: IReport<IKillClaim> = this.wrapSubmission(credentials, claim);
         await this.collection.insertOne(report);

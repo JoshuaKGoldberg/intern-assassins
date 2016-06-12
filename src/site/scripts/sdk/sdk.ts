@@ -55,11 +55,34 @@ export class Sdk {
     }
 
     /**
+     * Retrieves active kill claims on or by the user.
+     * 
+     * @param credentials   The submitting user credentials.
+     * @returns A promise for the user's active kill claims.
+     */
+    public getUserActiveKillClaims(credentials: ICredentials): Promise<IReport<IKillClaim>[]> {
+        return this.sendAjaxRequest(
+            "GET",
+            "api/kills",
+            credentials,
+            {
+                $or: [
+                    {
+                        "data.killer": credentials.alias
+                    },
+                    {
+                        "data.victim": credentials.alias
+                    }
+                ]
+            },
+            Sdk.parseResponseForJsonData);
+    }
+
+    /**
      * Retrieves all users' information.
      * 
      * @param credentials   The submitting user credentials.
      * @returns A promise for all users.
-     * @todo Implement this.
      */
     public getUsers(credentials: ICredentials): Promise<IReport<IUser>[]> {
         return this.sendAjaxRequest(

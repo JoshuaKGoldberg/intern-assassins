@@ -3,7 +3,7 @@
 "use strict";
 import * as bodyParser from "body-parser";
 import * as express from "express";
-import { IReport } from "../shared/actions";
+import { IReport, Method } from "../shared/actions";
 import { Database } from "./database";
 import { ServerError } from "./errors";
 import { Endpoint } from "./endpoints/endpoint";
@@ -91,10 +91,10 @@ export class Api {
      */
     private registerEndpointRoutes(app: any, endpoint: Endpoint<any>): void {
         app.route("/api/" + endpoint.getRoute())
-            .delete(this.wrapRouteHandler(this.generateRoute("delete", endpoint)))
-            .get(this.wrapRouteHandler(this.generateRoute("get", endpoint)))
-            .post(this.wrapRouteHandler(this.generateRoute("post", endpoint)))
-            .put(this.wrapRouteHandler(this.generateRoute("put", endpoint)));
+            .delete(this.wrapRouteHandler(this.generateRoute("DELETE", endpoint)))
+            .get(this.wrapRouteHandler(this.generateRoute("GET", endpoint)))
+            .post(this.wrapRouteHandler(this.generateRoute("POST", endpoint)))
+            .put(this.wrapRouteHandler(this.generateRoute("PUT", endpoint)));
     }
 
     /**
@@ -129,11 +129,11 @@ export class Api {
      * @param member   A storage member to defer to.
      * @returns A route handler.
      */
-    private generateRoute<TSubmission, TData>(route: "delete" | "get" | "post" | "put", member: Endpoint<TData>): IRouteHandler {
+    private generateRoute<TSubmission, TData>(method: Method, member: Endpoint<TData>): IRouteHandler {
         return (request: express.Request, response: express.Response): void => {
             const body: any = this.getBodyFromRequest(request);
 
-            member.route(route, body.credentials, body.data, response)
+            member.route(method, body.credentials, body.data, response)
                 .then((results: TData) => response.json(results))
                 .catch((error: Error): void => {
                     console.log(`Error: ${error.message}\n${error.stack}\n:(`);

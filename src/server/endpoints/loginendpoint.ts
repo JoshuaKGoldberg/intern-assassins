@@ -30,9 +30,12 @@ export class LoginEndpoint extends Endpoint<void> {
                 response.sendStatus(401);
             });
 
+        if (!record) {
+            return Promise.resolve();
+        }
+
         if (
-            !record
-            || credentials.nickname !== record.data.nickname
+            credentials.nickname !== record.data.nickname
             || credentials.alias !== record.data.alias
             || credentials.passphrase !== record.data.passphrase) {
             response.sendStatus(401);

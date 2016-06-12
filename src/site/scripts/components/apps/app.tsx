@@ -4,6 +4,7 @@
 "use strict";
 declare var io: SocketIOStatic;
 import * as React from "react";
+import { IKillClaim } from "../../../../shared/kills";
 import { IReport } from "../../../../shared/actions";
 import { IUser } from "../../../../shared/users";
 import { ICredentials } from "../../../../shared/login";
@@ -18,14 +19,19 @@ import { AppUser } from "./appuser";
  */
 export interface IAppState {
     /**
-     * Currently logged in user, if not anonymous.
+     * Any active kill claims related to the user, if not anyonymous.
      */
-    user?: IUser;
+    killClaimReports?: IReport<IKillClaim>[];
 
     /**
      * Recently pushed notification messages.
      */
     messages: string[];
+
+    /**
+     * Currently logged in user, if not anonymous.
+     */
+    user?: IUser;
 }
 
 /**
@@ -70,7 +76,7 @@ export class App extends React.Component<void, IAppState> {
         this.socket.on("report", (reportRaw: string): void => this.receiveMessage(reportRaw));
 
         if (this.storage.isComplete()) {
-            this.receiveLoginValues(this.storage.asCredentials());
+            this.receiveCredentials(this.storage.asCredentials());
         }
     }
 
@@ -90,14 +96,16 @@ export class App extends React.Component<void, IAppState> {
 
             return (
                 <AppUser
+                    killClaimReports={this.state.killClaimReports}
                     messages={this.state.messages}
+                    refreshUserData={(): void => { this.refreshUserData(); }}
                     sdk={this.sdk}
                     user={this.state.user} />);
         }
 
         return (
             <AppAnonymous
-                onLogin={(values: ICredentials) => this.receiveLoginValues(values)}
+                onLogin={(values: ICredentials) => this.receiveCredentials(values)}
                 sdk={this.sdk} />);
     }
 
@@ -106,23 +114,38 @@ export class App extends React.Component<void, IAppState> {
      * 
      * @param values   User login credentials.
      */
-    private receiveLoginValues(values: ICredentials): void {
-        this.storage.setValues(values);
+    private receiveCredentials(credentials: ICredentials): void {
+        this.storage.setValues(credentials);
+        this.refreshUserData();
+    }
 
-        this.sdk.getUser(values)
-            .then((report: IReport<IUser>): void => {
-                this.setState({
-                    user: report.data,
-                    messages: this.state.messages
-                });
-            })
+    /**
+     * Sends a request for relevant user data, then refreshes state.
+     * 
+     * @returns A promise for loading the data.
+     */
+    private async refreshUserData(): Promise<void> {
+        const credentials: ICredentials = this.storage.asCredentials();
+        const [userReport, killClaimReports] = await Promise.all(
+            [
+                this.sdk.getUser(credentials),
+                this.sdk.getUserActiveKillClaims(credentials)
+            ])
             .catch((error: Error): void => {
                 console.log("Error!", error);
             });
+
+        this.setState({
+            killClaimReports: killClaimReports,
+            messages: this.state.messages,
+            user: userReport.data
+        });
     }
 
     /**
      * Receives a notification message.
+     * 
+     * @param message   The notification message contents.
      */
     private receiveMessage(message: string): void {
         const messages: string[] = this.state.messages.slice();

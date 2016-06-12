@@ -5,6 +5,7 @@
 import { Api } from "../api";
 import { Database } from "../database";
 import { KillClaimsEndpoint } from "./killclaimsendpoint";
+import { LoginEndpoint } from "./loginendpoint";
 import { NotificationsEndpoint } from "./notificationsendpoint";
 import { UserEndpoint } from "./userendpoint";
 import { UsersEndpoint } from "./usersendpoint";
@@ -17,6 +18,11 @@ export class Endpoints {
      * Storage for kill claims.
      */
     public /* readonly */ kills: KillClaimsEndpoint;
+
+    /**
+     * Storage for logins.
+     */
+    public /* readonly */ login: LoginEndpoint;
 
     /**
      * Storage for emitted notifications.
@@ -46,6 +52,7 @@ export class Endpoints {
     public constructor(api: Api, database: Database) {
         this.api = api;
         this.kills = new KillClaimsEndpoint(api, database);
+        this.login = new LoginEndpoint(api, database);
         this.notifications = new NotificationsEndpoint(api, database);
         this.user = new UserEndpoint(api, database);
         this.users = new UsersEndpoint(api, database);

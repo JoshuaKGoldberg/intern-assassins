@@ -46,7 +46,7 @@ export abstract class Endpoint<T> {
      * @param alias   Alias of a user.
      * @returns A promise for the data with the id.
      */
-    public get(credentials: ICredentials, query: any): Promise<T> {
+    public get(credentials: ICredentials, query: any, response: Express.Response): Promise<T> {
         throw new ServerError(ErrorCause.NotImplemented);
     }
 
@@ -57,7 +57,7 @@ export abstract class Endpoint<T> {
      * @param data   Data to delete.
      * @returns A promise, if deleted successfully.
      */
-    public delete(credentials: ICredentials, query: any): Promise<any> {
+    public delete(credentials: ICredentials, query: any, response: Express.Response): Promise<any> {
         throw new ServerError(ErrorCause.NotImplemented);
     }
 
@@ -68,7 +68,7 @@ export abstract class Endpoint<T> {
      * @param data   Data to post.
      * @returns A promise for the result, if posted successfully.
      */
-    public post(credentials: ICredentials, data: any): Promise<T> {
+    public post(credentials: ICredentials, data: any, response: Express.Response): Promise<T> {
         throw new ServerError(ErrorCause.NotImplemented);
     }
 
@@ -79,26 +79,26 @@ export abstract class Endpoint<T> {
      * @param data   Data to put.
      * @returns A promise for the data, if put successfully.
      */
-    public put(credentials: ICredentials, data: any): Promise<T> {
+    public put(credentials: ICredentials, data: any, response: Express.Response): Promise<T> {
         throw new ServerError(ErrorCause.NotImplemented);
     }
 
     /**
      * 
      */
-    public route(route: string, credentials: ICredentials, data: any): Promise<T> {
+    public route(route: string, credentials: ICredentials, data: any, response: Express.Response): Promise<T> {
         switch (route) {
             case "delete":
-                return this.delete(credentials, data);
+                return this.delete(credentials, data, response);
 
             case "get":
-                return this.get(credentials, data);
+                return this.get(credentials, data, response);
 
             case "post":
-                return this.post(credentials, data);
+                return this.post(credentials, data, response);
 
             case "put":
-                return this.put(credentials, data);
+                return this.put(credentials, data, response);
 
             default:
                 throw new Error(`Unknown route: '${route}'.`);

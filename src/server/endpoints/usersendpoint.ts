@@ -67,17 +67,19 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
      * @remarks This can't call validateUserSubmission, because that calls this.
      */
     public async getByCredentials(credentials: ICredentials): Promise<IReport<IUser>> {
-        this.validateCredentials(credentials);
+        await this.validateCredentials(credentials);
 
         const user: IReport<IUser> = await this.collection.findOne({
-            data: credentials
+            "data.alias": credentials.alias,
+            "data.nickname": credentials.nickname,
+            "data.passphrase": credentials.passphrase
         });
 
         if (!user) {
             throw new ServerError(ErrorCause.UserDoesNotExist, credentials.alias);
         }
 
-        return Promise.resolve(user);
+        return user;
     }
 
     /**

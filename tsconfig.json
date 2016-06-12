@@ -14,6 +14,7 @@
         "src/server/endpoints/endpoint.ts",
         "src/server/endpoints/endpoints.ts",
         "src/server/endpoints/killclaimsendpoint.ts",
+        "src/server/endpoints/loginendpoint.ts",
         "src/server/endpoints/notificationsendpoint.ts",
         "src/server/endpoints/userendpoint.ts",
         "src/server/endpoints/usersendpoint.ts",

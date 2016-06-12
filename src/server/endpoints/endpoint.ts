@@ -2,7 +2,7 @@
 
 "use strict";
 import { Collection } from "mongodb";
-import { IReport } from "../../shared/actions";
+import { IReport, Method } from "../../shared/actions";
 import { IUser } from "../../shared/users";
 import { CredentialKeys, ICredentials } from "../../shared/login";
 import { ErrorCause, ServerError } from "../errors";
@@ -44,9 +44,9 @@ export abstract class Endpoint<T> {
     /**
      * @param credentials   Login values for verification.
      * @param alias   Alias of a user.
-     * @returns A promise for the data with the id.
+     * @returns A promise for the queried data.
      */
-    public get(credentials: ICredentials, query: any, response: Express.Response): Promise<T> {
+    public get(credentials: ICredentials, query: any, response: Express.Response): Promise<T | T[]> {
         throw new ServerError(ErrorCause.NotImplemented);
     }
 
@@ -84,24 +84,29 @@ export abstract class Endpoint<T> {
     }
 
     /**
+     * Routes a request to the appropriate handler.
      * 
+     * @param route   The handler method.
+     * @param credentials   Login values for verification.
+     * @param data   Data to transfer.
+     * @returns A promise for the handler's result, if successful.
      */
-    public route(route: string, credentials: ICredentials, data: any, response: Express.Response): Promise<T> {
-        switch (route) {
-            case "delete":
+    public route(method: Method, credentials: ICredentials, data: any, response: Express.Response): Promise<T> {
+        switch (method) {
+            case "DELETE":
                 return this.delete(credentials, data, response);
 
-            case "get":
+            case "GET":
                 return this.get(credentials, data, response);
 
-            case "post":
+            case "POST":
                 return this.post(credentials, data, response);
 
-            case "put":
+            case "POST":
                 return this.put(credentials, data, response);
 
             default:
-                throw new Error(`Unknown route: '${route}'.`);
+                throw new Error(`Unknown route: '${method}'.`);
         }
     }
 

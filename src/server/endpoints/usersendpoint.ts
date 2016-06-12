@@ -9,8 +9,6 @@ import { Endpoint } from "./endpoint";
 
 /**
  * Mock database storage for users.
- * 
- * @todo Use MongoDB...
  */
 export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
     /**
@@ -25,6 +23,7 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
      * 
      * @param credentials   Login values for authentication.
      * @returns A promise for all users.
+     * @remarks A user retrieving their own data should use "user/get".
      */
     public async get(credentials: ICredentials): Promise<IReport<IUser>[]> {
         await this.validateAdminSubmission(credentials);

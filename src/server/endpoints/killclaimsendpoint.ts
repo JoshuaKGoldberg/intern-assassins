@@ -10,8 +10,6 @@ import { Endpoint } from "./endpoint";
 
 /**
  * Mock database storage for kill claims.
- * 
- * @todo Use MongoDB...
  */
 export class KillClaimsEndpoint extends Endpoint<IReport<IKillClaim>> {
     /**
@@ -22,6 +20,40 @@ export class KillClaimsEndpoint extends Endpoint<IReport<IKillClaim>> {
     }
 
     /**
+     * Retrieves kill claims.
+     * 
+     * @param credentials   Login values for authentication.
+     * @param query   A filter on the kill claims.
+     * @returns Filtered kill claims.
+     * @remarks It would be more efficient to modify the filter for non-admin
+     *          users, rather than the post-query results.
+     */
+    public async get(credentials: ICredentials, query: any): Promise<IReport<IKillClaim>[]> {
+        const user: IUser = await this.validateUserSubmission(credentials);
+        const claims: IReport<IKillClaim>[] = await this.collection.find(query).toArray();
+
+        // Only admins can only view claims regarding other users
+        if (user.admin) {
+            return claims;
+        }
+
+        return claims
+            // Regular users can only see reports regarding themselves
+            .filter(
+                (report: IReport<IKillClaim>): boolean =>
+                    user.alias === report.data.killer || user.alias === report.data.victim)
+            .map(
+                (report: IReport<IKillClaim>): IReport<IKillClaim> => {
+                    // They also can't see the alias of reports claiming they've died
+                    if (user.alias === report.data.victim) {
+                        delete report.data.killer;
+                    }
+
+                    return report;
+                });
+    }
+
+    /**
      * Adds a new kill claim.
      * 
      * @param credentials   Login values for authentication.
@@ -29,7 +61,6 @@ export class KillClaimsEndpoint extends Endpoint<IReport<IKillClaim>> {
      * @returns A promise for the kill claim, if added successfully.
      */
     public async put(credentials: ICredentials, claim: IKillClaim): Promise<IReport<IKillClaim>> {
-        console.log("Claiming", claim);
         const user: IUser = await this.validateUserSubmission(credentials);
 
         // You can only claim a kill on yourself or your target
@@ -49,7 +80,7 @@ export class KillClaimsEndpoint extends Endpoint<IReport<IKillClaim>> {
         }
 
         // Don't allow duplicate claims
-        if (this.collection.findOne({
+        if (await this.collection.findOne({
                 "data.killer": claim.killer,
                 "data.victim": claim.victim
             })) {

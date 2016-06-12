@@ -2,17 +2,12 @@
 
 "use strict";
 import { IReport } from "../../shared/actions";
-import { StorageTable } from "./storagetable";
+import { Endpoint } from "./endpoint";
 
 /**
  * Mock database storage for emitted notifications.
  */
-export class NotificationsTable extends StorageTable<IReport<string>> {
-    /**
-     * All known messages.
-     */
-    private messages: IReport<string>[] = [];
-
+export class NotificationsEndpoint extends Endpoint<IReport<string>> {
     /**
      * @returns Path to this part of the global api.
      */
@@ -27,14 +22,14 @@ export class NotificationsTable extends StorageTable<IReport<string>> {
      * @param report   An associated report.
      * @returns A newly generated report for the message.
      */
-    public storeEmittedMessage(message: string, report: IReport<any>): IReport<string> {
+    public async storeEmittedMessage(message: string, report: IReport<any>): Promise<IReport<string>> {
         const messageReport = {
             data: message,
             reporter: report.reporter,
             timestamp: report.timestamp
         };
 
-        this.messages.push(messageReport);
+        await this.collection.insertOne(messageReport);
 
         return messageReport;
     }

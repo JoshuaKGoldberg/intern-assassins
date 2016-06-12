@@ -5,6 +5,7 @@
  */
 export enum ErrorCause {
     Unknown = 0,
+    ClaimAlreadyExists,
     IncorrectCredentials,
     MissingField,
     MissingFields,
@@ -17,8 +18,7 @@ export enum ErrorCause {
     UsersAlreadyExist,
     UserDead,
     UsersDead,
-    WrongTarget,
-    ClaimAlreadyExists
+    WrongTarget
 }
 
 /**

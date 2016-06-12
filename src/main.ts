@@ -1,24 +1,45 @@
-/* tslint:disable */
 "use strict";
-import { Server } from "./server/server";
+import * as fsp from "fs-promise";
+import { IServerSettings, Server } from "./server/server";
+import { Database, IDatabaseSettings } from "./server/database";
 
-(function () {
-    if (parseInt(process.version.match(/[0-9]/)[0]) < 6) {
-        console.log("Node >=6.0.0 required. You're on '" + process.version + "'.");
-        console.log("https://nodejs.org/en/download");
-        return;
-    }
+/**
+ * Settings to initialize the assassins app.
+ */
+export interface IAssassinsSettings {
+    /**
+     * Settings for the MongoDB database.
+     */
+    database: IDatabaseSettings;
 
     /**
-     * Path to a settings file storing server settings.
+     * Settings for the web server.
      */
-    var settingsFileName: string = "assassins.json";
+    server: IServerSettings;
+}
 
-    Server.createFromFile(settingsFileName)
-        .then(function (server: Server): void {
-            server.run();
+/**
+ * Path to a settings file storing server settings.
+ */
+const settingsFileName: string = "assassins.json";
+
+/**
+ * Promise for the server.
+ */
+const serverPromise: Promise<Server> = (async () => {
+    const settings: IAssassinsSettings = await fsp.exists(settingsFileName)
+        .then(exists => {
+            if (!exists) {
+                throw new Error(`'${settingsFileName}' not found.\nMake sure you copied '${settingsFileName.replace(".json", ".default.json")}' to '${settingsFileName}'.`);
+            }
         })
-        .catch(function (error) {
-            console.error(error, "\n:(");
-        });
+        .then(() => fsp.readFile(settingsFileName))
+        .then((data: Buffer) => JSON.parse(data.toString()));
+
+    const database = await Database.create(settings.database);
+    return new Server(settings.server, database);
 })();
+
+serverPromise
+    .then((server: Server): void => server.run())
+    .catch(error => console.error(`${error}\n:(`));

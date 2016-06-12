@@ -97,8 +97,9 @@ export class UsersTable extends React.Component<IUsersTableProps, void> {
      */
     private renderUser(user: IUser): JSX.Element[] {
         return this.props.fields
-            .map((key: string, i: number): JSX.Element => {
-                return <td key={i}>{user[key].toString()}</td>;
+            .filter((field: string): boolean => user.hasOwnProperty[field])
+            .map((field: string, i: number): JSX.Element => {
+                return <td key={i}>{user[field].toString()}</td>;
             });
     }
 }

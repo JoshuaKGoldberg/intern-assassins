@@ -3,19 +3,35 @@
 "use strict";
 import * as express from "express";
 import * as http from "http";
-import * as fsp from "fs-promise";
 import { IReport } from "../shared/actions";
+import { IUser } from "../shared/users";
 import { Api } from "./api";
 import { Sockets } from "./sockets";
+import { Database } from "./database";
 
 /**
  * Settings to initialize a new Server.
  */
 export interface IServerSettings {
     /**
-     * Which port to use, if not the default.
+     * Administrators to add when resetting the database.
      */
-    port?: number;
+    admins?: IUser[];
+
+    /**
+     * Port for the web server.
+     */
+    port: number;
+
+    /**
+     * Whether to reset the database history.
+     */
+    reset?: boolean;
+
+    /**
+     * Users to add when resetting the database.
+     */
+    users?: IUser[];
 }
 
 /**
@@ -43,77 +59,62 @@ export class Server {
     private api: Api;
 
     /**
+     * MongoDB database.
+     */
+    private database: Database;
+
+    /**
      * Real-time push notifications for activity.
      */
     private sockets: Sockets;
-
-    /**
-     * Whether the server is currently running.
-     */
-    private running: boolean = false;
 
     /**
      * Initializes a new instance of the Server class.
      * 
      * @param settings   User-specified server settings.
      */
-    public constructor(settings: IServerSettings) {
+    public constructor(settings: IServerSettings, database: Database) {
         this.settings = settings;
+        this.database = database;
 
         this.app = express();
         this.app.use(express.static("src/site"));
         this.app.use("/node_modules", express.static("node_modules"));
 
-        this.api = new Api(this.app);
+        this.api = new Api(this.app, this.database);
         this.server = http.createServer(this.app);
         this.sockets = new Sockets(this.server);
 
         this.api.registerReportCallback(
             (report: IReport<any>) => {
-                const message: string = report.data.killer === report.data.victim
-                    ? `${report.data.victim} appears to be dead...`
-                    : `${report.data.killer} killed ${report.data.victim}!`;
+                const message: string = `${report.data.victim} is dead!`;
 
                 this.sockets.emit(message);
-                this.api.notifications.storeEmittedMessage(message, report);
+                this.api.endpoints.notifications.storeEmittedMessage(message, report);
             });
+
     }
 
     /**
-     * Starts listening for requests.
+     * Starts the server listening for requests.
      */
     public run(): void {
-        if (this.running) {
-            throw new Error("Server is already running!");
+        if (this.settings.reset) {
+            this.database.drop();
+
+            if (this.settings.admins) {
+                console.log(`Importing ${this.settings.admins.length} admin(s).`);
+                this.api.endpoints.users.importAdmin(this.settings.admins);
+            }
+
+            if (this.settings.users) {
+                console.log(`Importing ${this.settings.users.length} user(s).`);
+                this.api.endpoints.users.importUsers(this.settings.users);
+            }
         }
 
         this.server.listen(
             this.settings.port,
             (): void => console.log(`Starting listening on port ${this.settings.port}...`));
-
-        this.running = true;
-    }
-
-    /**
-     * Loads a settings file to create a Server.
-     * 
-     * @param filePath   Settings file path.
-     * @returns Promise for a new Server.
-     */
-    public static createFromFile(filePath: string): Promise<Server> {
-        return fsp.exists(filePath)
-            .then(exists => {
-                if (!exists) {
-                    throw new Error(`'${filePath}' not found.\nMake sure you copied '${filePath.replace(".json", ".default.json")}' to '${filePath}'.`);
-                }
-            })
-            .then(() => {
-                return fsp.readFile(filePath)
-                    .then((data: Buffer): Server => new Server(JSON.parse(data.toString())))
-                    .catch((error: Error): void => {
-                        console.error("Could not create server.");
-                        console.error(error);
-                    });
-            });
     }
 }

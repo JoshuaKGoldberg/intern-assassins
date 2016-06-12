@@ -14,7 +14,30 @@ It's served by an `expressjs` server.
 Under `src/server` is an `expressjs` server.
 
 
+## Building
+
+Required software:
+* [Node.js](http://node.js.org) >= 6.X
+* [MongoDB](https://www.mongodb.com/)
+    * *[Windows installation guide](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/)*
+
+To build from scratch, run the following commands:
+
+```
+npm install -g gulp
+npm install
+gulp
+```
+
+
 ## Running
+
+First, a `mongod` intsance should be running on your computer.
+For example:
+
+```shell
+"C:\Program Files\MongoDB\Server\3.2\bin\mongod.exe"
+```
 
 Settings for the server are read from `assassins.json` at startup.
 This file contains the server `port`.
@@ -24,20 +47,6 @@ You'll also need to build first.
 
 ```shell
 node src\main
-```
-
-
-## Build Process
-
-[Gulp](http://gulpjs.com/) is used to automate building, which requires [Node.js](http://node.js.org).
-Use Node >= 6.0.0.
-
-To build from scratch, install Node.js and run the following commands:
-
-```
-npm install -g gulp
-npm install
-gulp
 ```
 
 ### Individual Gulp tasks

@@ -4,12 +4,12 @@
 import { IReport } from "../../shared/actions";
 import { ICredentials } from "../../shared/login";
 import { IUser } from "../../shared/users";
-import { StorageTable } from "./storagetable";
+import { Endpoint } from "./endpoint";
 
 /**
- * Mock database storage for single user operations.
+ * Endpoint for retrieving a single user's information.
  */
-export class UserTable extends StorageTable<IReport<IUser>> {
+export class UserEndpoint extends Endpoint<IReport<IUser>> {
     /**
      * @returns Path to this part of the global api.
      */
@@ -25,6 +25,6 @@ export class UserTable extends StorageTable<IReport<IUser>> {
      * @returns A promise for the user with the alias.
      */
     public get(credentials: ICredentials): Promise<IReport<IUser>> {
-        return this.api.users.getSingle(credentials);
+        return this.api.endpoints.users.getByCredentials(credentials);
     }
 }

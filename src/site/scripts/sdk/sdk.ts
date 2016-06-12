@@ -34,10 +34,8 @@ export class Sdk {
         return this.sendAjaxRequest(
             "POST",
             "api/login",
-            {
-                credentials: credentials,
-                data: credentials
-            },
+            credentials,
+            credentials,
             Sdk.parseResponseForOkStatus);
     }
 
@@ -52,6 +50,7 @@ export class Sdk {
             "GET",
             "api/user",
             credentials,
+            {},
             Sdk.parseResponseForJsonData);
     }
 
@@ -67,6 +66,7 @@ export class Sdk {
             "GET",
             "api/users",
             credentials,
+            {},
             Sdk.parseResponseForJsonData);
     }
 
@@ -81,10 +81,8 @@ export class Sdk {
         return this.sendAjaxRequest(
             "PUT",
             "api/kills",
-            {
-                credentials: credentials,
-                data: claim
-            },
+            credentials,
+            claim,
             Sdk.parseResponseForJsonData);
     }
 
@@ -93,19 +91,15 @@ export class Sdk {
      * 
      * @param method   What REST method to use.
      * @param url   The API endpoint locator.
+     * @param credentials   User credentials.
      * @param data   Contents of the request.
      * @param parser   What response parser to apply to the request.
      * @returns A promise for the type of response.
      */
-    private sendAjaxRequest<TData, TResponse>(method: Method, url: string, data: TData, parser: IResponseParser<TResponse>): Promise<TResponse> {
-        if (method === "GET") {
-            url = url + "?" + Object.keys(data)
-                .map((key: string): string => `${key}=${encodeURIComponent(data[key])}`)
-                .join("&");
-        }
-
+    private sendAjaxRequest<TData, TResponse>(method: Method, url: string, credentials: ICredentials, data: TData, parser: IResponseParser<TResponse>): Promise<TResponse> {
         return new Promise((resolve, reject): void => {
             const request: XMLHttpRequest = new XMLHttpRequest();
+            const body: string = JSON.stringify({ credentials, data });
 
             request.onerror = (event: Event): void => reject(event);
             request.onreadystatechange = (): void => {
@@ -120,9 +114,14 @@ export class Sdk {
                 }
             };
 
-            request.open(method, url);
-            request.setRequestHeader("content-type", "application/json");
-            request.send(JSON.stringify(data));
+            if (method === "GET") {
+                request.open(method, url + "?body=" + body);
+                request.send();
+            } else {
+                request.open(method, url);
+                request.setRequestHeader("content-type", "application/json");
+                request.send(body);
+            }
         });
     }
 

@@ -26,6 +26,7 @@
     "gulp-tslint": "^5.0.0",
     "gulp-typescript": "^2.13.4",
     "less": "^2.7.1",
+    "mongodb": "^2.1.18",
     "run-sequence": "^1.2.0",
     "tslint": "^3.10.2",
     "typescript": "^1.8.10",
@@ -35,6 +36,9 @@
   "dependencies": {
     "body-parser": "^1.15.1",
     "express": "^4.13.4",
+    "mongod": "^1.3.0",
+    "mongodb": "^2.1.18",
+    "mongoose": "^4.4.20",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
     "requirejs": "^2.2.0",

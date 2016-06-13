@@ -1,11 +1,12 @@
 /// <reference path="../../../typings/all.d.ts" />
 
 "use strict";
+import * as express from "express";
 import { Collection } from "mongodb";
 import { IReport, Method } from "../../shared/actions";
 import { IUser } from "../../shared/users";
 import { CredentialKeys, ICredentials } from "../../shared/login";
-import { ErrorCause, ServerError } from "../errors";
+import { ErrorCause, NotAuthorizedError, ServerError } from "../errors";
 import { Api } from "../api";
 import { Database } from "../database";
 
@@ -46,7 +47,7 @@ export abstract class Endpoint<T> {
      * @param alias   Alias of a user.
      * @returns A promise for the queried data.
      */
-    public get(credentials: ICredentials, query: any, response: Express.Response): Promise<T | T[]> {
+    public get(credentials: ICredentials, query: any, response: express.Response): Promise<T | T[]> {
         throw new ServerError(ErrorCause.NotImplemented);
     }
 
@@ -57,7 +58,7 @@ export abstract class Endpoint<T> {
      * @param data   Data to delete.
      * @returns A promise, if deleted successfully.
      */
-    public delete(credentials: ICredentials, query: any, response: Express.Response): Promise<any> {
+    public delete(credentials: ICredentials, query: any, response: express.Response): Promise<any> {
         throw new ServerError(ErrorCause.NotImplemented);
     }
 
@@ -68,7 +69,7 @@ export abstract class Endpoint<T> {
      * @param data   Data to post.
      * @returns A promise for the result, if posted successfully.
      */
-    public post(credentials: ICredentials, data: any, response: Express.Response): Promise<T> {
+    public post(credentials: ICredentials, data: any, response: express.Response): Promise<T> {
         throw new ServerError(ErrorCause.NotImplemented);
     }
 
@@ -79,7 +80,7 @@ export abstract class Endpoint<T> {
      * @param data   Data to put.
      * @returns A promise for the data, if put successfully.
      */
-    public put(credentials: ICredentials, data: any, response: Express.Response): Promise<T> {
+    public put(credentials: ICredentials, data: any, response: express.Response): Promise<T> {
         throw new ServerError(ErrorCause.NotImplemented);
     }
 
@@ -91,7 +92,7 @@ export abstract class Endpoint<T> {
      * @param data   Data to transfer.
      * @returns A promise for the handler's result, if successful.
      */
-    public route(method: Method, credentials: ICredentials, data: any, response: Express.Response): Promise<T> {
+    public route(method: Method, credentials: ICredentials, data: any, response: express.Response): Promise<T> {
         switch (method) {
             case "DELETE":
                 return this.delete(credentials, data, response);
@@ -102,7 +103,7 @@ export abstract class Endpoint<T> {
             case "POST":
                 return this.post(credentials, data, response);
 
-            case "POST":
+            case "PUT":
                 return this.put(credentials, data, response);
 
             default:
@@ -116,6 +117,10 @@ export abstract class Endpoint<T> {
      * @param credentials   Login credentials from a request.
      */
     protected validateCredentials(credentials: ICredentials): void {
+        if (!credentials) {
+            throw new NotAuthorizedError(ErrorCause.MissingFields, CredentialKeys);
+        }
+
         const missingFields: string[] = CredentialKeys.filter(
             (key: string) => typeof credentials[key] === "undefined");
 
@@ -123,7 +128,7 @@ export abstract class Endpoint<T> {
             return;
         }
 
-        throw new ServerError(ErrorCause.MissingFields, missingFields);
+        throw new NotAuthorizedError(ErrorCause.MissingFields, missingFields);
     }
 
     /**
@@ -138,7 +143,7 @@ export abstract class Endpoint<T> {
         return this.api.endpoints.users.getByCredentials(credentials)
             .then(storedUser => {
                 if (storedUser.data.passphrase !== credentials.passphrase) {
-                    throw new ServerError(ErrorCause.IncorrectCredentials);
+                    throw new NotAuthorizedError(ErrorCause.IncorrectCredentials);
                 }
 
                 return storedUser.data;
@@ -157,7 +162,7 @@ export abstract class Endpoint<T> {
         return this.validateUserSubmission(credentials)
             .then((user: IUser): IUser => {
                 if (!user.admin) {
-                    throw new ServerError(ErrorCause.NotAuthorized);
+                    throw new NotAuthorizedError(ErrorCause.NotAuthorized);
                 }
 
                 return user;

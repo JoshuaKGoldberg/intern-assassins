@@ -7,6 +7,7 @@ export enum ErrorCause {
     Unknown = 0,
     ClaimAlreadyExists,
     IncorrectCredentials,
+    InvalidData,
     MissingField,
     MissingFields,
     NotAuthorized,
@@ -81,6 +82,13 @@ export class ServerError extends Error {
     }
 
     /**
+     * @returns The associated HTTP error code with this error.
+     */
+    public getErrorCode(): number {
+        return 500;
+    }
+
+    /**
      * Creates a function that will throw a ServerError.
      * 
      * @param cause   The root cause of this error.
@@ -91,5 +99,27 @@ export class ServerError extends Error {
         return (): T => {
             throw new ServerError(cause, information);
         };
+    }
+}
+
+/**
+ * Server error for an unauthorized user.
+ */
+export class NotAuthorizedError extends ServerError {
+    /**
+     * Initializes a new instance of the NotAuthorizedError class.
+     * 
+     * @param cause   The root cause of this error.
+     * @param information   Any extra informtaion to display with the 401.
+     */
+    constructor(cause?: ErrorCause, information?: any) {
+        super(cause || ErrorCause.NotAuthorized, information);
+    }
+
+    /**
+     * @returns 401 UNAUTHORIZED.
+     */
+    public getErrorCode(): number {
+        return 401;
     }
 }

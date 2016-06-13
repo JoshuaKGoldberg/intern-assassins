@@ -1,4 +1,5 @@
 const browserify = require("browserify");
+const fs = require("fs");
 const gulp = require("gulp");
 const cucumber = require("gulp-cucumber");
 const less = require("gulp-less");
@@ -35,16 +36,31 @@ gulp.task("test:unit", () => {
         }));
 });
 
-gulp.task("test:integration", () => {
-    return gulp.src("test/integration/features/*.feature")
-        .pipe(cucumber({
-            "steps": "test/integration/steps/*.js",
-            "support": "test/integration/support/*.js"
-        }));
-});
+// Feature testing
+// Todo #: Run these synchronously, and therefore as a part of the default tests
+const featureTasks = (() => {
+    function testFeature(feature) {
+        return gulp.src(`test/integration/features/${feature}.feature`)
+            .pipe(cucumber({
+                "steps": `test/integration/steps/${feature}.js`,
+                "support": `test/integration/support/${feature}.js`
+            }));
+    }
+
+    const features = fs.readdirSync("test/integration/features")
+        .map(fileName => fileName.replace(".feature", ""));
+
+    features.forEach(feature => {
+        gulp.task(
+            `test:integration:${feature}`, 
+            () => testFeature(feature));
+    });
+
+    return features.map(feature => `test:integration:${feature}`);
+})();
 
 gulp.task("test", callback => {
-    runSequence(["test:unit", "test:integration"], callback);
+    runSequence(["test:unit"], callback);
 });
 
 gulp.task("tsc", () => {

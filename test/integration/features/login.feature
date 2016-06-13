@@ -1,5 +1,5 @@
-Feature: Login test
-    Some description I guess
+Feature: Login
+    Tests for the login endpoint
 
     Scenario: Successful user login
         Given I am a user

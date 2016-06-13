@@ -109,16 +109,7 @@ export class Api {
             try {
                 handler(request, response);
             } catch (error) {
-                const details: any = {
-                    error: error.message
-                };
-
-                if (error instanceof ServerError) {
-                    details.information = error.information;
-                    details.lifeAdvise = error.lifeAdvise;
-                }
-
-                response.status(500).json(details);
+                this.handleResponseError(response, error);
             }
         };
     }
@@ -136,10 +127,29 @@ export class Api {
             member.route(method, body.credentials, body.data, response)
                 .then((results: TData) => response.json(results))
                 .catch((error: Error): void => {
-                    console.log(`Error: ${error.message}\n${error.stack}\n:(`);
-                    response.sendStatus(500);
+                    this.handleResponseError(response, error);
                 });
         };
+    }
+
+    /**
+     * 
+     */
+    private handleResponseError(response: express.Response, error: Error) {
+        const details: any = {
+            error: error.message
+        };
+        let errorCode: number;
+
+        if (error instanceof ServerError) {
+            details.information = error.information;
+            details.lifeAdvise = error.lifeAdvise;
+            errorCode = error.getErrorCode() || 500;
+        } else {
+            errorCode = 500;
+        }
+
+        response.status(errorCode).json(details);
     }
 
     /**

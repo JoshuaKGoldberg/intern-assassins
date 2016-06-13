@@ -2,7 +2,7 @@
 
 "use strict";
 import { IReport } from "../../shared/actions";
-import { ICredentials } from "../../shared/login";
+import { CredentialKeys, ICredentials } from "../../shared/login";
 import { IUser } from "../../shared/users";
 import { ErrorCause, ServerError } from "../errors";
 import { Endpoint } from "./endpoint";
@@ -40,6 +40,7 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
      */
     public async put(credentials: ICredentials, users: IReport<IUser>[]): Promise<any> {
         await this.validateAdminSubmission(credentials);
+        this.validateUserReports(users);
 
         return this.collection.insertMany(users);
     }
@@ -83,7 +84,7 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
     }
 
     /**
-     * Retrieves a user by their credentials.
+     * Retrieves a user by their credentials, if they exist.
      * 
      * @param credentials   Login values for authentication.
      * @param alias   Alias of a user.
@@ -93,17 +94,11 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
     public async getByCredentials(credentials: ICredentials): Promise<IReport<IUser>> {
         await this.validateCredentials(credentials);
 
-        const user: IReport<IUser> = await this.collection.findOne({
+        return await this.collection.findOne({
             "data.alias": credentials.alias,
             "data.nickname": credentials.nickname,
             "data.passphrase": credentials.passphrase
         });
-
-        if (!user) {
-            throw new ServerError(ErrorCause.UserDoesNotExist, credentials.alias);
-        }
-
-        return user;
     }
 
     /**
@@ -168,5 +163,24 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
                         timestamp: Date.now()
                     };
                 }));
+    }
+
+    /**
+     * Validates that user reports have their required fields.
+     * 
+     * @param reports   User reports to be added.
+     */
+    private validateUserReports(reports: IReport<IUser>[]): void {
+        reports.forEach((report: IReport<IUser>, i: number): void => {
+            if (!report.data) {
+                throw new ServerError(ErrorCause.InvalidData, `[${i}].data`);
+            }
+
+            CredentialKeys.forEach((key: string): void => {
+                if (!report.data[key]) {
+                    throw new ServerError(ErrorCause.InvalidData, `[${i}].data[${key}]`);
+                }
+            });
+        });
     }
 }

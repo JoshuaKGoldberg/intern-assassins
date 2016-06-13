@@ -40,7 +40,8 @@ class UsersWorld extends World {
                 return {
                     data: user
                 };
-            }));
+            }))
+            .catch(() => {});
     }
 
     /**
@@ -53,14 +54,15 @@ class UsersWorld extends World {
             [{
                 "alias": "invalid",
                 "nickname": "also invalid"
-            }]);
+            }])
+            .catch(() => {});
     }
 
     /**
      * Asserts the response body contains sample users and the current user.
      */
     assertAllUsersReceived() {
-        this.assertUsersMatch(
+        this.assertUsersMatchReports(
             [this.credentials, ...sampleUsers],
             this.response.body);
     }
@@ -70,12 +72,19 @@ class UsersWorld extends World {
      */
     assertSampleUsersCreated() {
         return this.sendRequest("GET", "api/users")
-            .then(actualUsers => this.assertUsersMatch(
+            .then(actualUsers => this.assertUsersMatchReports(
                 [this.credentials, ...sampleUsers],
-                this.response.body));
+                this.response.body))
+            .catch(() => {});
     }
 
-    assertUsersMatch(expected, actual) {
+    /**
+     * Asserts a set of users matches their response reports.
+     * 
+     * @param expected   The users (expected values).
+     * @param actual   Reports on the users (actual received values).
+     */
+    assertUsersMatchReports(expected, actual) {
         actual = actual.map(report => {
             return {
                 alias: report.data.alias,

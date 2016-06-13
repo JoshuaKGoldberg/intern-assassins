@@ -126,14 +126,10 @@ export class App extends React.Component<void, IAppState> {
      */
     private async refreshUserData(): Promise<void> {
         const credentials: ICredentials = this.storage.asCredentials();
-        const [userReport, killClaimReports] = await Promise.all(
-            [
-                this.sdk.getUser(credentials),
-                this.sdk.getUserActiveKillClaims(credentials)
-            ])
-            .catch((error: Error): void => {
-                console.log("Error!", error);
-            });
+        const [userReport, killClaimReports] = await Promise.all([
+            this.sdk.getUser(credentials),
+            this.sdk.getUserActiveKillClaims(credentials)
+        ]);
 
         this.setState({
             killClaimReports: killClaimReports,

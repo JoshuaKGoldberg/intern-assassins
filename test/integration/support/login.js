@@ -1,6 +1,9 @@
 const hooks = require("./hooks");
 const World = require("./world");
 
+/**
+ * World for login feature requests.
+ */
 class LoginWorld extends World {
     /**
      * Sends a login request.
@@ -8,7 +11,8 @@ class LoginWorld extends World {
      * @param {object} credentials
      */
     sendLoginRequest(credentials) {
-        return this.sendRequest("POST", "api/login", credentials);
+        return this.sendRequest("POST", "api/login", credentials)
+            .catch(() => {});
     };
 }
 

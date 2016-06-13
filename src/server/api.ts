@@ -56,6 +56,7 @@ export class Api {
 
         this.endpoints = new Endpoints(this, database);
         this.registerEndpointRoutes(app, this.endpoints.kills);
+        this.registerEndpointRoutes(app, this.endpoints.leaders);
         this.registerEndpointRoutes(app, this.endpoints.login);
         this.registerEndpointRoutes(app, this.endpoints.notifications);
         this.registerEndpointRoutes(app, this.endpoints.user);
@@ -109,7 +110,7 @@ export class Api {
             try {
                 handler(request, response);
             } catch (error) {
-                this.handleResponseError(response, error);
+                this.handleResponseError(request.body, response, error);
             }
         };
     }
@@ -127,7 +128,7 @@ export class Api {
             member.route(method, body.credentials, body.data, response)
                 .then((results: TData) => response.json(results))
                 .catch((error: Error): void => {
-                    this.handleResponseError(response, error);
+                    this.handleResponseError(body, response, error);
                 });
         };
     }
@@ -135,7 +136,7 @@ export class Api {
     /**
      * 
      */
-    private handleResponseError(response: express.Response, error: Error) {
+    private handleResponseError(body: any, response: express.Response, error: Error) {
         const details: any = {
             error: error.message
         };

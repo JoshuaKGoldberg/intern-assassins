@@ -63,8 +63,8 @@ export class KillClaimsEndpoint extends Endpoint<IReport<IKillClaim>> {
     public async put(credentials: ICredentials, claim: IKillClaim): Promise<IReport<IKillClaim>> {
         const user: IUser = await this.validateUserSubmission(credentials);
 
-        // You can only claim a kill on yourself or your target
-        if (user.alias !== claim.victim && user.alias !== claim.killer) {
+        // Non-admins can only claim a kill on yourself or your target
+        if (!user.admin && user.alias !== claim.victim && user.alias !== claim.killer) {
             throw new ServerError(ErrorCause.PermissionDenied);
         }
 
@@ -84,7 +84,7 @@ export class KillClaimsEndpoint extends Endpoint<IReport<IKillClaim>> {
                 "data.killer": claim.killer,
                 "data.victim": claim.victim
             })) {
-            throw new ServerError(ErrorCause.ClaimAlreadyExists, victim.alias);
+            throw new ServerError(ErrorCause.ClaimAlreadyExists, claim);
         }
 
         // Add the claim to the database

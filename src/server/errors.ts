@@ -76,7 +76,12 @@ export class ServerError extends Error {
      * @param information   Any extra information to display with the cause.
      */
     constructor(cause: ErrorCause, information?: any) {
-        super(ErrorCause[cause]);
+        let message: string = ErrorCause[cause];
+        if (information !== undefined) {
+            message += ": " + information;
+        }
+
+        super(message);
         this.information = information;
         this.lifeAdvise = ServerError.lifeAdviseSayings[Math.random() * ServerError.lifeAdviseSayings.length | 0];
     }
@@ -86,19 +91,6 @@ export class ServerError extends Error {
      */
     public getErrorCode(): number {
         return 500;
-    }
-
-    /**
-     * Creates a function that will throw a ServerError.
-     * 
-     * @param cause   The root cause of this error.
-     * @param information   Any extra information to display with the cause.
-     * @returns A function that will throw a ServerError.
-     */
-    public static inPromise<T>(cause: ErrorCause, information: any): () => T {
-        return (): T => {
-            throw new ServerError(cause, information);
-        };
     }
 }
 

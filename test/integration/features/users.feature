@@ -9,7 +9,7 @@ Feature: Users
 
     Scenario: Unauthorized users GET
         Given I am a user
-        When I send a GET request to api/users
+        When I send an unsafe GET request to api/users
         Then I should receive a 401 response
 
     Scenario: Successful users PUT

@@ -33,7 +33,8 @@ module.exports = () => {
         database: {
             directory: `${baseDatabaseSettings.directory}-${increment}`,
             port: baseDatabaseSettings.port,
-            quiet: true
+            quiet: true,
+            reset: true
         },
         server: {
             port: baseServerSettings.port + increment,

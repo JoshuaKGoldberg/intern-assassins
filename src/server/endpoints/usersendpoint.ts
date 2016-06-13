@@ -39,10 +39,14 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
      * @returns A promise for addingthe users.
      */
     public async put(credentials: ICredentials, users: IReport<IUser>[]): Promise<any> {
+        if (!(users instanceof Array)) {
+            users = [users as any];
+        }
+
         await this.validateAdminSubmission(credentials);
         this.validateUserReports(users);
 
-        return this.collection.insertMany(users);
+        return await this.collection.insertMany(users);
     }
 
     /**

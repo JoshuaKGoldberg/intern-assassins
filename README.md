@@ -32,12 +32,18 @@ gulp
 
 ## Running
 
-First, a `mongod` intsance should be running on your computer.
-For example:
-
+In one shell, start MongoDB locally:
 ```shell
-"C:\Program Files\MongoDB\Server\3.2\bin\mongod.exe"
+mongod
 ```
+
+In another shell, start the server:
+```shell
+node src\main
+```
+
+The command `mongod` should is required in that format for tests.
+* On Windows, add the path to `mongod.exe` to your PATH. For example, `C:\Program Files\MongoDB\Server\3.2\bin`.
 
 Settings for the server are read from `assassins.json` at startup.
 This file contains the server `port`.
@@ -45,15 +51,12 @@ This file contains the server `port`.
 Before running the app, copy `assassins.default.json` to `assassins.json`.
 You'll also need to build first.
 
-```shell
-node src\main
-```
 
 ### Individual Gulp tasks
 
 * `gulp browserify` - Compresses and converts compiled .js files under `src/site` from the `tsc` task into a browser-compatible bundle.
 * `gulp less` - Runes the [Less](http://lesscss.org/) compiler.
-* `gulp test` - Runs tests in `tests/` *(currently none)*. 
+* `gulp test` - Runs tests in `tests/`. 
 * `gulp tsc` - Runs the [TypeScript](https://typescriptlang.org/) compiler.
 * `gulp tslint` - Runs [TSLint](https://github.com/palantir/tslint).
 * `gulp watch` - Runs the appropriate `less` or `tsc`+`tslint` tasks when a source file changes.

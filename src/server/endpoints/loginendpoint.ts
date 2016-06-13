@@ -3,7 +3,7 @@
 "use strict";
 import * as express from "express";
 import { ICredentials } from "../../shared/login";
-import { ServerError } from "../errors";
+import { NotAuthorizedError } from "../errors";
 import { Endpoint } from "./endpoint";
 
 /**
@@ -25,24 +25,19 @@ export class LoginEndpoint extends Endpoint<void> {
      * @returns A promise for the user with the alias.
      */
     public async post(credentials: ICredentials, data: void, response: express.Response): Promise<void> {
-        const record = await this.api.endpoints.users.getByCredentials(credentials)
-            .catch((error: ServerError): void => {
-                response.sendStatus(401);
-            });
-
+        const record = await this.api.endpoints.users.getByCredentials(credentials);
         if (!record) {
-            return Promise.resolve();
+            throw new NotAuthorizedError();
         }
 
         if (
             credentials.nickname !== record.data.nickname
             || credentials.alias !== record.data.alias
             || credentials.passphrase !== record.data.passphrase) {
-            response.sendStatus(401);
-        } else {
-            response.sendStatus(200);
+            throw new NotAuthorizedError();
         }
 
+        response.sendStatus(200);
         return Promise.resolve();
     }
 }

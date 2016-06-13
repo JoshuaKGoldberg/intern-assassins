@@ -1,5 +1,7 @@
 const browserify = require("browserify");
+const fs = require("fs");
 const gulp = require("gulp");
+const cucumber = require("gulp-cucumber");
 const less = require("gulp-less");
 const mocha = require("gulp-mocha");
 const runSequence = require("run-sequence");
@@ -27,12 +29,38 @@ gulp.task("less", () => {
         .pipe(gulp.dest("src/site"));
 });
 
-gulp.task("test", () => {
-    return gulp
-        .src("test/tests.js")
+gulp.task("test:unit", () => {
+    return gulp.src("test/unit/tests.js")
         .pipe(mocha({
             reporter: "spec"
         }));
+});
+
+// Feature testing
+// Todo #: Run these synchronously, and therefore as a part of the default tests
+const featureTasks = (() => {
+    function testFeature(feature) {
+        return gulp.src(`test/integration/features/${feature}.feature`)
+            .pipe(cucumber({
+                "steps": `test/integration/steps/${feature}.js`,
+                "support": `test/integration/support/${feature}.js`
+            }));
+    }
+
+    const features = fs.readdirSync("test/integration/features")
+        .map(fileName => fileName.replace(".feature", ""));
+
+    features.forEach(feature => {
+        gulp.task(
+            `test:integration:${feature}`, 
+            () => testFeature(feature));
+    });
+
+    return features.map(feature => `test:integration:${feature}`);
+})();
+
+gulp.task("test", callback => {
+    runSequence(["test:unit"], callback);
 });
 
 gulp.task("tsc", () => {
@@ -56,6 +84,11 @@ gulp.task("watch", () => {
     gulp.watch(["src/site/**/*.less"], ["less"]);
 });
 
-gulp.task("default", ["less", "tsc", "tslint"], cb => {
-    runSequence(["browserify", "test"], cb);
+gulp.task("default", ["less", "tsc", "tslint"], callback => {
+    runSequence(["browserify", "test"], callback);
+});
+
+// Hack for hanging integration tests: https://github.com/gulpjs/gulp/issues/167
+gulp.on("stop", () => {
+    process.nextTick(() => process.exit(0));
 });

@@ -117,4 +117,11 @@ export class KillClaimsEndpoint extends Endpoint<IReport<IKillClaim>> {
 
         return report;
     }
+
+    /**
+     * @returns All kill claims.
+     */
+    public async getAll(): Promise<IReport<IKillClaim>[]> {
+        return this.collection.find().toArray();
+    }
 }

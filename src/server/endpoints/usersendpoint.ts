@@ -28,7 +28,7 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
     public async get(credentials: ICredentials): Promise<IReport<IUser>[]> {
         await this.validateAdminSubmission(credentials);
 
-        return this.collection.find().toArray();
+        return this.getAll();
     }
 
     /**
@@ -43,6 +43,15 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
         this.validateUserReports(users);
 
         return this.collection.insertMany(users);
+    }
+
+    /**
+     * Retrieves all users.
+     * 
+     * @returns A promise for all users.
+     */
+    public getAll(): Promise<IReport<IUser>[]> {
+        return this.collection.find().toArray();
     }
 
     /**

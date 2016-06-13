@@ -3,6 +3,26 @@
 import { ICredentials } from "./login";
 
 /**
+ * Public leaderboard information on a user.
+ */
+export interface ILeader {
+    /**
+     * Whether the user is still alive.
+     */
+    alive: boolean;
+
+    /**
+     * How many kills the user has accomplished.
+     */
+    kills: number;
+
+    /**
+     * Friendly nickname of the user.
+     */
+    nickname: string;
+}
+
+/**
  * Database model representation of a user.
  */
 export interface IUser extends ICredentials {

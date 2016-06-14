@@ -4,9 +4,10 @@
 import * as express from "express";
 import { Collection } from "mongodb";
 import { Method } from "../../shared/actions";
+import { ErrorCause } from "../../shared/errors";
 import { IUser } from "../../shared/users";
 import { CredentialKeys, ICredentials } from "../../shared/login";
-import { ErrorCause, NotAuthorizedError, ServerError } from "../errors";
+import { NotAuthorizedError, ServerError } from "../errors";
 import { Api } from "../api";
 import { Database } from "../database";
 
@@ -139,7 +140,8 @@ export abstract class Endpoint<T> {
      * @returns A promise for a submitting user, if authenticated.
      */
     protected async validateUserCredentials<T>(credentials: ICredentials): Promise<IUser> {
-        const storedUser: IUser = await this.api.endpoints.users.getByCredentials(credentials);
+        const storedUser: IUser = await this.api.endpoints.users.getByCredentials(credentials)
+            .catch(() => undefined);
 
         if (!storedUser) {
             throw new NotAuthorizedError(ErrorCause.IncorrectCredentials);

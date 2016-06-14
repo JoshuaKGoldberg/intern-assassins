@@ -1,9 +1,10 @@
 /// <reference path="../../../typings/all.d.ts" />
 
 "use strict";
+import { ErrorCause } from "../../shared/errors";
 import { CredentialKeys, ICredentials } from "../../shared/login";
 import { IUser } from "../../shared/users";
-import { ErrorCause, ServerError } from "../errors";
+import { ServerError } from "../errors";
 import { Endpoint } from "./endpoint";
 
 /**
@@ -38,11 +39,11 @@ export class UsersEndpoint extends Endpoint<IUser> {
      * @returns A promise for addingthe users.
      */
     public async put(credentials: ICredentials, users: IUser[]): Promise<any> {
+        await this.validateAdminCredentials(credentials);
+
         if (!(users instanceof Array)) {
             users = [users as any];
         }
-
-        await this.validateAdminCredentials(credentials);
         this.validateUsers(users);
 
         return await this.collection.insertMany(users);
@@ -88,7 +89,7 @@ export class UsersEndpoint extends Endpoint<IUser> {
         }
 
         const missing: string[] = users
-            .filter((user: IUser): boolean => aliases.indexOf(user.alias) === -1);
+            .filter((user: IUser): boolean => foundAliases.indexOf(user.alias) === -1);
 
         throw new ServerError(ErrorCause.UsersDoNotExist, missing);
     }
@@ -104,11 +105,12 @@ export class UsersEndpoint extends Endpoint<IUser> {
     public async getByCredentials(credentials: ICredentials): Promise<IUser> {
         await this.validateCredentials(credentials);
 
-        return await this.collection.findOne({
-            alias: credentials.alias,
-            "nickname": credentials.nickname,
-            "passphrase": credentials.passphrase
-        });
+        const user: IUser = (await this.getByAliases(credentials, [credentials.alias]))[0];
+        if (credentials.nickname !== user.nickname || credentials.passphrase !== user.passphrase) {
+            throw new ServerError(ErrorCause.NotAuthorized);
+        }
+
+        return user;
     }
 
     /**

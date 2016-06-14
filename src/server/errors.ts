@@ -1,26 +1,6 @@
 "use strict";
 
-/**
- * Possible causes for a ServerError.
- */
-export enum ErrorCause {
-    Unknown = 0,
-    ClaimAlreadyExists,
-    IncorrectCredentials,
-    InvalidData,
-    MissingField,
-    MissingFields,
-    NotAuthorized,
-    NotImplemented,
-    PermissionDenied,
-    UserDoesNotExist,
-    UsersDoNotExist,
-    UserAlreadyExists,
-    UsersAlreadyExist,
-    UserDead,
-    UsersDead,
-    WrongTarget
-}
+import { ErrorCause } from "../shared/errors";
 
 /**
  * An error triggered in the server.
@@ -60,6 +40,11 @@ export class ServerError extends Error {
     ];
 
     /**
+     * Root cause for this error.
+     */
+    public /* readonly */ cause: ErrorCause;
+
+    /**
      * Extra information on the cause of this error.
      */
     public /* readonly */ information: any[];
@@ -82,6 +67,7 @@ export class ServerError extends Error {
         }
 
         super(message);
+        this.cause = cause;
         this.information = information;
         this.lifeAdvise = ServerError.lifeAdviseSayings[Math.random() * ServerError.lifeAdviseSayings.length | 0];
     }

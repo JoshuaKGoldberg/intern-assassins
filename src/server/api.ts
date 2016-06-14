@@ -4,6 +4,7 @@
 import * as bodyParser from "body-parser";
 import * as express from "express";
 import { Method } from "../shared/actions";
+import { ErrorCause } from "../shared/errors";
 import { Database } from "./database";
 import { ServerError } from "./errors";
 import { Endpoint } from "./endpoints/endpoint";
@@ -147,6 +148,7 @@ export class Api {
         let errorCode: number;
 
         if (error instanceof ServerError) {
+            details.cause = ErrorCause[error.cause];
             details.information = error.information;
             details.lifeAdvise = error.lifeAdvise;
             errorCode = error.getErrorCode() || 500;

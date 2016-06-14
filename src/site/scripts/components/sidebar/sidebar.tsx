@@ -4,7 +4,7 @@
 "use strict";
 import * as React from "react";
 import { ILeader } from "../../../../shared/users";
-import { ActivityBar } from "./activitybar";
+import { ActivityBoard } from "./activityboard";
 import { Leaderboard } from "./leaderboard";
 
 /**
@@ -36,7 +36,7 @@ interface ISidebarState {
  * Which part of the sidebar is being shown.
  */
 enum SidebarSelection {
-    ActivityBar,
+    ActivityBoard,
     Leaderboard
 }
 
@@ -51,14 +51,14 @@ export class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
      * State for the component.
      */
     public state: ISidebarState = {
-        selected: SidebarSelection.ActivityBar
+        selected: SidebarSelection.ActivityBoard
     };
 
     /**
      * Sidebar selections keyed to render methods.
      */
     private renderers: { [i: number]: () => JSX.Element } = {
-        [SidebarSelection.ActivityBar]: (): JSX.Element => <ActivityBar messages={this.props.messages} />,
+        [SidebarSelection.ActivityBoard]: (): JSX.Element => <ActivityBoard messages={this.props.messages} />,
         [SidebarSelection.Leaderboard]: (): JSX.Element => <Leaderboard leaders={this.props.leaders} />
     };
 
@@ -83,7 +83,7 @@ export class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
     private renderSelectionChangers(): JSX.Element {
         return (
             <div className="selection-changers">
-                {this.renderSelectionChanger(SidebarSelection.ActivityBar, "Activity")}
+                {this.renderSelectionChanger(SidebarSelection.ActivityBoard, "Activity")}
                 {this.renderSelectionChanger(SidebarSelection.Leaderboard, "Leaders")}
             </div>);
     }

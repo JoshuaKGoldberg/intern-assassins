@@ -35,7 +35,7 @@
         "src/site/scripts/components/admin/userstable.tsx",
         "src/site/scripts/components/admin/userstables.tsx",
         "src/site/scripts/components/sidebar/activity.tsx",
-        "src/site/scripts/components/sidebar/activitybar.tsx",
+        "src/site/scripts/components/sidebar/activityboard.tsx",
         "src/site/scripts/components/sidebar/leaderboard.tsx",
         "src/site/scripts/components/sidebar/sidebar.tsx",
         "src/site/scripts/components/footer.tsx",

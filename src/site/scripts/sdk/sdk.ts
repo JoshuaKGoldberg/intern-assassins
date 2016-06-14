@@ -116,6 +116,17 @@ export class Sdk {
     }
 
     /**
+     * Retrieves past notification.
+     * 
+     * @returns A promise for past notifications.
+     */
+    public getNotifications(): Promise<ILeader[]> {
+        return this.sendAjaxRequest(
+            "GET",
+            "api/notifications");
+    }
+
+    /**
      * Sends an ajax request to the server and parses the response.
      * 
      * @param method   What REST method to use.

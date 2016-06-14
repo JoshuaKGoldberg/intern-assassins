@@ -2,6 +2,7 @@
 
 "use strict";
 import { INotification } from "../../shared/notifications";
+import { ICredentials } from "../../shared/login";
 import { Endpoint } from "./endpoint";
 
 /**
@@ -13,6 +14,19 @@ export class NotificationsEndpoint extends Endpoint<INotification> {
      */
     public getRoute(): string {
         return "notifications";
+    }
+
+    /**
+     * Retrieves all notifications in descending chronological order.
+     * 
+     * @param credentials   Login values for authentication.
+     * @returns A promise for notifications in descending chronological order.
+     */
+    public async get(credentials: ICredentials): Promise<INotification[]> {
+        return (await this.collection.find().toArray())
+            .sort((a: INotification, b: INotification): number => {
+                return a.timestamp - b.timestamp;
+            });
     }
 
     /**

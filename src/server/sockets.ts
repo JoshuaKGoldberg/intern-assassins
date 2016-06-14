@@ -27,7 +27,6 @@ export class Sockets {
      * Emits a message.
      */
     public emitNotification(notification: INotification): void {
-        console.log("Emitting", notification);
         this.ioServer.emit("report", notification);
     }
 }

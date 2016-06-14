@@ -133,16 +133,17 @@ export class App extends React.Component<void, IAppState> {
      */
     private async refreshData(): Promise<void> {
         const credentials: ICredentials = this.storage.asCredentials();
-        const [user, killClaims, leaders] = await Promise.all([
+        const [user, killClaims, leaders, notifications] = await Promise.all([
             this.sdk.getUser(credentials),
             this.sdk.getUserActiveKillClaims(credentials),
-            this.sdk.getLeaders()
+            this.sdk.getLeaders(),
+            this.sdk.getNotifications()
         ]);
 
         this.setState({
             killClaims: killClaims,
             leaders: leaders,
-            notifications: this.state.notifications,
+            notifications: notifications,
             user: user
         });
     }

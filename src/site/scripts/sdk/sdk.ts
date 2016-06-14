@@ -3,6 +3,7 @@
 import { IKillClaim } from "../../../shared/kills";
 import { Method } from "../../../shared/actions";
 import { ICredentials } from "../../../shared/login";
+import { INotification } from "../../../shared/notifications";
 import { ILeader, IUser } from "../../../shared/users";
 
 /**
@@ -120,7 +121,7 @@ export class Sdk {
      * 
      * @returns A promise for past notifications.
      */
-    public getNotifications(): Promise<ILeader[]> {
+    public getNotifications(): Promise<INotification[]> {
         return this.sendAjaxRequest(
             "GET",
             "api/notifications");

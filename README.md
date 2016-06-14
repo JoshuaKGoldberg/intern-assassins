@@ -1,4 +1,5 @@
 # Intern Assassins
+[![Build Status](https://travis-ci.org/JoshuaKGoldberg/intern-assassins.svg?branch=master)](https://travis-ci.org/JoshuaKGoldberg/intern-assassins)
 
 Microsoft 2016 ISC Intern Assassins. Go wild or go home.
 

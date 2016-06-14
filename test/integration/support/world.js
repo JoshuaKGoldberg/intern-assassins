@@ -83,19 +83,20 @@ module.exports = class World {
     };
 
     /**
-     * Sends a request to the server with the current user credentials.
+     * Sends a request to the server with credentials.
      * 
      * @param {string} method   Request method, such as "GET".
      * @param {string} endpoint   Server endpoint, such as "api/login".
-     * @param {object} [data]   Optional .data of the body.
+     * @param {object} [data]   Body data, if any.
+     * @param {object} [credentials]   Login credentials, if not `this.credentials`.
      * @returns A promise for the request completing.
      */
-    sendRequest(method, endpoint, data) {
+    sendRequest(method, endpoint, data, credentials = this.credentials) {
         const options = {
             method: method,
             uri: `http://localhost:${this.server.settings.port}/${endpoint}`,
             body: {
-                credentials: this.credentials,
+                credentials: credentials,
                 data: data
             },
             json: true,
@@ -104,7 +105,7 @@ module.exports = class World {
             }
         };
 
-        return request(options).catch(function () { });
+        return request(options);
     }
 
     /**

@@ -61,3 +61,16 @@ You'll also need to build first.
 * `gulp tslint` - Runs [TSLint](https://github.com/palantir/tslint).
 * `gulp watch` - Runs the appropriate `less` or `tsc`+`tslint` tasks when a source file changes.
 
+#### Integration tests
+
+Integration tests are done with cucumber-js, but seem to be hanging weirdly.
+Run one at a time:
+
+```shell
+cls && gulp && gulp test:integration{test}
+```
+
+Tests:
+* `leaders`
+* `login`
+* `users`

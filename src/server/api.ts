@@ -3,7 +3,7 @@
 "use strict";
 import * as bodyParser from "body-parser";
 import * as express from "express";
-import { IReport, Method } from "../shared/actions";
+import { Method } from "../shared/actions";
 import { Database } from "./database";
 import { ServerError } from "./errors";
 import { Endpoint } from "./endpoints/endpoint";
@@ -15,7 +15,7 @@ import { Endpoints } from "./endpoints/endpoints";
  * @param report   The emitted report.
  */
 export interface IReportCallback<T> {
-    (report: IReport<T>): void;
+    (report: T): void;
 }
 
 /**
@@ -56,6 +56,7 @@ export class Api {
 
         this.endpoints = new Endpoints(this, database);
         this.registerEndpointRoutes(app, this.endpoints.kills);
+        this.registerEndpointRoutes(app, this.endpoints.leaders);
         this.registerEndpointRoutes(app, this.endpoints.login);
         this.registerEndpointRoutes(app, this.endpoints.notifications);
         this.registerEndpointRoutes(app, this.endpoints.user);
@@ -76,8 +77,8 @@ export class Api {
      * 
      * @param report   A new report.
      */
-    public fireReportCallback(report: IReport<any>): void {
-        this.reportCallbacks.forEach((callback: IReportCallback<any>): void => {
+    public fireReportCallback<T>(report: T): void {
+        this.reportCallbacks.forEach((callback: IReportCallback<T>): void => {
             callback(report);
         });
     }
@@ -109,7 +110,7 @@ export class Api {
             try {
                 handler(request, response);
             } catch (error) {
-                this.handleResponseError(response, error);
+                this.handleResponseError(request, response, error);
             }
         };
     }
@@ -127,15 +128,19 @@ export class Api {
             member.route(method, body.credentials, body.data, response)
                 .then((results: TData) => response.json(results))
                 .catch((error: Error): void => {
-                    this.handleResponseError(response, error);
+                    this.handleResponseError(body, response, error);
                 });
         };
     }
 
     /**
+     * Handles an error occurring in a request.
      * 
+     * @param request   The triggering express request.
+     * @param response   The triggering express response.
+     * @param error The triggering error.
      */
-    private handleResponseError(response: express.Response, error: Error) {
+    private handleResponseError(request: express.Request, response: express.Response, error: Error): void {
         const details: any = {
             error: error.message
         };

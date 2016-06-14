@@ -7,6 +7,11 @@ module.exports = function () {
         return this.sendRequest(method, endpoint);
     });
 
+    this.When(/^I send an unsafe (DELETE|GET|POST|PUT) request to (\S*)$/, function (method, endpoint) {
+        return this.sendRequest(method, endpoint)
+            .catch(() => {});
+    });
+
     this.Then(/^I should receive an? (.*) response$/, function (code) {
         this.assertResponseCode(code);
     });

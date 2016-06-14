@@ -3,7 +3,6 @@
 "use strict";
 import * as React from "react";
 import { Sdk } from "../../sdk/sdk";
-import { IReport } from "../../../../shared/actions";
 import { IUser } from "../../../../shared/users";
 import { UsersTable } from "./userstable";
 
@@ -54,10 +53,10 @@ export class UsersTables extends React.Component<IUsersTablesProps, IUsersTables
         };
 
         this.props.sdk.getUsers(this.props.user)
-            .then((users: IReport<IUser>[]): void => {
+            .then((users: IUser[]): void => {
                 this.setState({
                     loading: false,
-                    users: users.map((report: IReport<IUser>): IUser => report.data)
+                    users: users
                 });
             });
     }

@@ -1,14 +1,9 @@
 "use strict";
 
-import { IReport } from "../../../shared/actions";
 import { IKillClaim } from "../../../shared/kills";
+import { Method } from "../../../shared/actions";
 import { ICredentials } from "../../../shared/login";
-import { IUser } from "../../../shared/users";
-
-/**
- * One of the allowed REST methods.
- */
-type Method = "GET" | "POST" | "PUT";
+import { ILeader, IUser } from "../../../shared/users";
 
 /**
  * Parses a request for a type of response.
@@ -45,7 +40,7 @@ export class Sdk {
      * @param credentials   The submitting user credentials.
      * @returns A promise for the user.
      */
-    public getUser(credentials: ICredentials): Promise<IReport<IUser>> {
+    public getUser(credentials: ICredentials): Promise<IUser> {
         return this.sendAjaxRequest(
             "GET",
             "api/user",
@@ -60,7 +55,7 @@ export class Sdk {
      * @param credentials   The submitting user credentials.
      * @returns A promise for the user's active kill claims.
      */
-    public getUserActiveKillClaims(credentials: ICredentials): Promise<IReport<IKillClaim>[]> {
+    public getUserActiveKillClaims(credentials: ICredentials): Promise<IKillClaim[]> {
         return this.sendAjaxRequest(
             "GET",
             "api/kills",
@@ -68,10 +63,10 @@ export class Sdk {
             {
                 $or: [
                     {
-                        "data.killer": credentials.alias
+                        killer: credentials.alias
                     },
                     {
-                        "data.victim": credentials.alias
+                        victim: credentials.alias
                     }
                 ]
             },
@@ -84,7 +79,7 @@ export class Sdk {
      * @param credentials   The submitting user credentials.
      * @returns A promise for all users.
      */
-    public getUsers(credentials: ICredentials): Promise<IReport<IUser>[]> {
+    public getUsers(credentials: ICredentials): Promise<IUser[]> {
         return this.sendAjaxRequest(
             "GET",
             "api/users",
@@ -100,7 +95,7 @@ export class Sdk {
      * @param alias   The user's alias.
      * @returns A promise for the created kill claim, if successful.
      */
-    public reportKillClaim(credentials: ICredentials, claim: IKillClaim): Promise<IReport<IKillClaim>> {
+    public reportKillClaim(credentials: ICredentials, claim: IKillClaim): Promise<IKillClaim> {
         return this.sendAjaxRequest(
             "PUT",
             "api/kills",
@@ -110,16 +105,33 @@ export class Sdk {
     }
 
     /**
+     * Retrieves user leaderboard information.
+     * 
+     * @returns A promise for user leaderboard information.
+     */
+    public getLeaders(): Promise<ILeader[]> {
+        return this.sendAjaxRequest(
+            "GET",
+            "api/leaders");
+    }
+
+    /**
      * Sends an ajax request to the server and parses the response.
      * 
      * @param method   What REST method to use.
      * @param url   The API endpoint locator.
      * @param credentials   User credentials.
      * @param data   Contents of the request.
-     * @param parser   What response parser to apply to the request.
+     * @param parser   What response parser to apply to the request
+     *                 (by default, the JSON parser).
      * @returns A promise for the type of response.
      */
-    private sendAjaxRequest<TData, TResponse>(method: Method, url: string, credentials: ICredentials, data: TData, parser: IResponseParser<TResponse>): Promise<TResponse> {
+    private sendAjaxRequest<TData, TResponse>(
+        method: Method,
+        url: string,
+        credentials?: ICredentials,
+        data?: TData,
+        parser: IResponseParser<TResponse> = Sdk.parseResponseForJsonData): Promise<TResponse> {
         return new Promise((resolve, reject): void => {
             const request: XMLHttpRequest = new XMLHttpRequest();
             const body: string = JSON.stringify({ credentials, data });

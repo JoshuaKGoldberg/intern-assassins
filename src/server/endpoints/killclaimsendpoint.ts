@@ -21,7 +21,7 @@ export class KillClaimsEndpoint extends Endpoint<IKillClaim> {
     }
 
     /**
-     * Retrieves kill claims. :) travis
+     * Retrieves kill claims.
      * 
      * @param credentials   Login values for authentication.
      * @param query   A filter on the kill claims.

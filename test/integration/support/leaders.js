@@ -2,6 +2,9 @@ const expect = require("chai").expect;
 const hooks = require("./hooks");
 const World = require("./world");
 
+/**
+ * Sample user who will get a kill.
+ */
 const killer = {
     alias: "killer",
     alive: true,
@@ -10,6 +13,9 @@ const killer = {
     target: "victim"
 };
 
+/**
+ * Sample user who will be killed.
+ */
 const victim = {
     alias: "victim",
     alive: true,
@@ -22,7 +28,9 @@ const victim = {
  */
 class LeadersWorld extends World {
     /**
+     * PUTs the sample users (killer and victim) to the server.
      * 
+     * @returns {Promise} A promise for adding both users.
      */
     addUsers() {
         this.setUserType("admin");
@@ -39,7 +47,9 @@ class LeadersWorld extends World {
     }
 
     /**
+     * PUTs an unconfirmed kill claim to the server.
      * 
+     * @returns {Promise} A promise for adding the kill claim.
      */
     addUnconfirmedKillClaim() {
         return this.addUsers()
@@ -54,7 +64,9 @@ class LeadersWorld extends World {
     }
 
     /**
+     * PUTs confirmed kill claims to the server.
      * 
+     * @returns {Promise} A promise for adding the kill claims.
      */
     addConfirmedKillClaim() {
         return this.addUsers()
@@ -77,7 +89,7 @@ class LeadersWorld extends World {
     }
 
     /**
-     * 
+     * Asserts the killer and victim were received with no kills.
      */
     assertReceivedNoKills() {
         const users = this.response.body;
@@ -100,7 +112,8 @@ class LeadersWorld extends World {
     }
 
     /**
-     * 
+     * Asserts the killer and victim were received with one kill
+     * for the killer.
      */
     assertReceivedConfirmedKill() {
         const users = this.response.body;

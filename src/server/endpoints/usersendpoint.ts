@@ -1,7 +1,6 @@
 /// <reference path="../../../typings/all.d.ts" />
 
 "use strict";
-import { IReport } from "../../shared/actions";
 import { CredentialKeys, ICredentials } from "../../shared/login";
 import { IUser } from "../../shared/users";
 import { ErrorCause, ServerError } from "../errors";
@@ -10,7 +9,7 @@ import { Endpoint } from "./endpoint";
 /**
  * Mock database storage for users.
  */
-export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
+export class UsersEndpoint extends Endpoint<IUser> {
     /**
      * @returns Path to this part of the global api.
      */
@@ -25,8 +24,8 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
      * @returns A promise for all users.
      * @remarks A user retrieving their own data should use "user/get".
      */
-    public async get(credentials: ICredentials): Promise<IReport<IUser>[]> {
-        await this.validateAdminSubmission(credentials);
+    public async get(credentials: ICredentials): Promise<IUser[]> {
+        await this.validateAdminCredentials(credentials);
 
         return this.getAll();
     }
@@ -38,13 +37,13 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
      * @param users   Users to add.
      * @returns A promise for addingthe users.
      */
-    public async put(credentials: ICredentials, users: IReport<IUser>[]): Promise<any> {
+    public async put(credentials: ICredentials, users: IUser[]): Promise<any> {
         if (!(users instanceof Array)) {
             users = [users as any];
         }
 
-        await this.validateAdminSubmission(credentials);
-        this.validateUserReports(users);
+        await this.validateAdminCredentials(credentials);
+        this.validateUsers(users);
 
         return await this.collection.insertMany(users);
     }
@@ -54,7 +53,7 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
      * 
      * @returns A promise for all users.
      */
-    public getAll(): Promise<IReport<IUser>[]> {
+    public getAll(): Promise<IUser[]> {
         return this.collection.find().toArray();
     }
 
@@ -65,17 +64,16 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
      * @param alias   Aliases of users.
      * @returns A promise for the users with the aliases.
      */
-    public async getByAliases(credentials: ICredentials, aliases: string[]): Promise<IReport<IUser>[]> {
+    public async getByAliases(credentials: ICredentials, aliases: string[]): Promise<IUser[]> {
         const users = await this.collection
             .find({
-                "data.alias": {
+                alias: {
                     $in: aliases
                 }
             })
             .toArray();
 
-        const foundAliases: string[] = users.map(
-            (report: IReport<IUser>): string => report.data.alias);
+        const foundAliases: string[] = users.map((user: IUser): string => user.alias);
 
         let aliasMissing: boolean = false;
         for (let i: number = 0; i < aliases.length; i += 1) {
@@ -90,8 +88,7 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
         }
 
         const missing: string[] = users
-            .map((user: IReport<IUser>): string => user.data.alias)
-            .filter((alias: string): boolean => aliases.indexOf(alias) === -1);
+            .filter((user: IUser): boolean => aliases.indexOf(user.alias) === -1);
 
         throw new ServerError(ErrorCause.UsersDoNotExist, missing);
     }
@@ -104,28 +101,38 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
      * @returns A promise for the user with the alias.
      * @remarks This can't call validateUserSubmission, because that calls this.
      */
-    public async getByCredentials(credentials: ICredentials): Promise<IReport<IUser>> {
+    public async getByCredentials(credentials: ICredentials): Promise<IUser> {
         await this.validateCredentials(credentials);
 
         return await this.collection.findOne({
-            "data.alias": credentials.alias,
-            "data.nickname": credentials.nickname,
-            "data.passphrase": credentials.passphrase
+            alias: credentials.alias,
+            "nickname": credentials.nickname,
+            "passphrase": credentials.passphrase
         });
     }
 
     /**
      * Updates a user's information.
      * 
-     * @param report   Updated information for a user.
+     * @param user   Updated information for a user.
      * @returns A promise for when the user is updated.
      */
-    public async update(report: IReport<IUser>): Promise<any> {
+    public async update(user: IUser): Promise<any> {
         return this.collection.updateOne(
             {
-                "data.alias": report.data.alias
+                alias: user.alias
             },
-            report);
+            user);
+    }
+
+    /**
+     * Retrieves users matching a query.
+     * 
+     * @param query   A search query on users.
+     * @returns A promise for users matching the query.
+     */
+    public async query(query: any): Promise<IUser[]> {
+        return this.collection.find(query).toArray();
     }
 
     /**
@@ -137,18 +144,15 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
     public importUsers(users: IUser[]): Promise<any> {
         return this.collection.insertMany(
             users.map(
-                (user: IUser): IReport<IUser> => {
+                (user: IUser): IUser => {
                     return {
-                        data: {
-                            alias: user.alias,
-                            alive: true,
-                            biography: user.biography,
-                            nickname: user.nickname,
-                            passphrase: user.passphrase,
-                            target: user.target
-                        },
-                        reporter: "",
-                        timestamp: Date.now()
+                        alias: user.alias,
+                        alive: true,
+                        biography: user.biography,
+                        kills: 0,
+                        nickname: user.nickname,
+                        passphrase: user.passphrase,
+                        target: user.target
                     };
                 }));
     }
@@ -162,38 +166,38 @@ export class UsersEndpoint extends Endpoint<IReport<IUser>[]> {
     public importAdmins(users: IUser[]): Promise<any> {
         return this.collection.insertMany(
             users.map(
-                (user: IUser): IReport<IUser> => {
+                (user: IUser): IUser => {
                     return {
-                        data: {
-                            admin: true,
-                            alias: user.alias,
-                            alive: true,
-                            biography: user.biography,
-                            nickname: user.nickname,
-                            passphrase: user.passphrase
-                        },
-                        reporter: "",
-                        timestamp: Date.now()
+                        admin: true,
+                        alias: user.alias,
+                        alive: true,
+                        biography: user.biography,
+                        kills: 0,
+                        nickname: user.nickname,
+                        passphrase: user.passphrase
                     };
                 }));
     }
 
     /**
-     * Validates that user reports have their required fields.
+     * Validates that users have their required fields.
      * 
-     * @param reports   User reports to be added.
+     * @param users   Users to be added.
      */
-    private validateUserReports(reports: IReport<IUser>[]): void {
-        reports.forEach((report: IReport<IUser>, i: number): void => {
-            if (!report.data) {
-                throw new ServerError(ErrorCause.InvalidData, `[${i}].data`);
+    private validateUsers(users: IUser[]): void {
+        users.forEach((user: IUser, i: number): void => {
+            if (!user) {
+                throw new ServerError(ErrorCause.InvalidData, `[${i}]`);
             }
 
             CredentialKeys.forEach((key: string): void => {
-                if (!report.data[key]) {
-                    throw new ServerError(ErrorCause.InvalidData, `[${i}].data[${key}]`);
+                if (!user[key]) {
+                    throw new ServerError(ErrorCause.InvalidData, `[${i}][${key}]`);
                 }
             });
+
+            user.kills = user.kills || 0;
+            user.biography = user.biography || "";
         });
     }
 }

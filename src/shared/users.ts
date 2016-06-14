@@ -25,7 +25,7 @@ export interface ILeader {
 /**
  * Database model representation of a user.
  */
-export interface IUser extends ICredentials {
+export interface IUser extends ICredentials, ILeader {
     /**
      * Whether this user is an administrator.
      */

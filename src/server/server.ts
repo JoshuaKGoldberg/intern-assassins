@@ -4,7 +4,7 @@
 import * as express from "express";
 import * as fsp from "fs-promise";
 import * as http from "http";
-import { IReport } from "../shared/actions";
+import { IKillClaim } from "../shared/kills";
 import { IUser } from "../shared/users";
 import { IAssassinsSettings } from "../main";
 import { Api } from "./api";
@@ -94,11 +94,11 @@ export class Server {
         this.sockets = new Sockets(this.server);
 
         this.api.registerReportCallback(
-            (report: IReport<any>) => {
-                const message: string = `${report.data.victim} is dead!`;
+            (killClaim: IKillClaim): void => {
+                const message: string = `${killClaim.victim} is dead!`;
 
                 this.sockets.emit(message);
-                this.api.endpoints.notifications.storeEmittedMessage(message, report);
+                this.api.endpoints.notifications.storeEmittedMessage(message);
             });
 
     }

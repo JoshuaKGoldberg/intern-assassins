@@ -1,8 +1,6 @@
 /// <reference path="../../../typings/all.d.ts" />
 
 "use strict";
-import { IReport } from "../../shared/actions";
-import { IKillClaim } from "../../shared/kills";
 import { ILeader, IUser } from "../../shared/users";
 import { Endpoint } from "./endpoint";
 
@@ -25,30 +23,21 @@ export class LeadersEndpoint extends Endpoint<ILeader[]> {
      */
     public async get(): Promise<ILeader[]> {
         const leaders: { [i: string]: ILeader } = {};
+        const users: IUser[] = await this.api.endpoints.users.getAll();
 
         // List non-admin users as leaders, keyed by alias
-        (await this.api.endpoints.users.getAll())
-            .filter((report: IReport<IUser>): boolean => !report.data.admin)
-            .forEach((report: IReport<IUser>): void => {
-                leaders[report.data.alias] = {
-                    alive: report.data.alive,
-                    kills: 0,
-                    nickname: report.data.nickname
+        users
+            .filter((user: IUser): boolean => !user.admin)
+            .forEach((user: IUser): void => {
+                leaders[user.alias] = {
+                    alive: user.alive,
+                    kills: user.kills,
+                    nickname: user.nickname
                 };
             });
 
-        // Count claims by killers of victims that are confirmed dead
-        (await this.api.endpoints.kills.getAll())
-            .map((report: IReport<IKillClaim>): IKillClaim => report.data)
-            .filter((claim: IKillClaim): boolean => {
-                return claim.killer !== claim.victim && !leaders[claim.victim].alive;
-            })
-            .forEach((killClaim: IKillClaim): void => {
-                leaders[killClaim.killer].kills += 1;
-            });
-
         // Sort leaders by kills (descending), then by nickname (ascending).
-        return Object.keys(leaders)
+        const result = Object.keys(leaders)
             .map((key: string): ILeader => leaders[key])
             .sort((a: ILeader, b: ILeader): number => {
                 if (a.kills !== b.kills) {
@@ -57,5 +46,7 @@ export class LeadersEndpoint extends Endpoint<ILeader[]> {
 
                 return a.nickname < b.nickname ? -1 : 1;
             });
+
+        return result;
     }
 }

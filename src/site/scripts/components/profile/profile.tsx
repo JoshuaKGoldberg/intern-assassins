@@ -3,7 +3,6 @@
 
 "use strict";
 import * as React from "react";
-import { IReport } from "../../../../shared/actions";
 import { IKillClaim } from "../../../../shared/kills";
 import { IAppUserProps } from "../apps/appuser";
 import { Actions } from "./actions";
@@ -54,7 +53,7 @@ export class Profile extends React.Component<IAppUserProps, void> {
                         onKill={(): void => { this.onKill(); }} />
                 </div>
 
-                {this.renderKillClaimReports(this.props.killClaimReports)}
+                {this.renderKillClaimReports(this.props.killClaims)}
             </section>);
     }
 
@@ -64,12 +63,12 @@ export class Profile extends React.Component<IAppUserProps, void> {
      * @param The user's relevant kill claim reports.
      * @returns The rendered kill claim reports.
      */
-    private renderKillClaimReports(reports: IReport<IKillClaim>[]): JSX.Element {
-        if (!reports || !reports.length) {
+    private renderKillClaimReports(killClaims: IKillClaim[]): JSX.Element {
+        if (!killClaims || !killClaims.length) {
             return undefined;
         }
 
-        return <KillClaimReports reports={reports} />;
+        return <KillClaimReports killClaims={killClaims} />;
     }
 
     /**

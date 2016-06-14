@@ -3,7 +3,7 @@
 "use strict";
 import * as express from "express";
 import { Collection } from "mongodb";
-import { IReport, Method } from "../../shared/actions";
+import { Method } from "../../shared/actions";
 import { IUser } from "../../shared/users";
 import { CredentialKeys, ICredentials } from "../../shared/login";
 import { ErrorCause, NotAuthorizedError, ServerError } from "../errors";
@@ -132,34 +132,34 @@ export abstract class Endpoint<T> {
     }
 
     /**
-     * Ensures a submission contains the correct passphrase for its reporter before
-     * wrapping it in a report.
+     * Ensures a submission contains the correct information for its user.
      * 
      * @type T   The type of information being submitted.
      * @param credentials   Login values for authentication.
      * @returns A promise for a submitting user, if authenticated.
      */
-    protected validateUserSubmission<T>(credentials: ICredentials): Promise<IUser> {
-        return this.api.endpoints.users.getByCredentials(credentials)
-            .then(storedUser => {
-                if (storedUser.data.passphrase !== credentials.passphrase) {
-                    throw new NotAuthorizedError(ErrorCause.IncorrectCredentials);
-                }
+    protected async validateUserCredentials<T>(credentials: ICredentials): Promise<IUser> {
+        const storedUser: IUser = await this.api.endpoints.users.getByCredentials(credentials);
 
-                return storedUser.data;
-            });
+        if (!storedUser) {
+            throw new NotAuthorizedError(ErrorCause.IncorrectCredentials);
+        }
+        if (storedUser.passphrase !== credentials.passphrase) {
+            throw new NotAuthorizedError(ErrorCause.IncorrectCredentials);
+        }
+
+        return storedUser;
     }
 
     /**
-     * Ensures a submission contains the correct passphrase for its admin
-     * reporter before wrapping it in a report.
+     * Ensures a submission contains the correct information for an admin.
      * 
      * @type T   The type of information being submitted.
      * @param credentials   Login values for authentication.
      * @returns A promise for a submitting admin, if authenticated.
      */
-    protected validateAdminSubmission<T>(credentials: ICredentials): Promise<IUser> {
-        return this.validateUserSubmission(credentials)
+    protected validateAdminCredentials<T>(credentials: ICredentials): Promise<IUser> {
+        return this.validateUserCredentials(credentials)
             .then((user: IUser): IUser => {
                 if (!user.admin) {
                     throw new NotAuthorizedError(ErrorCause.NotAuthorized);
@@ -167,20 +167,5 @@ export abstract class Endpoint<T> {
 
                 return user;
             });
-    }
-
-    /**
-     * Standardizes data wrappings around data to use it as a report.
-     * 
-     * @param credentials   Login values for authentication.
-     * @param submission   An API submission sent in by a user.
-     * @returns The submission wrapped as a request.
-     */
-    protected wrapSubmission<T>(credentials: ICredentials, data: T): IReport<T> {
-        return {
-            data: data,
-            reporter: credentials.alias,
-            timestamp: Date.now()
-        };
     }
 }

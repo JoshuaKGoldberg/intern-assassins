@@ -1,7 +1,6 @@
 /// <reference path="../../../typings/all.d.ts" />
 
 "use strict";
-import { IReport } from "../../shared/actions";
 import { ICredentials } from "../../shared/login";
 import { IUser } from "../../shared/users";
 import { Endpoint } from "./endpoint";
@@ -9,7 +8,7 @@ import { Endpoint } from "./endpoint";
 /**
  * Endpoint for retrieving a single user's information.
  */
-export class UserEndpoint extends Endpoint<IReport<IUser>> {
+export class UserEndpoint extends Endpoint<IUser> {
     /**
      * @returns Path to this part of the global api.
      */
@@ -24,7 +23,7 @@ export class UserEndpoint extends Endpoint<IReport<IUser>> {
      * @param alias   Alias of a user.
      * @returns A promise for the user with the alias.
      */
-    public get(credentials: ICredentials): Promise<IReport<IUser>> {
+    public get(credentials: ICredentials): Promise<IUser> {
         return this.api.endpoints.users.getByCredentials(credentials);
     }
 }

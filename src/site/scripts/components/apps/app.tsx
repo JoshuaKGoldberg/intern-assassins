@@ -5,7 +5,6 @@
 declare var io: SocketIOStatic;
 import * as React from "react";
 import { IKillClaim } from "../../../../shared/kills";
-import { IReport } from "../../../../shared/actions";
 import { IUser } from "../../../../shared/users";
 import { ICredentials } from "../../../../shared/login";
 import { AppStorage } from "../../storage/appstorage";
@@ -21,7 +20,7 @@ export interface IAppState {
     /**
      * Any active kill claims related to the user, if not anyonymous.
      */
-    killClaimReports?: IReport<IKillClaim>[];
+    killClaims?: IKillClaim[];
 
     /**
      * Recently pushed notification messages.
@@ -96,7 +95,7 @@ export class App extends React.Component<void, IAppState> {
 
             return (
                 <AppUser
-                    killClaimReports={this.state.killClaimReports}
+                    killClaims={this.state.killClaims}
                     messages={this.state.messages}
                     refreshUserData={(): void => { this.refreshUserData(); }}
                     sdk={this.sdk}
@@ -126,15 +125,15 @@ export class App extends React.Component<void, IAppState> {
      */
     private async refreshUserData(): Promise<void> {
         const credentials: ICredentials = this.storage.asCredentials();
-        const [userReport, killClaimReports] = await Promise.all([
+        const [user, killClaims] = await Promise.all([
             this.sdk.getUser(credentials),
             this.sdk.getUserActiveKillClaims(credentials)
         ]);
 
         this.setState({
-            killClaimReports: killClaimReports,
+            killClaims: killClaims,
             messages: this.state.messages,
-            user: userReport.data
+            user: user
         });
     }
 

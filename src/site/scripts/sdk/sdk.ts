@@ -1,7 +1,7 @@
 "use strict";
 
 import { IKillClaim } from "../../../shared/kills";
-import { IReport, Method } from "../../../shared/actions";
+import { Method } from "../../../shared/actions";
 import { ICredentials } from "../../../shared/login";
 import { ILeader, IUser } from "../../../shared/users";
 
@@ -40,7 +40,7 @@ export class Sdk {
      * @param credentials   The submitting user credentials.
      * @returns A promise for the user.
      */
-    public getUser(credentials: ICredentials): Promise<IReport<IUser>> {
+    public getUser(credentials: ICredentials): Promise<IUser> {
         return this.sendAjaxRequest(
             "GET",
             "api/user",
@@ -55,7 +55,7 @@ export class Sdk {
      * @param credentials   The submitting user credentials.
      * @returns A promise for the user's active kill claims.
      */
-    public getUserActiveKillClaims(credentials: ICredentials): Promise<IReport<IKillClaim>[]> {
+    public getUserActiveKillClaims(credentials: ICredentials): Promise<IKillClaim[]> {
         return this.sendAjaxRequest(
             "GET",
             "api/kills",
@@ -79,7 +79,7 @@ export class Sdk {
      * @param credentials   The submitting user credentials.
      * @returns A promise for all users.
      */
-    public getUsers(credentials: ICredentials): Promise<IReport<IUser>[]> {
+    public getUsers(credentials: ICredentials): Promise<IUser[]> {
         return this.sendAjaxRequest(
             "GET",
             "api/users",
@@ -95,7 +95,7 @@ export class Sdk {
      * @param alias   The user's alias.
      * @returns A promise for the created kill claim, if successful.
      */
-    public reportKillClaim(credentials: ICredentials, claim: IKillClaim): Promise<IReport<IKillClaim>> {
+    public reportKillClaim(credentials: ICredentials, claim: IKillClaim): Promise<IKillClaim> {
         return this.sendAjaxRequest(
             "PUT",
             "api/kills",

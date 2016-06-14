@@ -6,7 +6,8 @@ const killer = {
     alias: "killer",
     alive: true,
     nickname: "Killer",
-    passphrase: "kill"
+    passphrase: "kill",
+    target: "victim"
 };
 
 const victim = {
@@ -83,36 +84,46 @@ class LeadersWorld extends World {
      * 
      */
     assertReceivedNoKills() {
-        expect(JSON.stringify(this.response.body)).to.deep.equal(JSON.stringify([
+        const users = this.response.body;
+
+        expect(users[0]).to.be.deep.equal(
             {
                 alive: true,
                 kills: 0,
                 nickname: "Killer"
             },
+            "The killer has no kills");
+
+        expect(users[1]).to.be.deep.equal(
             {
                 alive: true,
                 kills: 0,
                 nickname: "Victim"
-            }
-        ]));
+            },
+            "The victim has no kills and is still alive");
     }
 
     /**
      * 
      */
     assertReceivedConfirmedKill() {
-        expect(JSON.stringify(this.response.body)).to.deep.equal(JSON.stringify([
+        const users = this.response.body;
+
+        expect(users[0]).to.be.deep.equal(
             {
                 alive: true,
                 kills: 1,
                 nickname: "Killer"
             },
+            "The killer has one kill");
+
+        expect(users[1]).to.be.deep.equal(
             {
-                alive: true,
+                alive: false,
                 kills: 0,
                 nickname: "Victim"
-            }
-        ]));
+            },
+            "The victim has no kills and is dead");
     }
 }
 

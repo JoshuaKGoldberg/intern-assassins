@@ -4,8 +4,6 @@
 
 "use strict";
 import * as React from "react";
-import * as moment from "moment";
-import { IReport } from "../../../../shared/actions";
 import { IKillClaim } from "../../../../shared/kills";
 
 /**
@@ -13,9 +11,9 @@ import { IKillClaim } from "../../../../shared/kills";
  */
 export interface IKillClaimReportsProps {
     /**
-     * A user's relevant kill claim reports.
+     * A user's relevant kill claims.
      */
-    reports: IReport<IKillClaim>[];
+    killClaims: IKillClaim[];
 }
 
 /**
@@ -30,11 +28,11 @@ export class KillClaimReports extends React.Component<IKillClaimReportsProps, vo
     public render(): JSX.Element {
         return (
             <div className="kill-claim-reports">
-                {this.props.reports.map(
-                    (report: IReport<IKillClaim>, i: number): JSX.Element => {
-                        return report.data.killer
-                            ? this.renderKillerReport(report, i)
-                            : this.renderVictimReport(report, i);
+                {this.props.killClaims.map(
+                    (killClaim: IKillClaim, i: number): JSX.Element => {
+                        return killClaim.killer
+                            ? this.renderKillerReport(killClaim, i)
+                            : this.renderVictimReport(killClaim, i);
                     })}
             </div>);
     }
@@ -46,13 +44,12 @@ export class KillClaimReports extends React.Component<IKillClaimReportsProps, vo
      * @param i   Which index number this is.
      * @returns The rendered report.
      */
-    private renderKillerReport(report: IReport<IKillClaim>, i: number): JSX.Element {
-        const fromNow: string = moment(report.timestamp).fromNow();
-        const victim: string = report.data.victim;
+    private renderKillerReport(report: IKillClaim, i: number): JSX.Element {
+        const victim: string = report.victim;
 
         return (
             <div className="kill-claim-report killer-report" key={i}>
-                You reported killing {victim} {fromNow}.
+                You reported killing {victim}.
             </div>);
     }
 
@@ -63,12 +60,10 @@ export class KillClaimReports extends React.Component<IKillClaimReportsProps, vo
      * @param i   Which index number this is.
      * @returns The rendered report.
      */
-    private renderVictimReport(report: IReport<IKillClaim>, i: number): JSX.Element {
-        const fromNow: string = moment(report.timestamp).fromNow();
-
+    private renderVictimReport(report: IKillClaim, i: number): JSX.Element {
         return (
             <div className="kill-claim-report victim-report" key={i}>
-                Your killer reported killing you {fromNow}!
+                Your killer has reported killing you.
             </div>);
     }
 }

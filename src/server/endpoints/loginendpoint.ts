@@ -25,15 +25,15 @@ export class LoginEndpoint extends Endpoint<void> {
      * @returns A promise for the user with the alias.
      */
     public async post(credentials: ICredentials, data: void, response: express.Response): Promise<void> {
-        const record = await this.api.endpoints.users.getByCredentials(credentials);
-        if (!record) {
+        const user = await this.api.endpoints.users.getByCredentials(credentials);
+        if (!user) {
             throw new NotAuthorizedError();
         }
 
         if (
-            credentials.nickname !== record.data.nickname
-            || credentials.alias !== record.data.alias
-            || credentials.passphrase !== record.data.passphrase) {
+            credentials.nickname !== user.nickname
+            || credentials.alias !== user.alias
+            || credentials.passphrase !== user.passphrase) {
             throw new NotAuthorizedError();
         }
 

@@ -4,6 +4,7 @@
 import * as bodyParser from "body-parser";
 import * as express from "express";
 import { Method } from "../shared/actions";
+import { INotification } from "../shared/notifications";
 import { ErrorCause } from "../shared/errors";
 import { Database } from "./database";
 import { ServerError } from "./errors";
@@ -11,12 +12,12 @@ import { Endpoint } from "./endpoints/endpoint";
 import { Endpoints } from "./endpoints/endpoints";
 
 /**
- * Handler for a report being emitted.
+ * Handler for a notification being emitted.
  * 
- * @param report   The emitted report.
+ * @param notification   The emitted notification.
  */
-export interface IReportCallback<T> {
-    (report: T): void;
+export interface INotificationCallback {
+    (notification: INotification): void;
 }
 
 /**
@@ -39,9 +40,9 @@ export class Api {
     public /* readonly */ endpoints: Endpoints;
 
     /**
-     * Callbacks to notify of reports.
+     * Callbacks to notify of notifications.
      */
-    private reportCallbacks: IReportCallback<any>[] = [];
+    private notificationCallbacks: INotificationCallback[] = [];
 
     /**
      * Initializes a new instance of the Api class, registering its routes
@@ -69,18 +70,18 @@ export class Api {
      * 
      * @param callback   A callback to receive updates of events.
      */
-    public registerReportCallback(callback: IReportCallback<any>): void {
-        this.reportCallbacks.push(callback);
+    public registerNotificationCallback(callback: INotificationCallback): void {
+        this.notificationCallbacks.push(callback);
     }
 
     /**
-     * Fires all registered callbacks for a new report.
+     * Fires all registered callbacks for a new notification.
      * 
-     * @param report   A new report.
+     * @param notification   A new notification.
      */
-    public fireReportCallback<T>(report: T): void {
-        this.reportCallbacks.forEach((callback: IReportCallback<T>): void => {
-            callback(report);
+    public fireNotificationCallbacks<T>(notification: INotification): void {
+        this.notificationCallbacks.forEach((callback: INotificationCallback): void => {
+            callback(notification);
         });
     }
 

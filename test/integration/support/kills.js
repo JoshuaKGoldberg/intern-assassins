@@ -29,7 +29,9 @@ const victim = {
  */
 class KillsWorld extends World {
     /**
+     * Adds the killer and victim to the server.
      * 
+     * @returns {Promise} A promise for the users being added.
      */
     setUserTypeAsKiller() {
         this.setUserType("admin");
@@ -46,7 +48,9 @@ class KillsWorld extends World {
     }
 
     /**
+     * Sends a kill claim as the killer.
      * 
+     * @returns {Promise} A promise for the kill claim.
      */
     sendKillerKillClaim() {
         return this.sendRequest(
@@ -64,7 +68,9 @@ class KillsWorld extends World {
     }
 
     /**
+     * Sends a kill claim as the victim.
      * 
+     * @returns {Promise} A promise for the kill claim.
      */
     sendVictimKillClaim() {
         return this.sendRequest(
@@ -77,7 +83,9 @@ class KillsWorld extends World {
     }
 
     /**
+     * Sends an invalid kill claim as the killer.
      * 
+     * @returns {Promise} A promise for the kill claim.
      */
     sendInvalidKillClaim() {
         return this.sendRequest(
@@ -95,7 +103,9 @@ class KillsWorld extends World {
     }
 
     /**
+     * Sends an unauthorized kill claim.
      * 
+     * @returns {Promise} A promise for the kill claim.
      */
     sendUnauthorizedKillClaim() {
         return this.sendRequest(
@@ -114,7 +124,10 @@ class KillsWorld extends World {
     }
 
     /**
+     * Asserts the current user has the correct number of kills.
      * 
+     * @param {number} count   How many kills the user should have.
+     * @returns {Promise} A promise for asserting the number of kills.
      */
     assertKillsCount(count) {
         this.credentials = {
@@ -128,14 +141,14 @@ class KillsWorld extends World {
     }
 
     /**
-     * 
+     * Asserts the correct failure for an invalid kill claim was received.
      */
     assertInvalidFailure() {
         expect(this.response.body.cause).to.be.equal(ErrorCause[ErrorCause.MissingFields]);
     }
 
     /**
-     * 
+     * Asserts the correct failure for an unauthorized kill claim was received.
      */
     assertUnauthorizedFailure() {
         expect(this.response.body.cause).to.be.equal(ErrorCause[ErrorCause.IncorrectCredentials]);

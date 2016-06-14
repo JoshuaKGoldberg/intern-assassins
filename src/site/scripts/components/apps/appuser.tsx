@@ -3,9 +3,9 @@
 "use strict";
 import * as React from "react";
 import { IKillClaim } from "../../../../shared/kills";
-import { IUser } from "../../../../shared/users";
+import { ILeader, IUser } from "../../../../shared/users";
 import { Sdk } from "../../sdk/sdk";
-import { ActivityBar } from "../activitybar/activitybar";
+import { Sidebar } from "../sidebar/sidebar";
 import { ActionButton } from "../profile/actionbutton";
 import { Profile } from "../profile/profile";
 
@@ -37,6 +37,11 @@ export interface IAppUserProps {
      * Recently pushed notification messages.
      */
     messages: string[];
+
+    /**
+     * 
+     */
+    leaders: ILeader[];
 }
 
 /**
@@ -53,7 +58,7 @@ export class AppUser extends React.Component<IAppUserProps, void> {
             <div id="app" className="app-user">
                 <ActionButton text="x" small action={(): void => this.logOut()} />
                 <Profile {...this.props} />
-                <ActivityBar messages={this.props.messages} />
+                <Sidebar messages={this.props.messages} leaders={this.props.leaders} />
             </div>);
     }
 

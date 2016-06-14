@@ -23,7 +23,7 @@ export interface IActivityBarProps {
  */
 export const ActivityBar: React.StatelessComponent<IActivityBarProps> = (props: IActivityBarProps): JSX.Element => {
     return (
-        <section id="activity-bar">
+        <section className="activity-bar">
             {props.messages.map(
                 (message: string, i: number): JSX.Element => {
                     return <Activity key={i} message={message} />;

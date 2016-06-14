@@ -16,7 +16,7 @@ import { AppUser } from "./appuser";
 /**
  * State for an App component.
  */
-export interface IAppState {
+interface IAppState {
     /**
      * Any active kill claims related to the user, if not anyonymous.
      */

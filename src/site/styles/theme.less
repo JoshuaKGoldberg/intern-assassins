@@ -32,15 +32,15 @@ input {
     cursor: text;
     transition: 210ms all;
 
-    &:hover, &:active {
-        border-color: color-font-light;
+    &:hover, &:active, &.active {
+        border-color: @color-font-light;
         .shadow-light();
 
-        &[type=blue] {
+        &[type="blue"] {
             border-color: #77a;
         }
 
-        &[type=submit] {
+        &[type="submit"] {
             border-color: #7a7;
         }
     }
@@ -49,6 +49,20 @@ input {
     &[type=submit] {
         cursor: pointer;
     }
+
+    &.dark {
+        color: @color-font-light;
+        border-bottom-color: @color-font-dark;
+
+        &:hover, &:active, &.active {
+            border-color: @color-font-dark;
+            .shadow-dark();
+        }
+    }
+}
+
+:focus {
+    outline: 0;
 }
 
 

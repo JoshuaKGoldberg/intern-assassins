@@ -63,10 +63,10 @@ export class Sdk {
             {
                 $or: [
                     {
-                        "data.killer": credentials.alias
+                        killer: credentials.alias
                     },
                     {
-                        "data.victim": credentials.alias
+                        victim: credentials.alias
                     }
                 ]
             },

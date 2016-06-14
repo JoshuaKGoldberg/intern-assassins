@@ -31,15 +31,11 @@ class LeadersWorld extends World {
             .then(() => this.sendRequest(
                 "PUT",
                 "api/users",
-                {
-                    data: killer
-                }))
+                killer))
             .then(() => this.sendRequest(
                 "PUT",
                 "api/users",
-                {
-                    data: victim
-                }));
+                victim));
     }
 
     /**

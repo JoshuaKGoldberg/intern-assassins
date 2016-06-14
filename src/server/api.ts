@@ -154,7 +154,6 @@ export class Api {
             errorCode = 500;
         }
 
-        console.log("Error was", error);
         response.status(errorCode).json(details);
     }
 

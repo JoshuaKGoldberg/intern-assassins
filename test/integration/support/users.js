@@ -36,11 +36,7 @@ class UsersWorld extends World {
         return this.sendRequest(
             "PUT",
             "api/users",
-            sampleUsers.map(user => {
-                return {
-                    data: user
-                };
-            }))
+            sampleUsers)
             .catch(() => {});
     }
 
@@ -85,11 +81,11 @@ class UsersWorld extends World {
      * @param actual   Reports on the users (actual received values).
      */
     assertUsersMatchReports(expected, actual) {
-        actual = actual.map(report => {
+        actual = actual.map(user => {
             return {
-                alias: report.data.alias,
-                nickname: report.data.nickname,
-                passphrase: report.data.passphrase
+                alias: user.alias,
+                nickname: user.nickname,
+                passphrase: user.passphrase
             };
         });
 

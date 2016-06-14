@@ -9,6 +9,10 @@ html, body {
     height: 100%;
 }
 
+table {
+    width: 100%;
+}
+
 input {
     width: 175px;
     box-sizing: border-box;
@@ -30,17 +34,31 @@ input {
 }
 
 
-/* Activity bar */
+/* Sidebar */
 
-#activity-bar {
+.sidebar {
     padding: @padding-section;
     box-sizing: border-box;
+}
+
+.selection-changers {
+    display: block;
+    text-align: center;
 }
 
 .activity {
     margin: auto;
     padding: @padding-inside;
     text-align: center;
+}
+
+.leaderboard {
+    margin: auto;
+    max-width: 350px; 
+}
+
+.leader-name {
+    width: 100%;
 }
 
 
@@ -128,8 +146,16 @@ input {
         flex-direction: row-reverse;
     }
 
-    #activity-bar {
+    .sidebar {
         width: 490px;
+    }
+
+    .selection-changers {
+        display: flex;
+    }
+
+    .selection-changer {
+        margin: 0;
     }
 
     #profile {

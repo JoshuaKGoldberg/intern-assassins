@@ -25,7 +25,7 @@ export interface IAppAnonymousProps {
 /**
  * State for an AppAnonymous component.
  */
-export interface IAppAnonymousState {
+interface IAppAnonymousState {
     /**
      * Errors from invalid login credentials.
      */

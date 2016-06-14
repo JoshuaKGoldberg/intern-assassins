@@ -5,7 +5,7 @@
 declare var io: SocketIOStatic;
 import * as React from "react";
 import { IKillClaim } from "../../../../shared/kills";
-import { IUser } from "../../../../shared/users";
+import { ILeader, IUser } from "../../../../shared/users";
 import { ICredentials } from "../../../../shared/login";
 import { AppStorage } from "../../storage/appstorage";
 import { Sdk } from "../../sdk/sdk";
@@ -16,11 +16,16 @@ import { AppUser } from "./appuser";
 /**
  * State for an App component.
  */
-export interface IAppState {
+interface IAppState {
     /**
      * Any active kill claims related to the user, if not anyonymous.
      */
     killClaims?: IKillClaim[];
+
+    /**
+     * Leaders retrieved from the server.
+     */
+    leaders: ILeader[];
 
     /**
      * Recently pushed notification messages.
@@ -68,6 +73,7 @@ export class App extends React.Component<void, IAppState> {
         this.storage = new AppStorage();
         this.sdk = new Sdk();
         this.state = {
+            leaders: [],
             messages: []
         };
 
@@ -96,8 +102,9 @@ export class App extends React.Component<void, IAppState> {
             return (
                 <AppUser
                     killClaims={this.state.killClaims}
+                    leaders={this.state.leaders}
                     messages={this.state.messages}
-                    refreshUserData={(): void => { this.refreshUserData(); }}
+                    refreshUserData={(): void => { this.refreshData(); }}
                     sdk={this.sdk}
                     user={this.state.user} />);
         }
@@ -115,7 +122,7 @@ export class App extends React.Component<void, IAppState> {
      */
     private receiveCredentials(credentials: ICredentials): void {
         this.storage.setValues(credentials);
-        this.refreshUserData();
+        this.refreshData();
     }
 
     /**
@@ -123,15 +130,17 @@ export class App extends React.Component<void, IAppState> {
      * 
      * @returns A promise for loading the data.
      */
-    private async refreshUserData(): Promise<void> {
+    private async refreshData(): Promise<void> {
         const credentials: ICredentials = this.storage.asCredentials();
-        const [user, killClaims] = await Promise.all([
+        const [user, killClaims, leaders] = await Promise.all([
             this.sdk.getUser(credentials),
-            this.sdk.getUserActiveKillClaims(credentials)
+            this.sdk.getUserActiveKillClaims(credentials),
+            this.sdk.getLeaders()
         ]);
 
         this.setState({
             killClaims: killClaims,
+            leaders: leaders,
             messages: this.state.messages,
             user: user
         });
@@ -147,6 +156,7 @@ export class App extends React.Component<void, IAppState> {
         messages.push(message);
 
         this.setState({
+            leaders: this.state.leaders,
             messages: messages
         });
     }

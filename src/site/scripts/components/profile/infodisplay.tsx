@@ -34,7 +34,7 @@ export interface IInfoDisplayProps {
 /**
  * State for an InfoDisplay component.
  */
-export interface IInfoDisplayState {
+interface IInfoDisplayState {
     /**
      * Whether the component is being edited.
      */

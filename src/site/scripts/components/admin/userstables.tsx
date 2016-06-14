@@ -24,7 +24,7 @@ export interface IUsersTablesProps {
 /**
  * State for a UsersTables component.
  */
-export interface IUsersTablesState {
+interface IUsersTablesState {
     /**
      * Whether the users list is still loading.
      */

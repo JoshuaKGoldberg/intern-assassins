@@ -32,15 +32,15 @@ input {
     cursor: text;
     transition: 210ms all;
 
-    &:hover, &:active {
-        border-color: color-font-light;
+    &:hover, &:active, &.active {
+        border-color: @color-font-light;
         .shadow-light();
 
-        &[type=blue] {
+        &[type="blue"] {
             border-color: #77a;
         }
 
-        &[type=submit] {
+        &[type="submit"] {
             border-color: #7a7;
         }
     }
@@ -49,6 +49,20 @@ input {
     &[type=submit] {
         cursor: pointer;
     }
+
+    &.dark {
+        color: @color-font-light;
+        border-bottom-color: @color-font-dark;
+
+        &:hover, &:active, &.active {
+            border-color: @color-font-dark;
+            .shadow-dark();
+        }
+    }
+}
+
+:focus {
+    outline: 0;
 }
 
 
@@ -77,6 +91,21 @@ input {
     width: 100%;
     padding: 35px 0;
     background: white;
+    text-align: center;
+}
+
+
+/* Sidebar */
+
+.sidebar {
+    background: @color-background-dark;
+    color: @color-font-light;
+}
+
+.no-messages {
+    padding: 49px;
+    opacity: .49;
+    font-style: italic;
     text-align: center;
 }
 
@@ -112,18 +141,6 @@ input {
     .action-expanded & {
         display: block;
         opacity: 1;
-    }
-}
-
-
-/* Activity bar */
-
-#activity-bar {
-    background: @color-background-dark;
-    color: @color-font-light;
-
-    & .activity:last-of-type {
-        padding-bottom: 42px;
     }
 }
 

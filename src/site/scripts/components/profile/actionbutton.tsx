@@ -26,7 +26,7 @@ export interface IActionButtonProps {
 /**
  * State for an ActionButton component.
  */
-export interface IActionButtonState {
+interface IActionButtonState {
     /**
      * How long until this can be activated.
      */

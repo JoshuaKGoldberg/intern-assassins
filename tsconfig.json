@@ -21,6 +21,7 @@
         "src/server/endpoints/usersendpoint.ts",
         "src/server/sockets.ts",
         "src/shared/actions.ts",
+        "src/shared/errors.ts",
         "src/shared/kills.ts",
         "src/shared/login.ts",
         "src/shared/users.ts",

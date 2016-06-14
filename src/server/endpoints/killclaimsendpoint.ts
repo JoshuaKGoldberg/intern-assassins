@@ -1,10 +1,11 @@
 /// <reference path="../../../typings/all.d.ts" />
 
 "use strict";
+import { ErrorCause } from "../../shared/errors";
 import { IKillClaim } from "../../shared/kills";
 import { IUser } from "../../shared/users";
 import { ICredentials } from "../../shared/login";
-import { ErrorCause, ServerError } from "../errors";
+import { NotAuthorizedError, ServerError } from "../errors";
 import { Endpoint } from "./endpoint";
 
 /**
@@ -57,11 +58,12 @@ export class KillClaimsEndpoint extends Endpoint<IKillClaim> {
      * @returns A promise for the kill claim, if added successfully.
      */
     public async put(credentials: ICredentials, claim: IKillClaim): Promise<IKillClaim> {
+        this.validateKillClaim(claim);
         const user: IUser = await this.validateUserCredentials(credentials);
 
         // Non-admins can only claim a kill on yourself or your target
         if (!user.admin && user.alias !== claim.victim && user.alias !== claim.killer) {
-            throw new ServerError(ErrorCause.PermissionDenied);
+            throw new NotAuthorizedError();
         }
 
         // Retrieve the killer and victim users
@@ -108,6 +110,25 @@ export class KillClaimsEndpoint extends Endpoint<IKillClaim> {
      */
     public async getAll(): Promise<IKillClaim[]> {
         return this.collection.find().toArray();
+    }
+
+    /**
+     * Validates that a kill claim has the required fields.
+     */
+    private validateKillClaim(claim: IKillClaim): void {
+        if (claim.killer && claim.victim) {
+            return;
+        }
+
+        const missingFields: string[] = [];
+        if (!claim.killer) {
+            missingFields.push("killer");
+        }
+        if (!claim.victim) {
+            missingFields.push("victim");
+        }
+
+        throw new ServerError(ErrorCause.MissingFields, missingFields);
     }
 
     /**

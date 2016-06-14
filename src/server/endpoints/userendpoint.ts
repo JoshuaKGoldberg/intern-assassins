@@ -23,7 +23,7 @@ export class UserEndpoint extends Endpoint<IUser> {
      * @param alias   Alias of a user.
      * @returns A promise for the user with the alias.
      */
-    public get(credentials: ICredentials): Promise<IUser> {
-        return this.api.endpoints.users.getByCredentials(credentials);
+    public async get(credentials: ICredentials): Promise<IUser> {
+        return await this.api.endpoints.users.getByCredentials(credentials);
     }
 }

@@ -1,18 +1,11 @@
+/// <reference path="../../../../../typings/moment/index.d.ts" />
 /// <reference path="../../../../../typings/react/index.d.ts" />
 /// <reference path="../../../../../typings/react-dom/index.d.ts" />
 
 "use strict";
+import * as Moment from "moment";
 import * as React from "react";
-
-/**
- * Props for an Activity component.
- */
-export interface IActivityProps {
-    /**
-     * Displayed activity message.
-     */
-    message: string;
-}
+import { INotification } from "../../../../shared/notifications";
 
 /**
  * Stateless component for an activity message.
@@ -20,9 +13,10 @@ export interface IActivityProps {
  * @param props   Props for an Activity component.
  * @returns The rendered compoment.
  */
-export const Activity: React.StatelessComponent<IActivityProps> = (props: IActivityProps): JSX.Element => {
+export const Activity: React.StatelessComponent<INotification> = (props: INotification): JSX.Element => {
     return (
         <div className="activity">
-            {props.message}
+            <div className="activity-description">{props.description}</div>
+            <div className="activity-time">{Moment(props.timestamp).fromNow()}</div>
         </div>);
 };

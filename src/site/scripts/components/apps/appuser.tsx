@@ -3,6 +3,7 @@
 "use strict";
 import * as React from "react";
 import { IKillClaim } from "../../../../shared/kills";
+import { INotification } from "../../../../shared/notifications";
 import { ILeader, IUser } from "../../../../shared/users";
 import { Sdk } from "../../sdk/sdk";
 import { Sidebar } from "../sidebar/sidebar";
@@ -36,7 +37,7 @@ export interface IAppUserProps {
     /**
      * Recently pushed notification messages.
      */
-    messages: string[];
+    notifications: INotification[];
 
     /**
      * 
@@ -58,7 +59,7 @@ export class AppUser extends React.Component<IAppUserProps, void> {
             <div id="app" className="app-user">
                 <ActionButton text="x" small action={(): void => this.logOut()} />
                 <Profile {...this.props} />
-                <Sidebar messages={this.props.messages} leaders={this.props.leaders} />
+                <Sidebar notifications={this.props.notifications} leaders={this.props.leaders} />
             </div>);
     }
 

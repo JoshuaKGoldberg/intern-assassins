@@ -5,6 +5,7 @@
 declare var io: SocketIOStatic;
 import * as React from "react";
 import { IKillClaim } from "../../../../shared/kills";
+import { INotification } from "../../../../shared/notifications";
 import { ILeader, IUser } from "../../../../shared/users";
 import { ICredentials } from "../../../../shared/login";
 import { AppStorage } from "../../storage/appstorage";
@@ -30,7 +31,7 @@ interface IAppState {
     /**
      * Recently pushed notification messages.
      */
-    messages: string[];
+    notifications: INotification[];
 
     /**
      * Currently logged in user, if not anonymous.
@@ -74,11 +75,11 @@ export class App extends React.Component<void, IAppState> {
         this.sdk = new Sdk();
         this.state = {
             leaders: [],
-            messages: []
+            notifications: []
         };
 
         this.socket = io();
-        this.socket.on("report", (reportRaw: string): void => this.receiveMessage(reportRaw));
+        this.socket.on("report", (notification: INotification): void => this.receiveNotification(notification));
 
         if (this.storage.isComplete()) {
             this.receiveCredentials(this.storage.asCredentials());
@@ -103,7 +104,7 @@ export class App extends React.Component<void, IAppState> {
                 <AppUser
                     killClaims={this.state.killClaims}
                     leaders={this.state.leaders}
-                    messages={this.state.messages}
+                    notifications={this.state.notifications}
                     refreshUserData={(): void => { this.refreshData(); }}
                     sdk={this.sdk}
                     user={this.state.user} />);
@@ -141,23 +142,22 @@ export class App extends React.Component<void, IAppState> {
         this.setState({
             killClaims: killClaims,
             leaders: leaders,
-            messages: this.state.messages,
+            notifications: this.state.notifications,
             user: user
         });
     }
 
     /**
-     * Receives a notification message.
+     * Receives a socket notification.
      * 
-     * @param message   The notification message contents.
+     * @param message   The notification.
      */
-    private receiveMessage(message: string): void {
-        const messages: string[] = this.state.messages.slice();
-        messages.push(message);
+    private receiveNotification(notification: INotification): void {
+        const notifications: INotification[] = [...this.state.notifications, notification];
 
         this.setState({
             leaders: this.state.leaders,
-            messages: messages
+            notifications: notifications
         });
     }
 }

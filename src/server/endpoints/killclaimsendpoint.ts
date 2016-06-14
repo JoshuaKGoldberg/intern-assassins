@@ -3,6 +3,7 @@
 "use strict";
 import { ErrorCause } from "../../shared/errors";
 import { IKillClaim } from "../../shared/kills";
+import { NotificationCause } from "../../shared/notifications";
 import { IUser } from "../../shared/users";
 import { ICredentials } from "../../shared/login";
 import { NotAuthorizedError, ServerError } from "../errors";
@@ -91,16 +92,11 @@ export class KillClaimsEndpoint extends Endpoint<IKillClaim> {
         // Only change death status when the victim says so
         if (killer.alias === victim.alias) {
             await this.finalizeKill(victim);
+        } else {
+            await this.api.endpoints.users.update(killer);
         }
 
-        // Update the corresponding users
-        await this.api.endpoints.users.update(killer);
         await this.api.endpoints.users.update(victim);
-
-        // Only report a death when the victim says so
-        if (!victim.alive) {
-            this.api.fireReportCallback(claim);
-        }
 
         return claim;
     }
@@ -157,5 +153,12 @@ export class KillClaimsEndpoint extends Endpoint<IKillClaim> {
         victim.alive = false;
         victim.target = "";
         await this.api.endpoints.users.update(victim);
+
+        this.api.fireNotificationCallbacks({
+            cause: NotificationCause.Kill,
+            description: `${killer.nickname} has scored a kill!`,
+            nickname: killer.nickname,
+            timestamp: Date.now()
+        });
     }
 }

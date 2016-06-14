@@ -3,6 +3,7 @@
 
 "use strict";
 import * as React from "react";
+import { INotification } from "../../../../shared/notifications";
 import { ILeader } from "../../../../shared/users";
 import { ActivityBoard } from "./activityboard";
 import { Leaderboard } from "./leaderboard";
@@ -19,7 +20,7 @@ export interface ISidebarProps {
     /**
      * Displayed activity messages.
      */
-    messages: string[];
+    notifications: INotification[];
 }
 
 /**
@@ -58,7 +59,7 @@ export class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
      * Sidebar selections keyed to render methods.
      */
     private renderers: { [i: number]: () => JSX.Element } = {
-        [SidebarSelection.ActivityBoard]: (): JSX.Element => <ActivityBoard messages={this.props.messages} />,
+        [SidebarSelection.ActivityBoard]: (): JSX.Element => <ActivityBoard notifications={this.props.notifications} />,
         [SidebarSelection.Leaderboard]: (): JSX.Element => <Leaderboard leaders={this.props.leaders} />
     };
 

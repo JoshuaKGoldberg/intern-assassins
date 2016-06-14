@@ -3,6 +3,7 @@
 "use strict";
 import * as http from "http";
 import * as socketIo from "socket.io";
+import { INotification } from "../shared/notifications";
 
 /**
  * Emits real-time socket events for new and updated reports.
@@ -25,7 +26,8 @@ export class Sockets {
     /**
      * Emits a message.
      */
-    public emit(message: string): void {
-        this.ioServer.emit("report", message);
+    public emitNotification(notification: INotification): void {
+        console.log("Emitting", notification);
+        this.ioServer.emit("report", notification);
     }
 }

@@ -47,15 +47,17 @@ export class Leaderboard extends React.Component<ILeaderboardProps, void> {
             <div className="leaders-table-container">
                 <h3>{title}</h3>
                 <table>
-                    {this.props.leaders
-                        .filter((leader: ILeader): boolean => leader.alive === alive)
-                        .map((leader: ILeader, i: number): JSX.Element => {
-                            return (
-                                <tr>
-                                    <td className="leader-name">{leader.nickname}</td>
-                                    <td className="leader-kills">{leader.kills}</td>
-                                </tr>);
-                        })}
+                    <tbody>
+                        {this.props.leaders
+                            .filter((leader: ILeader): boolean => leader.alive === alive)
+                            .map((leader: ILeader, i: number): JSX.Element => {
+                                return (
+                                    <tr key={i}>
+                                        <td className="leader-name">{leader.nickname}</td>
+                                        <td className="leader-kills">{leader.kills}</td>
+                                    </tr>);
+                            })}
+                    </tbody>
                 </table>
             </div>);
     }

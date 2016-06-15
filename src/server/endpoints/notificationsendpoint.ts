@@ -36,7 +36,7 @@ export class NotificationsEndpoint extends Endpoint<INotification> {
      * @param report   An associated report.
      * @returns A newly generated report for the message.
      */
-    public async storeEmittedNotification(notification: INotification): Promise<void> {
+    public async receiveNotification(notification: INotification): Promise<void> {
         await this.collection.insertOne(notification);
     }
 }

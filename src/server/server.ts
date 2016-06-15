@@ -1,4 +1,4 @@
-/// <reference path="../../typings/all.d.ts" />
+/// <reference path="../../typings/node/index.d.ts" />
 
 "use strict";
 import * as express from "express";
@@ -7,8 +7,10 @@ import * as http from "http";
 import { INotification } from "../shared/notifications";
 import { IUser } from "../shared/users";
 import { IAssassinsSettings } from "../main";
+import { NotificationsHub } from "./notifications/notificationshub";
+import { EndpointNotifier } from "./notifications/endpointnotifier";
+import { SocketNotifier } from "./notifications/socketnotifier";
 import { Api } from "./api";
-import { Sockets } from "./sockets";
 import { Database } from "./database";
 
 /**
@@ -56,6 +58,11 @@ export class Server {
     public /* readonly */ api: Api;
 
     /**
+     * Broadcasts notifications.
+     */
+    public /* readonly */ notificationsHub: NotificationsHub;
+
+    /**
      * Running express application responding to requests.
      */
     private app: any;
@@ -69,11 +76,6 @@ export class Server {
      * MongoDB database.
      */
     private database: Database;
-
-    /**
-     * Real-time push notifications for activity.
-     */
-    private sockets: Sockets;
 
     /**
      * Initializes a new instance of the Server class.
@@ -91,14 +93,15 @@ export class Server {
 
         this.api = new Api(this.app, this.database);
         this.server = http.createServer(this.app);
-        this.sockets = new Sockets(this.server);
+
+        this.notificationsHub = new NotificationsHub();
+        this.notificationsHub.registerNotifier(new EndpointNotifier(this.api.endpoints.notifications));
+        this.notificationsHub.registerNotifier(new SocketNotifier(this.server));
 
         this.api.registerNotificationCallback(
             (notification: INotification): void => {
-                this.sockets.emitNotification(notification);
-                this.api.endpoints.notifications.storeEmittedNotification(notification);
+                this.notificationsHub.notify(notification);
             });
-
     }
 
     /**

@@ -125,11 +125,29 @@ export class ActionButton extends React.Component<IActionButtonProps, IActionBut
         }
 
         return (
+            <div className="action-confirmation">
             <input
-                className="action-confirmation"
                 onClick={onClick}
                 type="button"
-                value={value} />);
+                value={value} />
+                {this.renderCancel()}
+            </div>);
+    }
+
+    private renderCancel(): JSX.Element {
+        let onClick: () => void;
+
+        if (this.state.expanded) {
+            onClick = (): void => {
+                this.toggleExpansion();
+            };
+        }
+
+        return (
+          <input
+            onClick={onClick}
+            type="button"
+            value="Cancel"/>);
     }
 
     /**
@@ -139,7 +157,8 @@ export class ActionButton extends React.Component<IActionButtonProps, IActionBut
         if (this.state.expanded) {
             this.setState({
                 confirmation: this.state.confirmation,
-                expanded: false
+                expanded: false,
+                delay: 0
             });
 
             return;

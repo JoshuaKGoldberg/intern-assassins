@@ -19,7 +19,10 @@ Use JSDoc annotations everywhere. Code should otherwise be as self-documenting a
 Larger architectural information is kept in the [wiki](https://github.com/JoshuaKGoldberg/intern-assassins/wiki).
 
 
-## Pull Requests
+## Pull Requests and Commits
 
 Create one pull request per issue when possible.
 PRs that address multiple related issues are fine if it would have been difficult to split them.
+
+PR and commit titles should be concise descriptions of the issues.
+Bodies should explain in more detail and link to their relevant issue per the [GitHub standard](https://help.github.com/articles/closing-issues-via-commit-messages/).

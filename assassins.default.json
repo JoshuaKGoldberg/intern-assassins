@@ -7,7 +7,6 @@
     "admins": [
       {
         "alias": "admin",
-        "biography": "Sample admin biography.",
         "nickname": "Admin",
         "passphrase": "pineapple"
       }
@@ -17,49 +16,42 @@
     "users": [
       {
         "alias": "aaa",
-        "biography": "a is for apples",
         "nickname": "Aaa",
         "passphrase": "pineapple",
         "target": "bbb"
       },
       {
         "alias": "bbb",
-        "biography": "b is for bananas",
         "nickname": "Bbb",
         "passphrase": "pineapple",
         "target": "ccc"
       },
       {
         "alias": "ccc",
-        "biography": "c is for carrots",
         "nickname": "Ccc",
         "passphrase": "pineapple",
         "target": "ddd"
       },
       {
         "alias": "ddd",
-        "biography": "d is for dates",
         "nickname": "Ddd",
         "passphrase": "pineapple",
         "target": "eee"
       },
       {
         "alias": "eee",
-        "biography": "e is for eggplant",
         "nickname": "Eee",
         "passphrase": "pineapple",
         "target": "fff"
       },
       {
         "alias": "fff",
-        "biography": "f is for figs",
         "nickname": "Fff",
         "passphrase": "pineapple",
         "target": "ggg"
       },
       {
         "alias": "ggg",
-        "biography": "g is for grapes",
         "nickname": "Ggg",
         "passphrase": "pineapple",
         "target": "aaa"

@@ -41,8 +41,7 @@ export class Profile extends React.Component<IAppUserProps, void> {
                 </div>
 
                 <div className="area info-display-area">
-                    <InfoDisplay info="biography" display={this.props.user.biography} editable={true} large={true} />
-                    <InfoDisplay info="nickname" display={this.props.user.nickname} editable={true} />
+                    <InfoDisplay info="nickname" display={this.props.user.nickname} />
                     <InfoDisplay info="target" display={this.props.user.target} />
                 </div>
 

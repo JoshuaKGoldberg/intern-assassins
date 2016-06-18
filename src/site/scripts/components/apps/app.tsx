@@ -1,13 +1,12 @@
 /// <reference path="../../../../../typings/react/index.d.ts" />
-/// <reference path="../../../../../typings/socket.io/index.d.ts" />
 
 "use strict";
-declare var io: SocketIOStatic;
 import * as React from "react";
 import { IKillClaim } from "../../../../shared/kills";
-import { INotification } from "../../../../shared/notifications";
+import { INotification, NotificationCause } from "../../../../shared/notifications";
 import { ILeader, IUser } from "../../../../shared/users";
 import { ICredentials } from "../../../../shared/login";
+import { SocketHandler } from "../../sockets/sockethandler";
 import { AppStorage } from "../../storage/appstorage";
 import { Sdk } from "../../sdk/sdk";
 import { AppAdmin } from "./appadmin";
@@ -59,9 +58,9 @@ export class App extends React.Component<void, IAppState> {
     private sdk: Sdk;
 
     /**
-     * Real-time socket.io server.
+     * Wrapper around a real-time socket.io server.
      */
-    private socket: SocketIO.Server;
+    private socketHandler: SocketHandler<INotification, IAppState>;
 
     /**
      * Initializes a new instance of the App class.
@@ -71,6 +70,7 @@ export class App extends React.Component<void, IAppState> {
      */
     public constructor(props?: void, context?: any) {
         super(props, context);
+
         this.storage = new AppStorage();
         this.sdk = new Sdk();
         this.state = {
@@ -78,8 +78,12 @@ export class App extends React.Component<void, IAppState> {
             notifications: []
         };
 
-        this.socket = io();
-        this.socket.on("report", (notification: INotification): void => this.receiveNotification(notification));
+        this.socketHandler = new SocketHandler<INotification, IAppState>()
+            .setRouter((notification: INotification): NotificationCause => notification.cause)
+            .setReceiver((state: IAppState, notification: INotification): void => this.receiveState(state, notification))
+            .registerHandler(
+                NotificationCause.Kill,
+                (notification: INotification): IAppState => this.handleKillNotification(notification));
 
         if (this.storage.isComplete()) {
             this.receiveCredentials(this.storage.asCredentials());
@@ -151,16 +155,39 @@ export class App extends React.Component<void, IAppState> {
     }
 
     /**
-     * Receives a socket notification.
+     * Generates a new state from a kill notification.
      * 
-     * @param message   The notification.
+     * @param notification   The triggering notification.
+     * @returns A new state.
      */
-    private receiveNotification(notification: INotification): void {
+    private handleKillNotification(notification: INotification): IAppState {
+        // When this is moved to Flux, make a(n immutable) copy of this.state. See issue #83.
+        const newState: IAppState = this.state;
+
+        newState.leaders
+            .find((leader: ILeader): boolean => leader.nickname === notification.nickname)
+            .kills += 1;
+
+        return newState;
+    }
+
+    /**
+     * Receives a new state from the socket handler.
+     * 
+     * @param state   A new state.
+     * @param notification   The triggering notification.
+     */
+    private receiveState(state: IAppState, notification: INotification): void {
         const notifications: INotification[] = [...this.state.notifications, notification];
 
-        this.setState({
-            leaders: this.state.leaders,
-            notifications: notifications
-        });
+        this.setState(
+            { notifications } as any,
+            (): void => {
+                // If you did something, fetch new target information from the server
+                if (notification.nickname === this.state.user.nickname) {
+                    this.refreshData();
+                    return undefined;
+                }
+            });
     }
 }

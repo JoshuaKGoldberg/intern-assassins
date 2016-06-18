@@ -14,13 +14,6 @@ export interface IInfoDisplayProps {
     display: string;
 
     /**
-     * Whether the info is editable.
-     * 
-     * @todo Implement this?
-     */
-    editable?: boolean;
-
-    /**
      * Name of the info, such as "alias".
      */
     info: string;
@@ -32,44 +25,23 @@ export interface IInfoDisplayProps {
 }
 
 /**
- * State for an InfoDisplay component.
+ * Stateless component for an displayed piece of information.
+ * 
+ * @param props   Properties of the component.
+ * @returns The rendered component.
  */
-interface IInfoDisplayState {
-    /**
-     * Whether the component is being edited.
-     */
-    editing: boolean;
-}
+export const InfoDisplay: React.StatelessComponent<IInfoDisplayProps> = (props: IInfoDisplayProps): JSX.Element => {
+    let className: string = "info-display";
 
-/**
- * Component for an editable displayed piece of information.
- */
-export class InfoDisplay extends React.Component<IInfoDisplayProps, IInfoDisplayState> {
-    /**
-     * State of the component.
-     */
-    public state: IInfoDisplayState = {
-        editing: false
-    };
-
-    /**
-     * Renders the component.
-     * 
-     * @returns The rendered component.
-     */
-    public render(): JSX.Element {
-        let className: string = "info-display";
-
-        if (this.props.large) {
-            className += "info-display-large";
-        }
-
-        return (
-            <div className={className}>
-                <span>Your </span>
-                <span>{this.props.info} </span>
-                <span>is </span>
-                <div className="display">{this.props.display}</div>.
-            </div>);
+    if (props.large) {
+        className += "info-display-large";
     }
-}
+
+    return (
+        <div className={className}>
+            <span>Your </span>
+            <span>{props.info} </span>
+            <span>is </span>
+            <div className="display">{props.display}</div>.
+        </div>);
+};

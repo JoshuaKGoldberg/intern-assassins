@@ -37,11 +37,6 @@ export interface IUser extends ICredentials, ILeader {
     alive: boolean;
 
     /**
-     * Life story, condensed.
-     */
-    biography: string;
-
-    /**
      * Who this person is hunting, if still alive.
      */
     target?: string;

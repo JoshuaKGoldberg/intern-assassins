@@ -150,7 +150,6 @@ export class UsersEndpoint extends Endpoint<IUser> {
                     return {
                         alias: user.alias,
                         alive: true,
-                        biography: user.biography,
                         kills: 0,
                         nickname: user.nickname,
                         passphrase: user.passphrase,
@@ -173,7 +172,6 @@ export class UsersEndpoint extends Endpoint<IUser> {
                         admin: true,
                         alias: user.alias,
                         alive: true,
-                        biography: user.biography,
                         kills: 0,
                         nickname: user.nickname,
                         passphrase: user.passphrase
@@ -199,7 +197,6 @@ export class UsersEndpoint extends Endpoint<IUser> {
             });
 
             user.kills = user.kills || 0;
-            user.biography = user.biography || "";
         });
     }
 }

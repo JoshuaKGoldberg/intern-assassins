@@ -6,7 +6,6 @@ import { INotification } from "../../../../shared/notifications";
 import { ILeader, IUser } from "../../../../shared/users";
 import { ActionButton } from "../profile/actionbutton";
 import { Greeting } from "../profile/greeting";
-import { InfoDisplay } from "../profile/infodisplay";
 import { Sdk } from "../../sdk/sdk";
 import { Sidebar } from "../sidebar/sidebar";
 import { UsersTables } from "../admin/userstables";
@@ -52,10 +51,6 @@ export class AppAdmin extends React.Component<IAppAdminProps, void> {
                     <ActionButton text="x" small action={(): void => this.logOut()} />
                     <div className="area greeting-area">
                         <Greeting admin={this.props.user.admin} nickname={this.props.user.nickname} />
-                    </div>
-
-                    <div className="area info-display-area">
-                        <InfoDisplay info="biography" display={this.props.user.biography} editable={true} large={true} />
                     </div>
 
                     <UsersTables sdk={this.props.sdk} user={this.props.user} />

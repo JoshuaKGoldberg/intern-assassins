@@ -186,7 +186,6 @@ export class App extends React.Component<void, IAppState> {
                 // If you did something, fetch new target information from the server
                 if (notification.nickname === this.state.user.nickname) {
                     this.refreshData();
-                    return undefined;
                 }
             });
     }

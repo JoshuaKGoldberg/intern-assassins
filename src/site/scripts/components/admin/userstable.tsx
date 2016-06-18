@@ -14,6 +14,11 @@ export interface IUsersTableProps {
     fields: string[];
 
     /**
+     * Optional filter to restrict users listed.
+     */
+    filter?: IUserFilter;
+
+    /**
      * Title to to display.
      */
     heading: string;
@@ -25,16 +30,45 @@ export interface IUsersTableProps {
 }
 
 /**
+ * Checks if a user should be displayed in a table.
+ * 
+ * @param user   User attributes being filtered.
+ * @returns Whether the user should be displayed.
+ */
+export interface IUserFilter {
+    (user: IUser): boolean;
+}
+
+/**
  * Component for an administrative table of users.
  */
 export class UsersTable extends React.Component<IUsersTableProps, void> {
+    /**
+     * User filter to allow only non-admin users.
+     * 
+     * @param user   User attributes being filtered.
+     * @returns Whether the user should be displayed.
+     */
+    public static filterToNonAdminUsers(user: IUser): boolean {
+        return !user.admin;
+    }
+
+    /**
+     * User filter to allow only admin users.
+     * 
+     * @param user   User attributes being filtered.
+     * @returns Whether the user should be displayed.
+     */
+    public static filterToAdminUsers(user: IUser): boolean {
+        return !!user.admin;
+    }
+
     /**
      * Renders the component.
      * 
      * @returns The rendered component.
      */
     public render(): JSX.Element {
-
         return (
             <div class="users-table">
                 <h3>{this.props.heading}</h3>
@@ -83,7 +117,11 @@ export class UsersTable extends React.Component<IUsersTableProps, void> {
      * @returns The rendered body component.
      */
     private renderBody(): JSX.Element[] {
-        return this.props.users
+        const users: IUser[] = this.props.filter
+            ? this.props.users.filter(this.props.filter)
+            : this.props.users;
+
+        return users
             .map((user: IUser, i: number): JSX.Element => {
                 return <tr key={i}>{this.renderUser(user)}</tr>;
             });
@@ -97,8 +135,9 @@ export class UsersTable extends React.Component<IUsersTableProps, void> {
      */
     private renderUser(user: IUser): JSX.Element[] {
         return this.props.fields
-            .filter((field: string): boolean => user.hasOwnProperty[field])
+            .filter((field: string): boolean => user.hasOwnProperty(field))
             .map((field: string, i: number): JSX.Element => {
+                console.log("Rendering field", field, i);
                 return <td key={i}>{user[field].toString()}</td>;
             });
     }

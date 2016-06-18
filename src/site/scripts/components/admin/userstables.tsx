@@ -75,14 +75,17 @@ export class UsersTables extends React.Component<IUsersTablesProps, IUsersTables
             <div id="administration">
                 <UsersTable
                     fields={["alias", "nickname", "target"]}
+                    filter={UsersTable.filterToNonAdminUsers}
                     heading="Alive"
                     users={this.state.users.filter(user => user.alive)} />
                 <UsersTable
                     fields={["alias", "nickname"]}
+                    filter={UsersTable.filterToNonAdminUsers}
                     heading="Dead"
                     users={this.state.users.filter(user => !user.alive)} />
                 <UsersTable
                     fields={["alias", "nickname"]}
+                    filter={UsersTable.filterToAdminUsers}
                     heading="Admins"
                     users={this.state.users.filter(user => user.admin)} />
             </div>);

@@ -131,13 +131,12 @@ export class UsersTable extends React.Component<IUsersTableProps, void> {
      * Renders a single user's row.
      * 
      * @param user   Information on a user.
-     * 
+     * @returns The rendered user row.
      */
     private renderUser(user: IUser): JSX.Element[] {
         return this.props.fields
             .filter((field: string): boolean => user.hasOwnProperty(field))
             .map((field: string, i: number): JSX.Element => {
-                console.log("Rendering field", field, i);
                 return <td key={i}>{user[field].toString()}</td>;
             });
     }

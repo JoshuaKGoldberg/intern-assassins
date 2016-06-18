@@ -96,8 +96,10 @@ export class App extends React.Component<void, IAppState> {
             if (this.state.user && this.state.user.admin) {
                 return (
                     <AppAdmin
-                        sdk={this.sdk}
-                        user={this.state.user} />);
+                        leaders={this.state.leaders}
+                        notifications={this.state.notifications}
+                        user={this.state.user}
+                        sdk={this.sdk} />);
             }
 
             return (

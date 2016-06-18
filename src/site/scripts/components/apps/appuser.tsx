@@ -40,7 +40,7 @@ export interface IAppUserProps {
     notifications: INotification[];
 
     /**
-     * 
+     * Leaders to be shown in the sidebar.
      */
     leaders: ILeader[];
 }

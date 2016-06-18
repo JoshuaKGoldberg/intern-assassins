@@ -2,11 +2,13 @@
 
 "use strict";
 import * as React from "react";
-import { IUser } from "../../../../shared/users";
+import { INotification } from "../../../../shared/notifications";
+import { ILeader, IUser } from "../../../../shared/users";
 import { ActionButton } from "../profile/actionbutton";
 import { Greeting } from "../profile/greeting";
 import { InfoDisplay } from "../profile/infodisplay";
 import { Sdk } from "../../sdk/sdk";
+import { Sidebar } from "../sidebar/sidebar";
 import { UsersTables } from "../admin/userstables";
 
 /**
@@ -14,14 +16,24 @@ import { UsersTables } from "../admin/userstables";
  */
 export interface IAppAdminProps {
     /**
+     * Wrapper around the server API.
+     */
+    sdk: Sdk;
+
+    /**
      * Information on the user.
      */
     user: IUser;
 
     /**
-     * Wrapper around the server API.
+     * Recently pushed notification messages.
      */
-    sdk: Sdk;
+    notifications: INotification[];
+
+    /**
+     * Leaders to be shown in the sidebar.
+     */
+    leaders: ILeader[];
 }
 
 /**
@@ -48,6 +60,7 @@ export class AppAdmin extends React.Component<IAppAdminProps, void> {
 
                     <UsersTables sdk={this.props.sdk} user={this.props.user} />
                 </section>
+                <Sidebar notifications={this.props.notifications} leaders={this.props.leaders} />
             </div>);
     }
 

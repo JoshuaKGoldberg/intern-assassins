@@ -13,4 +13,9 @@ export interface IKillClaim {
      * Rest in potatoes.
      */
     victim: string;
+
+    /**
+     * When the deed took place.
+     */
+    timestamp: number;
 }

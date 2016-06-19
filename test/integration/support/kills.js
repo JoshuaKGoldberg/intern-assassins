@@ -48,6 +48,15 @@ class KillsWorld extends World {
     }
 
     /**
+     * Adds the killer and victim to the server.
+     * 
+     * @returns {Promise} A promise for the users being added.
+     */
+    setUserTypeAsVictim() {
+        return this.setUserTypeAsKiller();
+    }
+
+    /**
      * Sends a kill claim as the killer.
      * 
      * @returns {Promise} A promise for the kill claim.
@@ -129,7 +138,7 @@ class KillsWorld extends World {
      * @param {number} count   How many kills the user should have.
      * @returns {Promise} A promise for asserting the number of kills.
      */
-    assertKillsCount(count) {
+    assertKillerKillsCount(count) {
         this.credentials = {
             alias: killer.alias,
             nickname: killer.nickname,
@@ -138,6 +147,23 @@ class KillsWorld extends World {
 
         return this.sendRequest("GET", "api/user")
             .then(() => expect(this.response.body.kills).to.be.equal(count));
+    }
+
+    /**
+     * Asserts the victim is dead.
+     * 
+     * @param {number} count   How many kills the user should have.
+     * @returns {Promise} A promise for asserting the number of kills.
+     */
+    assertVictimDeath(count) {
+        this.credentials = {
+            alias: victim.alias,
+            nickname: victim.nickname,
+            passphrase: victim.passphrase
+        };
+
+        return this.sendRequest("GET", "api/user")
+            .then(() => expect(this.response.body.alive).to.be.equal(false));
     }
 
     /**

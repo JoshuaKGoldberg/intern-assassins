@@ -44,6 +44,7 @@ export class KillClaimReports extends React.Component<IKillClaimReportsProps, vo
 
         return (
             <div className="kill-claim-reports">
+                {this.renderStatistics(this.props.killClaims)}
                 {Object.keys(collectedReports)
                     .map((key: string): JSX.Element => {
                         return (
@@ -52,6 +53,38 @@ export class KillClaimReports extends React.Component<IKillClaimReportsProps, vo
                                 {this.renderKillClaimsGroup(collectedReports[key])}
                             </div>);
                     })}
+            </div>);
+    }
+
+    /**
+     * Renders a statistics section for kill claims.
+     * 
+     * @param killClaims   Kill claims to summarize.
+     * @returns The rendered statistics section.
+     */
+    private renderStatistics(killClaims: IKillClaim[]): JSX.Element {
+        const relevantClaims: IKillClaim[] = killClaims
+            .filter((killClaim: IKillClaim): boolean => {
+                return killClaim.killer === this.props.user.alias && killClaim.killer !== killClaim.victim;
+            })
+            .sort((a: IKillClaim, b: IKillClaim): number => b.timestamp - a.timestamp);
+
+        if (relevantClaims.length === 0) {
+            return <p className="kill-claim-statistics">You haven't killed anybody yet... Get cracking!</p>;
+        }
+
+        const oldestClaimDate: moment.Moment = Moment(relevantClaims[0].timestamp);
+        const newestClaimDate: moment.Moment = Moment(relevantClaims[relevantClaims.length - 1].timestamp);
+        const numberOfDays: number = oldestClaimDate.diff(newestClaimDate, "days") + 1;
+        const killsDescriptor: string = relevantClaims.length === 1 ? "person" : "people";
+        const daysPerKill: number = Math.round(numberOfDays / relevantClaims.length);
+        const daysDescriptor: string = daysPerKill === 1 ? "day" : "days";
+
+        return (
+            <div className="kill-claim-statistics">
+                <span>You've killed <strong>{relevantClaims.length}</strong> {killsDescriptor}.</span>
+                <br />
+                <span>That's {daysPerKill} {daysDescriptor} per kill.</span> 
             </div>);
     }
 

@@ -69,6 +69,10 @@ export class UsersTable extends React.Component<IUsersTableProps, void> {
      * @returns The rendered component.
      */
     public render(): JSX.Element {
+        if (!this.props.users || this.props.users.length === 0) {
+            return <div class="users-table"></div>;
+        }
+
         return (
             <div class="users-table">
                 <h3>{this.props.heading}</h3>

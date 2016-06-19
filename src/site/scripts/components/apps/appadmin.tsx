@@ -8,6 +8,7 @@ import { ActionButton } from "../profile/actionbutton";
 import { Greeting } from "../profile/greeting";
 import { Sdk } from "../../sdk/sdk";
 import { Sidebar } from "../sidebar/sidebar";
+import { UsersImporter } from "../admin/usersimporter";
 import { UsersTables } from "../admin/userstables";
 
 /**
@@ -48,12 +49,15 @@ export class AppAdmin extends React.Component<IAppAdminProps, void> {
         return (
             <div id="app" className="app-admin">
                 <section id="profile">
-                    <ActionButton text="x" small action={(): void => this.logOut()} />
+                    <div id="logout">
+                        <ActionButton action={(): void => this.logOut()} small text="x" />
+                    </div>
                     <div className="area greeting-area">
                         <Greeting admin={this.props.user.admin} nickname={this.props.user.nickname} />
                     </div>
 
                     <UsersTables sdk={this.props.sdk} user={this.props.user} />
+                    <UsersImporter sdk={this.props.sdk} user={this.props.user} />
                 </section>
                 <Sidebar notifications={this.props.notifications} leaders={this.props.leaders} />
             </div>);

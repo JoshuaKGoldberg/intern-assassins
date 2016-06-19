@@ -13,6 +13,11 @@ export interface IActionButtonProps {
     action: () => void;
 
     /**
+     * Delay ticks when activated, if not the default.
+     */
+    delay?: number;
+
+    /**
      * Whether the button is small.
      */
     small?: boolean;
@@ -148,7 +153,7 @@ export class ActionButton extends React.Component<IActionButtonProps, IActionBut
         this.setState({
             confirmation: this.state.confirmation,
             expanded: true,
-            delay: 3
+            delay: this.props.delay || 3
         });
 
         const interval: NodeJS.Timer = setInterval(

@@ -37,6 +37,7 @@
         "src/site/scripts/components/apps/appanonymous.tsx",
         "src/site/scripts/components/apps/appuser.tsx",
         "src/site/scripts/components/admin/userstable.tsx",
+        "src/site/scripts/components/admin/usersimporter.tsx",
         "src/site/scripts/components/admin/userstables.tsx",
         "src/site/scripts/components/sidebar/activity.tsx",
         "src/site/scripts/components/sidebar/activityboard.tsx",
@@ -50,6 +51,7 @@
         "src/site/scripts/components/profile/killclaimreports.tsx",
         "src/site/scripts/components/profile/profile.tsx",
         "src/site/scripts/storage/appstorage.ts",
+        "src/site/scripts/storage/sheetparser.ts",
         "src/site/scripts/sockets/sockethandler.ts"
     ]
 }

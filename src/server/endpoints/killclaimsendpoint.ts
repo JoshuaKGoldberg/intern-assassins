@@ -31,24 +31,16 @@ export class KillClaimsEndpoint extends Endpoint<IKillClaim> {
      */
     public async get(credentials: ICredentials, query: any): Promise<IKillClaim[]> {
         const user: IUser = await this.validateUserCredentials(credentials);
-        const killClaims: IKillClaim[] = await this.collection.find(query).toArray();
+        let killClaims: IKillClaim[] = await this.collection.find(query).toArray();
 
-        // Only admins can only view claims regarding other users
-        if (user.admin) {
-            return killClaims;
+        // Regular users only care about reports of their kills or deaths
+        if (!user.admin) {
+            killClaims = killClaims.filter((killClaim: IKillClaim): boolean => {
+                return user.alias === killClaim.killer || user.alias === killClaim.victim;
+            });
         }
 
-        return killClaims
-            // Regular users can only see themselves
-            .filter((killClaim: IKillClaim): boolean => user.alias === killClaim.killer || user.alias === killClaim.victim)
-            .map((killClaim: IKillClaim): IKillClaim => {
-                // They also can't see the alias of their killers
-                if (user.alias === killClaim.victim) {
-                    delete killClaim.killer;
-                }
-
-                return killClaim;
-            });
+        return killClaims;
     }
 
     /**
@@ -161,7 +153,8 @@ export class KillClaimsEndpoint extends Endpoint<IKillClaim> {
         if (!existingKillerClaim) {
             await this.collection.insertOne({
                 killer: killer.alias,
-                victim: victim.alias
+                victim: victim.alias,
+                timestamp: Date.now()
             });
         }
 

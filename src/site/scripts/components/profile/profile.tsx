@@ -3,7 +3,6 @@
 
 "use strict";
 import * as React from "react";
-import { IKillClaim } from "../../../../shared/kills";
 import { IAppUserProps } from "../apps/appuser";
 import { Actions } from "./actions";
 import { Greeting } from "./greeting";
@@ -52,22 +51,21 @@ export class Profile extends React.Component<IAppUserProps, void> {
                         onKill={(): void => { this.onKill(); }} />
                 </div>
 
-                {this.renderKillClaimReports(this.props.killClaims)}
+                {this.renderKillClaimReports()}
             </section>);
     }
 
     /**
      * Renders the user's active kill claim reports, if there are any.
      * 
-     * @param The user's relevant kill claim reports.
      * @returns The rendered kill claim reports.
      */
-    private renderKillClaimReports(killClaims: IKillClaim[]): JSX.Element {
-        if (!killClaims || !killClaims.length) {
+    private renderKillClaimReports(): JSX.Element {
+        if (!this.props.killClaims || !this.props.killClaims.length) {
             return undefined;
         }
 
-        return <KillClaimReports killClaims={killClaims} />;
+        return <KillClaimReports killClaims={this.props.killClaims} user={this.props.user} />;
     }
 
     /**
@@ -80,7 +78,8 @@ export class Profile extends React.Component<IAppUserProps, void> {
             this.props.user,
             {
                 killer: this.props.user.alias,
-                victim: this.props.user.alias
+                victim: this.props.user.alias,
+                timestamp: Date.now()
             });
 
         this.props.refreshUserData();
@@ -96,7 +95,8 @@ export class Profile extends React.Component<IAppUserProps, void> {
             this.props.user,
             {
                 killer: this.props.user.alias,
-                victim: this.props.user.target
+                victim: this.props.user.target,
+                timestamp: Date.now()
             });
 
         this.props.refreshUserData();

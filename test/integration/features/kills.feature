@@ -1,16 +1,22 @@
 Feature: Kill claims
     Tests for the kills endpoint
 
-    Scenario: Unconfirmed kill claim
+    Scenario: Unconfirmed killer claim
         Given I am a killer
         When I send a kill claim
         Then I should have 0 kills
 
-    Scenario: Successful kill claim
+    Scenario: Confirmed killer claim
         Given I am a killer
-        When I send a kill claim
+        When I self-report a kill claim
         And the victim confirms the kill claim
         Then I should have 1 kill
+
+    Scenario: Self-reported victim claim
+        Given I am a victim
+        When I send a kill claim
+        Then I should be dead
+        And my killer should have 1 kill
 
     Scenario: Invalid kill claim
         Given I am a killer

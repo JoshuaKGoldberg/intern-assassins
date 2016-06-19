@@ -7,8 +7,16 @@ module.exports = function () {
         return this.setUserTypeAsKiller();
     });
 
+    this.Given(/^I am a victim$/, function () {
+        return this.setUserTypeAsVictim();
+    });
+
     this.When(/^I send a kill claim$/, function () {
         return this.sendKillerKillClaim();
+    });
+
+    this.When(/^I self-report a kill claim$/, function () {
+        return this.sendVictimKillClaim();
     });
 
     this.When(/^the victim confirms the kill claim$/, function () {
@@ -23,8 +31,16 @@ module.exports = function () {
         return this.sendUnauthorizedKillClaim();
     });
 
+    this.Then(/^I should be dead?$/, function (killsCount) {
+        return this.assertVictimDeath();
+    });
+
     this.Then(/^I should have (.*) kills?$/, function (killsCount) {
-        return this.assertKillsCount(parseInt(killsCount));
+        return this.assertKillerKillsCount(parseInt(killsCount));
+    });
+
+    this.Then(/^my killer should have (.*) kills?$/, function (killsCount) {
+        return this.assertKillerKillsCount(parseInt(killsCount));
     });
 
     this.Then(/^it should have failed as invalid$/, function () {

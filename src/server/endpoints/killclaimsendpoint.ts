@@ -62,7 +62,7 @@ export class KillClaimsEndpoint extends Endpoint<IKillClaim> {
         this.validateKillClaim(claim);
         const user: IUser = await this.validateUserCredentials(credentials);
 
-        // Non-admins can only claim a kill on yourself or your target
+        // Non-admins can only claim a kill on themselves or their target
         if (!user.admin && user.alias !== claim.victim && user.alias !== claim.killer) {
             throw new NotAuthorizedError();
         }
@@ -95,8 +95,6 @@ export class KillClaimsEndpoint extends Endpoint<IKillClaim> {
         } else {
             await this.api.endpoints.users.update(killer);
         }
-
-        await this.api.endpoints.users.update(victim);
 
         return claim;
     }
@@ -153,6 +151,19 @@ export class KillClaimsEndpoint extends Endpoint<IKillClaim> {
         victim.alive = false;
         victim.target = "";
         await this.api.endpoints.users.update(victim);
+
+        // Add a kill claim from the killer to the victim if one doesn't yet exist
+        const existingKillerClaim: IKillClaim = await this.collection.findOne({
+            killer: killer.alias,
+            victim: victim.alias
+        });
+
+        if (!existingKillerClaim) {
+            await this.collection.insertOne({
+                killer: killer.alias,
+                victim: victim.alias
+            });
+        }
 
         this.api.fireNotificationCallbacks({
             cause: NotificationCause.Kill,

@@ -196,6 +196,7 @@ export class UsersEndpoint extends Endpoint<IUser> {
                 }
             });
 
+            user.alive = true;
             user.kills = user.kills || 0;
         });
     }

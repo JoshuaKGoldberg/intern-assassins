@@ -17,6 +17,11 @@ declare var XLSX: any;
  */
 export interface IUsersImporterProps {
     /**
+     * Callback for after importing.
+     */
+    onImport?: () => void;
+
+    /**
      * Wrapper around the server API.
      */
     sdk: Sdk;
@@ -126,7 +131,7 @@ export class UsersImporter extends React.Component<IUsersImporterProps, IUsersIm
                     </tbody>
                 </table>
                 <ActionButton
-                    action={(): void => this.import()}
+                    action={(): void => { this.import(); }}
                     text="Import!" />
             </div>);
     }
@@ -181,7 +186,14 @@ export class UsersImporter extends React.Component<IUsersImporterProps, IUsersIm
     /**
      * Finalizes importing the staged users.
      */
-    private import(): void {
-        console.log("Importing:", this.state.importingUsers);
+    private async import(): Promise<void> {
+        await this.props.sdk.importUsers(this.props.user, this.state.importingUsers);
+
+        this.setState(
+            {
+                importing: false,
+                importingUsers: undefined
+            },
+            this.props.onImport);
     }
 }

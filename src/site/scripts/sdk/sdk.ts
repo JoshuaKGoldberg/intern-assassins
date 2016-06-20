@@ -5,6 +5,7 @@ import { Method } from "../../../shared/actions";
 import { ICredentials } from "../../../shared/login";
 import { INotification } from "../../../shared/notifications";
 import { ILeader, IUser } from "../../../shared/users";
+import { IPartialUser } from "../storage/sheetparser";
 
 /**
  * Parses a request for a type of response.
@@ -87,6 +88,22 @@ export class Sdk {
             credentials,
             {},
             Sdk.parseResponseForJsonData);
+    }
+
+    /**
+     * Imports users into the database.
+     * 
+     * @param credentials   The submitting user credentials.
+     * @param users   Users to import.
+     * @returns A promise for whether the users were accepted.
+     */
+    public importUsers(credentials: ICredentials, users: IPartialUser[]): Promise<boolean> {
+        return this.sendAjaxRequest(
+            "PUT",
+            "api/users",
+            credentials,
+            users,
+            Sdk.parseResponseForOkStatus);
     }
 
     /**

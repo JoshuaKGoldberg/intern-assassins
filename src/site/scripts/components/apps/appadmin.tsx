@@ -57,7 +57,7 @@ export class AppAdmin extends React.Component<IAppAdminProps, void> {
                     </div>
 
                     <UsersTables sdk={this.props.sdk} user={this.props.user} />
-                    <UsersImporter sdk={this.props.sdk} user={this.props.user} />
+                    <UsersImporter onImport={(): void => this.onImport()} sdk={this.props.sdk} user={this.props.user} />
                 </section>
                 <Sidebar notifications={this.props.notifications} leaders={this.props.leaders} />
             </div>);
@@ -68,6 +68,13 @@ export class AppAdmin extends React.Component<IAppAdminProps, void> {
      */
     private logOut(): void {
         localStorage.clear();
+        window.location.reload();
+    }
+
+    /**
+     * Reloads the page after a users import.
+     */
+    private onImport(): void {
         window.location.reload();
     }
 }

@@ -57,7 +57,9 @@ export class AppUser extends React.Component<IAppUserProps, void> {
     public render(): JSX.Element {
         return (
             <div id="app" className="app-user">
-                <ActionButton text="x" small action={(): void => this.logOut()} />
+                <div id="logout">
+                    <ActionButton action={(): void => this.logOut()} small text="x" />
+                </div>
                 <Profile {...this.props} />
                 <Sidebar notifications={this.props.notifications} leaders={this.props.leaders} />
             </div>);

@@ -91,7 +91,7 @@ export class UsersImporter extends React.Component<IUsersImporterProps, IUsersIm
      */
     private renderDropzone(): JSX.Element {
         if (this.state.importing) {
-            return <h3>Import</h3>;
+            return <h3>Confirm Import</h3>;
         }
 
         return (
@@ -132,7 +132,7 @@ export class UsersImporter extends React.Component<IUsersImporterProps, IUsersIm
                 </table>
                 <ActionButton
                     action={(): void => { this.import(); }}
-                    text="Import!" />
+                    text="Confrm!" />
             </div>);
     }
 

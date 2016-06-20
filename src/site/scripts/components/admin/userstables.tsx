@@ -71,23 +71,27 @@ export class UsersTables extends React.Component<IUsersTablesProps, IUsersTables
             return <div class="loading">Loading users...</div>;
         }
 
+        const usersAlive: IUser[] = this.state.users.filter(
+            (user: IUser): boolean => !user.admin && user.alive);
+        const usersDead: IUser[] = this.state.users.filter(
+            (user: IUser): boolean => !user.admin && user.alive);
+        const admins: IUser[] = this.state.users.filter(
+            (user: IUser): boolean => user.admin);
+
         return (
             <div id="administration">
                 <UsersTable
                     fields={["alias", "nickname", "target"]}
-                    filter={UsersTable.filterToNonAdminUsers}
                     heading="Alive"
-                    users={this.state.users.filter(user => user.alive)} />
+                    users={usersAlive} />
                 <UsersTable
                     fields={["alias", "nickname"]}
-                    filter={UsersTable.filterToNonAdminUsers}
                     heading="Dead"
-                    users={this.state.users.filter(user => !user.alive)} />
+                    users={usersDead} />
                 <UsersTable
                     fields={["alias", "nickname"]}
-                    filter={UsersTable.filterToAdminUsers}
                     heading="Admins"
-                    users={this.state.users.filter(user => user.admin)} />
+                    users={admins} />
             </div>);
     }
 }

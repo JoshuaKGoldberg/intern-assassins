@@ -43,7 +43,7 @@ In another shell, start the server:
 node src\main
 ```
 
-The command `mongod` should is required in that format for tests.
+The command `mongod` is required in that format for tests.
 * On Windows, add the path to `mongod.exe` to your PATH. For example, `C:\Program Files\MongoDB\Server\3.2\bin`.
 
 Settings for the server are read from `assassins.json` at startup.
@@ -68,7 +68,7 @@ Integration tests are done with cucumber-js, but seem to be hanging weirdly.
 Run one at a time:
 
 ```shell
-cls && gulp && gulp test:integration{test}
+cls && gulp && gulp test:integration:{test}
 ```
 
 Tests:

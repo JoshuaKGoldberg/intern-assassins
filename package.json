@@ -24,6 +24,7 @@
     "fs-promise": "^0.5.0",
     "gulp": "^3.9.1",
     "gulp-cucumber": "0.0.21",
+    "gulp-eslint": "^2.0.0",
     "gulp-less": "^3.1.0",
     "gulp-mocha": "^2.2.0",
     "gulp-tslint": "^5.0.0",
@@ -47,5 +48,9 @@
     "typings": "^1.0.4",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^2.13.1",
+    "eslint-plugin-react": "^5.2.2"
   }
 }

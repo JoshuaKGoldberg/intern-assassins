@@ -1,3 +1,5 @@
+"use strict";
+
 const expect = require("chai").expect;
 const hooks = require("./hooks");
 const World = require("./world");

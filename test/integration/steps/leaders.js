@@ -1,3 +1,5 @@
+"use strict";
+
 const steps = require("./steps");
 
 module.exports = function () {
@@ -5,7 +7,7 @@ module.exports = function () {
 
     this.Given(/^the server has users$/, function () {
         return this.addUsers();
-    })
+    });
 
     this.Given(/^the server has users with an unconfirmed kill claim$/, function () {
         return this.addUnconfirmedKillClaim();

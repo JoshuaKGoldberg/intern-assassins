@@ -1,3 +1,5 @@
+"use strict";
+
 const expect = require("chai").expect;
 const request = require("request-promise");
 
@@ -67,7 +69,7 @@ module.exports = class World {
         if (userType === "admin") {
             return this.server.api.endpoints.users.importAdmins([this.credentials]);
         }
-    };
+    }
 
     /**
      * Gets user credentials to the appropriate lookup.
@@ -80,7 +82,7 @@ module.exports = class World {
         }
 
         return credentialLookups[credentialsType].call(this);
-    };
+    }
 
     /**
      * Sends a request to the server with credentials.
@@ -115,5 +117,5 @@ module.exports = class World {
      */
     assertResponseCode(code) {
         expect(this.response.statusCode.toString()).to.be.equal(code);
-    };
+    }
 };

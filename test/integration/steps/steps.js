@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function () {
     this.Given(/^I am an? (logged in)?(user|admin)$/, function (_, userType) {
         this.setUserType(userType);

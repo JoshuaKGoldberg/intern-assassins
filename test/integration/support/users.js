@@ -1,3 +1,5 @@
+"use strict";
+
 const expect = require("chai").expect;
 const hooks = require("./hooks");
 const World = require("./world");
@@ -68,7 +70,7 @@ class UsersWorld extends World {
      */
     assertSampleUsersCreated() {
         return this.sendRequest("GET", "api/users")
-            .then(actualUsers => this.assertUsersMatchReports(
+            .then(() => this.assertUsersMatchReports(
                 [this.credentials, ...sampleUsers],
                 this.response.body))
             .catch(() => {});
@@ -111,7 +113,7 @@ class UsersWorld extends World {
             }
 
             return 0;
-        })
+        });
     }
 }
 

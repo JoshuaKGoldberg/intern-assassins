@@ -19,6 +19,7 @@
         "src/server/endpoints/notificationsendpoint.ts",
         "src/server/endpoints/userendpoint.ts",
         "src/server/endpoints/usersendpoint.ts",
+        "src/server/notifications/emailnotifier.ts",
         "src/server/notifications/notificationshub.ts",
         "src/server/notifications/notifiers.ts",
         "src/server/notifications/socketnotifier.ts",

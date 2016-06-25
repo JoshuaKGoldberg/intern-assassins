@@ -8,6 +8,7 @@ import { INotification } from "../shared/notifications";
 import { IUser } from "../shared/users";
 import { IAssassinsSettings } from "../main";
 import { NotificationsHub } from "./notifications/notificationshub";
+import { EmailNotifier, IEmailSettings } from "./notifications/emailnotifier";
 import { EndpointNotifier } from "./notifications/endpointnotifier";
 import { SocketNotifier } from "./notifications/socketnotifier";
 import { Api } from "./api";
@@ -21,6 +22,11 @@ export interface IServerSettings {
      * Administrators to add when resetting the database.
      */
     admins?: IUser[];
+
+    /**
+     * Settings to set up an email notifier.
+     */
+    email: IEmailSettings;
 
     /**
      * Port for the web server.
@@ -97,6 +103,7 @@ export class Server {
         this.notificationsHub = new NotificationsHub();
         this.notificationsHub.registerNotifier(new EndpointNotifier(this.api.endpoints.notifications));
         this.notificationsHub.registerNotifier(new SocketNotifier(this.server));
+        this.notificationsHub.registerNotifier(new EmailNotifier(settings.email));
 
         this.api.registerNotificationCallback(
             (notification: INotification): void => {

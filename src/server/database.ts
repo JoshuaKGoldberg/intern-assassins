@@ -1,6 +1,7 @@
-/// <reference path="../../typings/all.d.ts" />
+/// <reference path="../../typings/bluebird/index.d.ts" />
 
 "use strict";
+import * as Promise from "bluebird";
 import { Collection, Db, MongoClient, MongoError } from "mongodb";
 
 /**

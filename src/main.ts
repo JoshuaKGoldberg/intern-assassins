@@ -1,4 +1,7 @@
+/// <reference path="../typings/bluebird/index.d.ts" />
+
 "use strict";
+import * as Promise from "bluebird";
 import { IServerSettings, Server } from "./server/server";
 import { IDatabaseSettings } from "./server/database";
 
@@ -25,7 +28,7 @@ export const settingsFilePath: string = "assassins.json";
 /**
  * Promise for the server.
  */
-export const serverPromise: Promise<Server> = (async () => {
+export const serverPromise: Promise<Server> = (async (): Promise<Server> => {
     return Server.createFromFile(settingsFilePath);
 })();
 

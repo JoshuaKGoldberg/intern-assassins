@@ -1,3 +1,4 @@
+const babelify = require("babelify");
 const browserify = require("browserify");
 const fs = require("fs");
 const gulp = require("gulp");
@@ -18,6 +19,7 @@ gulp.task("browserify", () => {
         });
 
     return browsering
+        .transform("babelify", { presets: ["es2015"] })
         .bundle()
         .pipe(source("main.js"))
         .pipe(gulp.dest("src/site/scripts/bundled"));

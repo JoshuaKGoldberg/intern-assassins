@@ -1,3 +1,5 @@
+"use strict";
+
 const expect = require("chai").expect;
 const hooks = require("./hooks");
 const World = require("./world");
@@ -152,10 +154,9 @@ class KillsWorld extends World {
     /**
      * Asserts the victim is dead.
      * 
-     * @param {number} count   How many kills the user should have.
      * @returns {Promise} A promise for asserting the number of kills.
      */
-    assertVictimDeath(count) {
+    assertVictimDeath() {
         this.credentials = {
             alias: victim.alias,
             nickname: victim.nickname,

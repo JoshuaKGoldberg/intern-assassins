@@ -1,4 +1,5 @@
-const Server = require("../../../src/server/server").Server;
+"use strict";
+
 const exec = require("child_process").exec;
 
 /**
@@ -31,4 +32,4 @@ module.exports = scenario => {
             exec(`mongo --eval "use admin; db.shutdownServer();"`);
         }
     };
-}
+};

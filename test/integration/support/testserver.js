@@ -1,5 +1,6 @@
+"use strict";
+
 const Server = require("../../../src/server/server").Server;
-const exec = require("child_process").exec;
 
 /**
  * Base settings for the database.
@@ -42,4 +43,4 @@ module.exports = () => {
             reset: true
         }
     });
-}
+};

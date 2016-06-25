@@ -1,3 +1,5 @@
+"use strict";
+
 const createTestMongoDb = require("./testmongodb");
 const promiseTestServer = require("./testserver");
 

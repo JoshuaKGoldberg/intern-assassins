@@ -1,3 +1,5 @@
+"use strict";
+
 const steps = require("./steps");
 
 module.exports = function () {
@@ -21,7 +23,7 @@ module.exports = function () {
 
     this.When(/^the victim confirms the kill claim$/, function () {
         return this.sendVictimKillClaim();
-    })
+    });
 
     this.When(/^I send an invalid kill claim$/, function () {
         return this.sendInvalidKillClaim();
@@ -31,7 +33,7 @@ module.exports = function () {
         return this.sendUnauthorizedKillClaim();
     });
 
-    this.Then(/^I should be dead?$/, function (killsCount) {
+    this.Then(/^I should be dead?$/, function () {
         return this.assertVictimDeath();
     });
 
@@ -45,9 +47,9 @@ module.exports = function () {
 
     this.Then(/^it should have failed as invalid$/, function () {
         this.assertInvalidFailure();
-    })
+    });
 
     this.Then(/^it should have failed as unauthorized$/, function () {
         this.assertUnauthorizedFailure();
-    })
+    });
 };

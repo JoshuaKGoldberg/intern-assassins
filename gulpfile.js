@@ -1,6 +1,7 @@
 const babelify = require("babelify");
 const browserify = require("browserify");
 const buffer = require("vinyl-buffer");
+const eslint = require("gulp-eslint");
 const fs = require("fs");
 const gulp = require("gulp");
 const cucumber = require("gulp-cucumber");
@@ -29,11 +30,21 @@ gulp.task("browserify", () => {
         .pipe(gulp.dest("src/site/scripts/bundled"));
 });
 
+gulp.task("eslint", () => {
+    return gulp
+        .src("test/**/*.js")
+        .pipe(eslint())
+        .pipe(eslint.format())
+        .pipe(eslint.failAfterError());
+});
+
 gulp.task("less", () => {
     return gulp.src("src/site/**/*.less")
         .pipe(less())
         .pipe(gulp.dest("src/site"));
 });
+
+gulp.task("lint", ["eslint", "tslint"], callback => callback());
 
 gulp.task("test:unit", () => {
     return gulp.src("test/unit/tests.js")
@@ -86,11 +97,11 @@ gulp.task("tslint", () => {
 });
 
 gulp.task("watch", () => {
-    gulp.watch(["*.json", "src/**/*.ts","src/**/*.tsx"], ["tsc", "tslint", "browserify"]);
+    gulp.watch(["*.json", "src/**/*.ts","src/**/*.tsx"], ["tsc", "lint", "browserify"]);
     gulp.watch(["src/site/**/*.less"], ["less"]);
 });
 
-gulp.task("default", ["less", "tsc", "tslint"], callback => {
+gulp.task("default", ["less", "tsc", "lint"], callback => {
     runSequence(["browserify", "test"], callback);
 });
 

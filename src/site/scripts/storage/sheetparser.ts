@@ -121,4 +121,3 @@ export class SheetParser {
                 .filter((value: number): boolean => !isNaN(value)));
     }
 }
-

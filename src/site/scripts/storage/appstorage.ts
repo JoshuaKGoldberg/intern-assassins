@@ -88,4 +88,3 @@ export class AppStorage {
         return !!(this.alias && this.nickname && this.passphrase);
     }
 }
-

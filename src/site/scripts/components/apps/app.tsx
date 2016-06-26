@@ -2,7 +2,7 @@
 
 "use strict";
 import * as React from "react";
-import { IKillClaim } from "../../../../shared/kills";
+import { IKill, IClaim } from "../../../../shared/kills";
 import { INotification, NotificationCause } from "../../../../shared/notifications";
 import { ILeader, IUser } from "../../../../shared/users";
 import { ICredentials } from "../../../../shared/login";
@@ -18,9 +18,14 @@ import { AppUser } from "./appuser";
  */
 interface IAppState {
     /**
-     * Any active kill claims related to the user, if not anyonymous.
+     * Any active kill claims related to the user, if not anonymous.
      */
-    killClaims?: IKillClaim[];
+    claims?: IClaim[];
+
+    /**
+     * Any recorded kills by the user, if not anonymous.
+     */
+    kills?: IKill[];
 
     /**
      * Leaders retrieved from the server.
@@ -108,7 +113,8 @@ export class App extends React.Component<void, IAppState> {
 
             return (
                 <AppUser
-                    killClaims={this.state.killClaims}
+                    claims={this.state.claims}
+                    kills={this.state.kills}
                     leaders={this.state.leaders}
                     notifications={this.state.notifications}
                     refreshUserData={(): void => { this.refreshData(); }}
@@ -139,19 +145,15 @@ export class App extends React.Component<void, IAppState> {
      */
     private async refreshData(): Promise<void> {
         const credentials: ICredentials = this.storage.asCredentials();
-        const [user, killClaims, leaders, notifications] = await Promise.all([
-            this.sdk.getUser(credentials),
-            this.sdk.getUserActiveKillClaims(credentials),
+        const [claims, kills, leaders, notifications, user] = await Promise.all([
+            this.sdk.getClaims(credentials),
+            this.sdk.getKills(credentials),
             this.sdk.getLeaders(),
-            this.sdk.getNotifications()
+            this.sdk.getNotifications(),
+            this.sdk.getUser(credentials),
         ]);
 
-        this.setState({
-            killClaims: killClaims,
-            leaders: leaders,
-            notifications: notifications,
-            user: user
-        });
+        this.setState({ claims, kills, leaders, notifications, user });
     }
 
     /**

@@ -4,7 +4,8 @@
 
 import { Api } from "../api";
 import { Database } from "../database";
-import { KillClaimsEndpoint } from "./killclaimsendpoint";
+import { ClaimsEndpoint } from "./claimsendpoint";
+import { KillsEndpoint } from "./killsendpoint";
 import { LeadersEndpoint } from "./leadersendpoint";
 import { LoginEndpoint } from "./loginendpoint";
 import { NotificationsEndpoint } from "./notificationsendpoint";
@@ -16,9 +17,14 @@ import { UsersEndpoint } from "./usersendpoint";
  */
 export class Endpoints {
     /**
+     * Endpoint for finalized kills.
+     */
+    public /* readonly */ claims: ClaimsEndpoint;
+
+    /**
      * Endpoint for kill claims.
      */
-    public /* readonly */ kills: KillClaimsEndpoint;
+    public /* readonly */ kills: KillsEndpoint;
 
     /**
      * Endpoint for leaders.
@@ -57,7 +63,8 @@ export class Endpoints {
      */
     public constructor(api: Api, database: Database) {
         this.api = api;
-        this.kills = new KillClaimsEndpoint(api, database);
+        this.claims = new ClaimsEndpoint(api, database);
+        this.kills = new KillsEndpoint(api, database);
         this.leaders = new LeadersEndpoint(api, database);
         this.login = new LoginEndpoint(api, database);
         this.notifications = new NotificationsEndpoint(api, database);

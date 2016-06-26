@@ -57,6 +57,7 @@ export class Api {
         });
 
         this.endpoints = new Endpoints(this, database);
+        this.registerEndpointRoutes(app, this.endpoints.claims);
         this.registerEndpointRoutes(app, this.endpoints.kills);
         this.registerEndpointRoutes(app, this.endpoints.leaders);
         this.registerEndpointRoutes(app, this.endpoints.login);

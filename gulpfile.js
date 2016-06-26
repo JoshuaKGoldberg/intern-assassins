@@ -54,7 +54,7 @@ gulp.task("test:unit", () => {
 });
 
 // Feature testing
-// Todo #: Run these synchronously, and therefore as a part of the default tests
+// Todo #71: Run these synchronously, and therefore as a part of the default tests
 const featureTasks = (() => {
     function testFeature(feature) {
         return gulp.src(`test/integration/features/${feature}.feature`)

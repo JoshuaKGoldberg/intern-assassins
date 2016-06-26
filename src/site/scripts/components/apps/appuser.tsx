@@ -2,7 +2,7 @@
 
 "use strict";
 import * as React from "react";
-import { IKillClaim } from "../../../../shared/kills";
+import { IClaim, IKill } from "../../../../shared/kills";
 import { INotification } from "../../../../shared/notifications";
 import { ILeader, IUser } from "../../../../shared/users";
 import { Sdk } from "../../sdk/sdk";
@@ -17,7 +17,12 @@ export interface IAppUserProps {
     /**
      * Any active kill claims related to the user.
      */
-    killClaims?: IKillClaim[];
+    claims: IClaim[];
+
+    /**
+     * Any recorded kills by the user.
+     */
+    kills: IKill[];
 
     /**
      * Hook to request new user data from the server.

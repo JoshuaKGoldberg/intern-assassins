@@ -3,14 +3,14 @@
 /**
  * A user claiming to have killed or been killed.
  */
-export interface IKillClaim {
+export interface IClaim {
     /**
-     * Which user became a murderer.
+     * Alias of the killer.
      */
     killer: string;
 
     /**
-     * Rest in potatoes.
+     * Alias of the victim.
      */
     victim: string;
 
@@ -19,3 +19,8 @@ export interface IKillClaim {
      */
     timestamp: number;
 }
+
+/**
+ * A user was killed.
+ */
+export interface IKill extends IClaim { }

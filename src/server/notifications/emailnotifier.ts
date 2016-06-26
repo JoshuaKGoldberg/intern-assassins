@@ -76,7 +76,23 @@ export class EmailNotifier implements INotifier {
      * @param api   Request router to API endpoints.
      * @param settings   Settings to set up the email notifier.
      */
-    public constructor(api: Api, settings: IEmailSettings) {
+    public constructor(api: Api, settings?: IEmailSettings) {
+        this.api = api;
+
+        // Tests might not have email settings, so it's ok if it doesn't exist
+        if (!settings) {
+            this.settings = {
+                cc: [],
+                domain: "@localhost",
+                transporter: {},
+                website: "localhost"
+            };
+            return;
+        }
+
+        this.settings = settings;
+
+        // If email settings do exist, they must be filled out to create a transporter
         if (!settings.transporter.service) {
             throw new Error("No transporter.service defined in email settings.");
         }
@@ -84,8 +100,6 @@ export class EmailNotifier implements INotifier {
             throw new Error("No transporter.auth defined in email settings.");
         }
 
-        this.api = api;
-        this.settings = settings;
         this.transporter = nodemailer.createTransport(settings.transporter);
     }
 
@@ -113,9 +127,9 @@ export class EmailNotifier implements INotifier {
         const user: IUser = await this.api.endpoints.users.getByNickname(notification.nickname);
 
         this.sendMail({
-            to: `${user.alias}@${this.settings.domain}`,
             subject: "You died!",
-            text: `Better luck next time, ${user.nickname}.`
+            text: `Better luck next time, ${user.nickname}.`,
+            to: user.alias
         });
     }
 
@@ -129,9 +143,9 @@ export class EmailNotifier implements INotifier {
         const user: IUser = await this.api.endpoints.users.getByNickname(notification.nickname);
 
         this.sendMail({
-            to: `${user.alias}@${this.settings.domain}`,
             subject: "You scored a kill!",
-            text: `Well played, ${user.nickname}! You now have ${user.kills} kill${user.kills === 0 ? "" : "s"}.`
+            text: `Well played, ${user.nickname}! You now have ${user.kills} kill${user.kills === 0 ? "" : "s"}.`,
+            to: user.alias
         });
     }
 
@@ -145,9 +159,9 @@ export class EmailNotifier implements INotifier {
         const user: IUser = await this.api.endpoints.users.getByNickname(notification.nickname);
 
         this.sendMail({
-            to: `${user.alias}@${this.settings.domain}`,
             subject: "You've claimed a kill.",
-            text: `Your target hasn't yet verified it. Remind them in a few minutes if they don't.`
+            text: `Your target hasn't yet verified it. Remind them in a few minutes if they don't.`,
+            to: user.alias
         });
     }
 
@@ -161,9 +175,9 @@ export class EmailNotifier implements INotifier {
         const user: IUser = await this.api.endpoints.users.getByNickname(notification.nickname);
 
         this.sendMail({
-            to: `${user.alias}@${this.settings.domain}`,
             subject: "Your killer claims they've killed you.",
-            text: `Head to ${this.settings.website} now to verify it.`
+            text: `Head to ${this.settings.website} now to verify it.`,
+            to: user.alias
         });
     }
 
@@ -173,12 +187,16 @@ export class EmailNotifier implements INotifier {
      * @param settings   Nodemailer settings for the email.
      */
     private sendMail(settings: nodemailer.SendMailOptions): void {
+        if (!this.transporter) {
+            return;
+        }
+
         this.transporter.sendMail({
             cc: this.settings.cc,
             from: settings.from || this.settings.transporter.auth.user,
             subject: settings.subject,
             text: settings.text,
-            to: settings.to
+            to: `settings.to${this.settings.domain}`
         });
     }
 }

@@ -59,7 +59,7 @@ export class Server {
     public /* readonly */ settings: IServerSettings;
 
     /**
-     * Request router to internal storage.
+     * Request router to API endpoints.
      */
     public /* readonly */ api: Api;
 
@@ -103,11 +103,11 @@ export class Server {
         this.notificationsHub = new NotificationsHub();
         this.notificationsHub.registerNotifier(new EndpointNotifier(this.api.endpoints.notifications));
         this.notificationsHub.registerNotifier(new SocketNotifier(this.server));
-        this.notificationsHub.registerNotifier(new EmailNotifier(settings.email));
+        this.notificationsHub.registerNotifier(new EmailNotifier(this.api, settings.email));
 
         this.api.registerNotificationCallback(
-            (notification: INotification): void => {
-                this.notificationsHub.notify(notification);
+            (notification: INotification): Promise<void> => {
+                return this.notificationsHub.notify(notification);
             });
     }
 

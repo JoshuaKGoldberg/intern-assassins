@@ -17,7 +17,7 @@ import { Endpoints } from "./endpoints/endpoints";
  * @param notification   The emitted notification.
  */
 export interface INotificationCallback {
-    (notification: INotification): void;
+    (notification: INotification): Promise<void>;
 }
 
 /**
@@ -79,10 +79,10 @@ export class Api {
      * 
      * @param notification   A new notification.
      */
-    public fireNotificationCallbacks<T>(notification: INotification): void {
-        this.notificationCallbacks.forEach((callback: INotificationCallback): void => {
-            callback(notification);
-        });
+    public async fireNotificationCallbacks<T>(notification: INotification): Promise<void> {
+        for (const callback of this.notificationCallbacks) {
+            await callback(notification);
+        }
     }
 
     /**

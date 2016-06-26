@@ -11,6 +11,12 @@
         "passphrase": "pineapple"
       }
     ],
+    "email": {
+      "cc": [],
+      "domain": "",
+      "transporter": {},
+      "website": "localhost:3000"
+    },
     "port": 3000,
     "reset": true,
     "users": [

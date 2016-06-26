@@ -30,7 +30,22 @@ export interface INotification {
  */
 export enum NotificationCause {
     /**
+     * The user has died.
+     */
+    Death,
+
+    /**
      * The user has killed someone.
      */
-    Kill
+    Kill,
+
+    /**
+     * The user is claiming to have killed someone.
+     */
+    KillClaimToKiller,
+
+    /**
+     * Someone is claiming to have killed the user.
+     */
+    KillClaimToVictim
 }

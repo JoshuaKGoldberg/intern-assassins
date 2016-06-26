@@ -114,6 +114,15 @@ export class UsersEndpoint extends Endpoint<IUser> {
     }
 
     /**
+     * Retrieves a user by their nickname, if they exist.
+     * 
+     * @param nickname   A user's nickname.
+     */
+    public async getByNickname(nickname: string): Promise<IUser> {
+        return await this.collection.findOne({ nickname });
+    }
+
+    /**
      * Updates a user's information.
      * 
      * @param user   Updated information for a user.

@@ -85,6 +85,18 @@ export class KillClaimsEndpoint extends Endpoint<IKillClaim> {
         if (killer.alias === victim.alias) {
             await this.finalizeKill(victim);
         } else {
+            await this.api.fireNotificationCallbacks({
+                cause: NotificationCause.KillClaimToKiller,
+                description: `You claimed to have killed ${victim.alias}.`,
+                nickname: killer.nickname,
+                timestamp: Date.now()
+            });
+            await this.api.fireNotificationCallbacks({
+                cause: NotificationCause.KillClaimToVictim,
+                description: `Someone claims to have killed you.`,
+                nickname: victim.nickname,
+                timestamp: Date.now()
+            });
             await this.api.endpoints.users.update(killer);
         }
 
@@ -158,10 +170,17 @@ export class KillClaimsEndpoint extends Endpoint<IKillClaim> {
             });
         }
 
-        this.api.fireNotificationCallbacks({
+        await this.api.fireNotificationCallbacks({
             cause: NotificationCause.Kill,
             description: `${killer.nickname} has scored a kill!`,
             nickname: killer.nickname,
+            timestamp: Date.now()
+        });
+
+        await this.api.fireNotificationCallbacks({
+            cause: NotificationCause.Death,
+            description: `Oh no! ${victim.nickname} died!`,
+            nickname: victim.nickname,
             timestamp: Date.now()
         });
     }

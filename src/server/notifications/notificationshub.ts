@@ -25,9 +25,9 @@ export class NotificationsHub {
      * 
      * @param notification   A new notification to broadcast.
      */
-    public notify(notification: INotification): void {
-        for (let i: number = 0; i < this.notifiers.length; i += 1) {
-            this.notifiers[i].receive(notification);
+    public async notify(notification: INotification): Promise<void> {
+        for (const notifier of this.notifiers) {
+            await notifier.receive(notification);
         }
     }
 }

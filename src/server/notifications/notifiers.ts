@@ -10,5 +10,5 @@ export interface INotifier {
      * 
      * @param notification   A new notification.
      */
-    receive(notification: INotification): void;
+    receive(notification: INotification): Promise<void>;
 }

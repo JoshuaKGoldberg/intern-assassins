@@ -1,6 +1,6 @@
 "use strict";
 import { NotificationsEndpoint } from "../endpoints/notificationsendpoint";
-import { INotification } from "../../shared/notifications";
+import { INotification, NotificationCause } from "../../shared/notifications";
 import { INotifier } from "./notifiers";
 
 /**
@@ -22,11 +22,15 @@ export class EndpointNotifier implements INotifier {
     }
 
     /**
-     * Broadcasts a notification to the socket.io server.
+     * Broadcasts a kill notification to the socket.io server.
      * 
      * @param notification   A new notification.
      */
-    public receive(notification: INotification): void {
-        this.endpoint.receiveNotification(notification);
+    public receive(notification: INotification): Promise<void> {
+        if (notification.cause !== NotificationCause.Kill) {
+            return;
+        }
+
+        return this.endpoint.receiveNotification(notification);
     }
 }

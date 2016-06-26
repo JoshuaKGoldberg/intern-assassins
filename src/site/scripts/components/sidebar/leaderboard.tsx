@@ -50,6 +50,7 @@ export class Leaderboard extends React.Component<ILeaderboardProps, void> {
                     <tbody>
                         {this.props.leaders
                             .filter((leader: ILeader): boolean => leader.alive === alive)
+                            .sort((a: ILeader, b: ILeader): number => b.kills - a.kills)
                             .map((leader: ILeader, i: number): JSX.Element => {
                                 return (
                                     <tr key={i}>

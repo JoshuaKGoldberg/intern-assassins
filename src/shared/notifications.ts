@@ -15,9 +15,9 @@ export interface INotification {
     description: string;
 
     /**
-     * The user's nickname.
+     * The user's codename.
      */
-    nickname: string;
+    codename: string;
 
     /**
      * When the notification occurred on the server.

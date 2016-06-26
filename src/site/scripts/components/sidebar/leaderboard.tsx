@@ -53,7 +53,7 @@ export class Leaderboard extends React.Component<ILeaderboardProps, void> {
                             .map((leader: ILeader, i: number): JSX.Element => {
                                 return (
                                     <tr key={i}>
-                                        <td className="leader-name">{leader.nickname}</td>
+                                        <td className="leader-name">{leader.codename}</td>
                                         <td className="leader-kills">{leader.kills}</td>
                                     </tr>);
                             })}

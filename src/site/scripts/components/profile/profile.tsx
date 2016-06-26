@@ -26,21 +26,21 @@ export class Profile extends React.Component<IAppUserProps, void> {
                 </section>);
         }
 
-        if (!this.props.user.nickname) {
+        if (!this.props.user.codename) {
             return (
                 <section id="profile" className="loading">
-                    loading profile for {this.props.user.nickname}...
+                    loading profile for {this.props.user.codename}...
                 </section>);
         }
 
         return (
             <section id="profile">
                 <div className="area greeting-area">
-                    <Greeting admin={this.props.user.admin} nickname={this.props.user.nickname} />
+                    <Greeting admin={this.props.user.admin} codename={this.props.user.codename} />
                 </div>
 
                 <div className="area info-display-area">
-                    <InfoDisplay info="nickname" display={this.props.user.nickname} />
+                    <InfoDisplay info="codename" display={this.props.user.codename} />
                     {this.props.user.alive && <InfoDisplay info="target" display={this.props.user.target} />}
                 </div>
 

@@ -81,15 +81,15 @@ export class UsersTables extends React.Component<IUsersTablesProps, IUsersTables
         return (
             <div id="administration">
                 <UsersTable
-                    fields={["alias", "nickname", "target"]}
+                    fields={["alias", "codename", "target"]}
                     heading="Alive"
                     users={usersAlive} />
                 <UsersTable
-                    fields={["alias", "nickname"]}
+                    fields={["alias", "codename"]}
                     heading="Dead"
                     users={usersDead} />
                 <UsersTable
-                    fields={["alias", "nickname"]}
+                    fields={["alias", "codename"]}
                     heading="Admins"
                     users={admins} />
             </div>);

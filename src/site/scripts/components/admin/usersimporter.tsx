@@ -119,7 +119,7 @@ export class UsersImporter extends React.Component<IUsersImporterProps, IUsersIm
                     <thead>
                         <tr>
                             <th>alias</th>
-                            <th>nickname</th>
+                            <th>codename</th>
                             <th>target</th>
                         </tr>
                     </thead>
@@ -147,7 +147,7 @@ export class UsersImporter extends React.Component<IUsersImporterProps, IUsersIm
         return (
             <tr key={i}>
                 <td>{user.alias}</td>
-                <td>{user.nickname}</td>
+                <td>{user.codename}</td>
                 <td>{user.target}</td>
             </tr>);
     }

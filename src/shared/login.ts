@@ -10,9 +10,9 @@ export interface ICredentials {
     alias: string;
 
     /**
-     * Friendly nickname of a user.
+     * Friendly codename of a user.
      */
-    nickname: string;
+    codename: string;
 
     /**
      * Secret passphrase of a user.
@@ -23,4 +23,4 @@ export interface ICredentials {
 /**
  * Keys required to exist in login attempt data.
  */
-export const CredentialKeys: string[] = ["alias", "nickname", "passphrase"];
+export const CredentialKeys: string[] = ["alias", "codename", "passphrase"];

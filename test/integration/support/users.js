@@ -10,12 +10,12 @@ const World = require("./world");
 const sampleUsers = [
     {
         alias: "aaa",
-        nickname: "Aaa",
+        codename: "Aaa",
         passphrase: "apple"
     },
     {
         alias: "bbb",
-        nickname: "Bbb",
+        codename: "Bbb",
         passphrase: "banana"
     }
 ];
@@ -51,7 +51,7 @@ class UsersWorld extends World {
             "api/users",
             [{
                 "alias": "invalid",
-                "nickname": "also invalid"
+                "codename": "also invalid"
             }])
             .catch(() => {});
     }
@@ -86,7 +86,7 @@ class UsersWorld extends World {
         actual = actual.map(user => {
             return {
                 alias: user.alias,
-                nickname: user.nickname,
+                codename: user.codename,
                 passphrase: user.passphrase
             };
         });

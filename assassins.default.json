@@ -7,7 +7,7 @@
     "admins": [
       {
         "alias": "admin",
-        "nickname": "Admin",
+        "codename": "Admin",
         "passphrase": "pineapple"
       }
     ],
@@ -22,43 +22,43 @@
     "users": [
       {
         "alias": "aaa",
-        "nickname": "Aaa",
+        "codename": "Aaa",
         "passphrase": "pineapple",
         "target": "bbb"
       },
       {
         "alias": "bbb",
-        "nickname": "Bbb",
+        "codename": "Bbb",
         "passphrase": "pineapple",
         "target": "ccc"
       },
       {
         "alias": "ccc",
-        "nickname": "Ccc",
+        "codename": "Ccc",
         "passphrase": "pineapple",
         "target": "ddd"
       },
       {
         "alias": "ddd",
-        "nickname": "Ddd",
+        "codename": "Ddd",
         "passphrase": "pineapple",
         "target": "eee"
       },
       {
         "alias": "eee",
-        "nickname": "Eee",
+        "codename": "Eee",
         "passphrase": "pineapple",
         "target": "fff"
       },
       {
         "alias": "fff",
-        "nickname": "Fff",
+        "codename": "Fff",
         "passphrase": "pineapple",
         "target": "ggg"
       },
       {
         "alias": "ggg",
-        "nickname": "Ggg",
+        "codename": "Ggg",
         "passphrase": "pineapple",
         "target": "aaa"
       }

@@ -10,7 +10,7 @@ const World = require("./world");
 const killer = {
     alias: "killer",
     alive: true,
-    nickname: "Killer",
+    codename: "Killer",
     passphrase: "kill",
     target: "victim"
 };
@@ -21,7 +21,7 @@ const killer = {
 const victim = {
     alias: "victim",
     alive: true,
-    nickname: "Victim",
+    codename: "Victim",
     passphrase: "dead"
 };
 
@@ -100,7 +100,7 @@ class LeadersWorld extends World {
             {
                 alive: true,
                 kills: 0,
-                nickname: "Killer"
+                codename: "Killer"
             },
             "The killer has no kills");
 
@@ -108,7 +108,7 @@ class LeadersWorld extends World {
             {
                 alive: true,
                 kills: 0,
-                nickname: "Victim"
+                codename: "Victim"
             },
             "The victim has no kills and is still alive");
     }
@@ -124,7 +124,7 @@ class LeadersWorld extends World {
             {
                 alive: true,
                 kills: 1,
-                nickname: "Killer"
+                codename: "Killer"
             },
             "The killer has one kill");
 
@@ -132,7 +132,7 @@ class LeadersWorld extends World {
             {
                 alive: false,
                 kills: 0,
-                nickname: "Victim"
+                codename: "Victim"
             },
             "The victim has no kills and is dead");
     }

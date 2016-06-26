@@ -85,10 +85,11 @@ export class App extends React.Component<void, IAppState> {
 
         this.socketHandler = new SocketHandler<INotification, IAppState>()
             .setRouter((notification: INotification): NotificationCause => notification.cause)
-            .setReceiver((state: IAppState, notification: INotification): void => this.receiveState(state, notification))
-            .registerHandler(
-                NotificationCause.Kill,
-                (notification: INotification): IAppState => this.handleKillNotification(notification));
+            .setReceiver((state: IAppState, notification: INotification): void => this.receiveState(state, notification));
+
+        this.registerSocketHandler(NotificationCause.Death, this.handleDeathNotification);
+        this.registerSocketHandler(NotificationCause.Kill, this.handleKillNotification);
+        this.registerSocketHandler(NotificationCause.KillClaimToVictim, this.handleKillClaimToVictimNotification);
 
         if (this.storage.isComplete()) {
             this.receiveCredentials(this.storage.asCredentials());
@@ -129,6 +130,18 @@ export class App extends React.Component<void, IAppState> {
     }
 
     /**
+     * Registers a member function to handle a notification.
+     * 
+     * @param cause   The notification cause.
+     * @param callback   A member function.
+     */
+    private registerSocketHandler(cause: NotificationCause, callback: Function): void {
+        this.socketHandler.registerHandler(
+            cause,
+            (notification: INotification): IAppState => callback.call(this, notification));
+    }
+
+    /**
      * Handler for a successful login.
      * 
      * @param values   User login credentials.
@@ -157,6 +170,30 @@ export class App extends React.Component<void, IAppState> {
     }
 
     /**
+     * Generates a new state from a death notification.
+     * 
+     * @param notification   The triggering notification.
+     * @returns A new state.
+     * @remarks Because the death is of the user, the page is reloaded.
+     */
+    private handleDeathNotification(notification: INotification): IAppState {
+        // Eventually, claim notifications will only be sent to relevent users. See #113.
+        if (notification.codename !== this.state.user.codename) {
+            return this.state;
+        }
+
+        // When this is moved to Flux, make a(n immutable) copy of this.state. See issue #83.
+        const newState: IAppState = this.state;
+
+        newState.user.alive = false;
+        newState.leaders
+            .find((leader: ILeader): boolean => leader.codename === notification.codename)
+            .alive = false;
+
+        return newState;
+    }
+
+    /**
      * Generates a new state from a kill notification.
      * 
      * @param notification   The triggering notification.
@@ -174,20 +211,46 @@ export class App extends React.Component<void, IAppState> {
     }
 
     /**
-     * Receives a new state from the socket handler.
+     * Generates a new state from a victim's claim notification.
+     * 
+     * @param notification   The triggering notification.
+     * @returns A new state.
+     */
+    private handleKillClaimToVictimNotification(notification: INotification): IAppState {
+        // Eventually, claim notifications will only be sent to relevent users. See #113.
+        if (notification.codename !== this.state.user.codename) {
+            return this.state;
+        }
+
+        // When this is moved to Flux, make a(n immutable) copy of this.state. See issue #83.
+        const newState: IAppState = this.state;
+
+        newState.claims.push({
+            killer: undefined,
+            victim: newState.user.alias,
+            timestamp: notification.timestamp
+        });
+
+        return newState;
+    }
+
+    /**
+     * Receives a new notification from the socket handler.
      * 
      * @param state   A new state.
      * @param notification   The triggering notification.
      */
     private receiveState(state: IAppState, notification: INotification): void {
-        const notifications: INotification[] = [...this.state.notifications, notification];
+        state.notifications = [...state.notifications, notification];
 
         this.setState(
-            { notifications } as any,
-            (): void => {
-                // If you did something, fetch new target information from the server
-                if (notification.codename === this.state.user.codename) {
-                    this.refreshData();
+            state,
+            async (): Promise<void> => {
+                // If necessary, fetch a new target from the server
+                if (notification.cause === NotificationCause.Kill) {
+                    const credentials: ICredentials = this.storage.asCredentials();
+                    const newUser: IUser = await this.sdk.getUser(credentials);
+                    this.setState({ user: newUser } as any);
                 }
             });
     }

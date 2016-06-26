@@ -99,6 +99,7 @@ export class ClaimsEndpoint extends Endpoint<IClaim> {
         if (killer.alias === victim.alias) {
             await this.api.endpoints.kills.finalizeDeath(victim);
         } else {
+            await this.api.endpoints.users.update(killer);
             await this.api.fireNotificationCallbacks({
                 cause: NotificationCause.KillClaimToKiller,
                 description: `You claimed to have killed ${victim.alias}.`,
@@ -111,7 +112,6 @@ export class ClaimsEndpoint extends Endpoint<IClaim> {
                 codename: victim.codename,
                 timestamp: Date.now()
             });
-            await this.api.endpoints.users.update(killer);
         }
 
         return claim;

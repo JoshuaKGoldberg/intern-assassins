@@ -20,9 +20,9 @@ interface IColumns {
     alias: string;
 
     /**
-     * Name of the nickname column.
+     * Name of the codename column.
      */
-    nickname: string;
+    codename: string;
 
     /**
      * Name of the passphrase column.
@@ -58,7 +58,7 @@ export class SheetParser {
         this.sheet = sheet;
         this.columns = {
             alias: this.findColumn(1, "alias"),
-            nickname: this.findColumn(1, "nickname"),
+            codename: this.findColumn(1, "codename"),
             passphrase: this.findColumn(1, "passphrase")
         };
         this.height = this.calculateHeight();
@@ -75,7 +75,7 @@ export class SheetParser {
         for (let row: number = 3; row < this.height; row += 1) {
             credentials.push({
                 alias: this.sheet[this.columns.alias + row].v,
-                nickname: this.sheet[this.columns.nickname + row].v,
+                codename: this.sheet[this.columns.codename + row].v,
                 passphrase: this.sheet[this.columns.passphrase + row].v,
             });
         }
@@ -86,7 +86,7 @@ export class SheetParser {
             .map((user: ICredentials, i: number): IPartialUser => {
                 return {
                     alias: user.alias,
-                    nickname: user.nickname,
+                    codename: user.codename,
                     passphrase: user.passphrase,
                     target: credentials[(i + 1) % credentials.length].alias
                 };

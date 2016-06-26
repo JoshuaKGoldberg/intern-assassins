@@ -53,7 +53,7 @@ export class AppAdmin extends React.Component<IAppAdminProps, void> {
                         <ActionButton action={(): void => this.logOut()} small text="x" />
                     </div>
                     <div className="area greeting-area">
-                        <Greeting admin={this.props.user.admin} nickname={this.props.user.nickname} />
+                        <Greeting admin={this.props.user.admin} codename={this.props.user.codename} />
                     </div>
 
                     <UsersTables sdk={this.props.sdk} user={this.props.user} />

@@ -32,11 +32,11 @@ export class LeadersEndpoint extends Endpoint<ILeader[]> {
                 leaders[user.alias] = {
                     alive: user.alive,
                     kills: user.kills,
-                    nickname: user.nickname
+                    codename: user.codename
                 };
             });
 
-        // Sort leaders by kills (descending), then by nickname (ascending).
+        // Sort leaders by kills (descending), then by codename (ascending).
         const result = Object.keys(leaders)
             .map((key: string): ILeader => leaders[key])
             .sort((a: ILeader, b: ILeader): number => {
@@ -44,7 +44,7 @@ export class LeadersEndpoint extends Endpoint<ILeader[]> {
                     return b.kills - a.kills;
                 }
 
-                return a.nickname < b.nickname ? -1 : 1;
+                return a.codename < b.codename ? -1 : 1;
             });
 
         return result;

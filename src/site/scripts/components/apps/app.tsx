@@ -167,7 +167,7 @@ export class App extends React.Component<void, IAppState> {
         const newState: IAppState = this.state;
 
         newState.leaders
-            .find((leader: ILeader): boolean => leader.nickname === notification.nickname)
+            .find((leader: ILeader): boolean => leader.codename === notification.codename)
             .kills += 1;
 
         return newState;
@@ -186,7 +186,7 @@ export class App extends React.Component<void, IAppState> {
             { notifications } as any,
             (): void => {
                 // If you did something, fetch new target information from the server
-                if (notification.nickname === this.state.user.nickname) {
+                if (notification.codename === this.state.user.codename) {
                     this.refreshData();
                 }
             });

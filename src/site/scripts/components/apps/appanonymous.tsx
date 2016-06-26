@@ -54,7 +54,7 @@ export class AppAnonymous extends React.Component<IAppAnonymousProps, IAppAnonym
                 <h1>Would you like to play a game?</h1>
 
                 <input ref="alias" type="text" placeholder="alias" />
-                <input ref="nickname" type="text" placeholder="nickname" />
+                <input ref="codename" type="text" placeholder="codename" />
                 <input ref="passphrase" type="password" placeholder="passphrase" />
 
                 <input type="submit" value="submit" />

@@ -31,7 +31,7 @@ export class LoginEndpoint extends Endpoint<void> {
         }
 
         if (
-            credentials.nickname !== user.nickname
+            credentials.codename !== user.codename
             || credentials.alias !== user.alias
             || credentials.passphrase !== user.passphrase) {
             throw new NotAuthorizedError();

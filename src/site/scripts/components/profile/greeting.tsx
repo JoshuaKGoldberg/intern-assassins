@@ -13,13 +13,13 @@ export interface IGreetingProps {
     admin: boolean;
 
     /**
-     * Nickname of the user being greeted.
+     * codename of the user being greeted.
      */
-    nickname: string;
+    codename: string;
 }
 
 /**
- * Possible greetings, where "{0}" is replaced with a nickname.
+ * Possible greetings, where "{0}" is replaced with a codename.
  */
 const greetings: string[] = [
     "Hey, {0}!",
@@ -32,7 +32,7 @@ const greetings: string[] = [
 ];
 
 /**
- * Possible declarations, where "{0}" is replaced with a nickname.
+ * Possible declarations, where "{0}" is replaced with a codename.
  */
 const decorations: string[] = [
     "{0} the Bountiful",
@@ -58,11 +58,11 @@ const decoration = decorations[Math.random() * decorations.length | 0];
  * Component for a happy greeting.
  */
 export const Greeting: React.StatelessComponent<IGreetingProps> = (state: IGreetingProps): JSX.Element => {
-    const nickname: string = state.admin
-        ? decoration.replace("{0}", state.nickname)
-        : state.nickname;
+    const codename: string = state.admin
+        ? decoration.replace("{0}", state.codename)
+        : state.codename;
 
-    const displayedGreeting: string = greeting.replace("{0}", nickname);
+    const displayedGreeting: string = greeting.replace("{0}", codename);
 
     return <h1 className="greeting">{displayedGreeting}</h1>;
 };

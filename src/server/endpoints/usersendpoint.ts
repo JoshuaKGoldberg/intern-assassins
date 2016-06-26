@@ -119,7 +119,7 @@ export class UsersEndpoint extends Endpoint<IUser> {
         await this.validateCredentials(credentials);
 
         const user: IUser = await this.getByAlias(credentials.alias);
-        if (credentials.nickname !== user.nickname || credentials.passphrase !== user.passphrase) {
+        if (credentials.codename !== user.codename || credentials.passphrase !== user.passphrase) {
             throw new ServerError(ErrorCause.NotAuthorized);
         }
 
@@ -127,12 +127,12 @@ export class UsersEndpoint extends Endpoint<IUser> {
     }
 
     /**
-     * Retrieves a user by their nickname, if they exist.
+     * Retrieves a user by their codename, if they exist.
      * 
-     * @param nickname   A user's nickname.
+     * @param codename   A user's codename.
      */
-    public async getByNickname(nickname: string): Promise<IUser> {
-        return await this.collection.findOne({ nickname });
+    public async getByCodename(codename: string): Promise<IUser> {
+        return await this.collection.findOne({ codename });
     }
 
     /**
@@ -173,7 +173,7 @@ export class UsersEndpoint extends Endpoint<IUser> {
                         alias: user.alias,
                         alive: true,
                         kills: 0,
-                        nickname: user.nickname,
+                        codename: user.codename,
                         passphrase: user.passphrase,
                         target: user.target
                     };
@@ -195,7 +195,7 @@ export class UsersEndpoint extends Endpoint<IUser> {
                         alias: user.alias,
                         alive: true,
                         kills: 0,
-                        nickname: user.nickname,
+                        codename: user.codename,
                         passphrase: user.passphrase
                     };
                 }));

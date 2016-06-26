@@ -11,7 +11,7 @@ const ErrorCause = require("../../../src/shared/errors").ErrorCause;
 const killer = {
     alias: "killer",
     alive: true,
-    nickname: "Killer",
+    codename: "Killer",
     passphrase: "kill",
     target: "victim"
 };
@@ -22,7 +22,7 @@ const killer = {
 const victim = {
     alias: "victim",
     alive: true,
-    nickname: "Victim",
+    codename: "Victim",
     passphrase: "dead"
 };
 
@@ -73,7 +73,7 @@ class KillsWorld extends World {
             },
             {
                 alias: killer.alias,
-                nickname: killer.nickname,
+                codename: killer.codename,
                 passphrase: killer.passphrase
             });
     }
@@ -107,7 +107,7 @@ class KillsWorld extends World {
             },
             {
                 alias: victim.alias,
-                nickname: victim.nickname,
+                codename: victim.codename,
                 passphrase: victim.passphrase
             })
             .catch(() => {});
@@ -128,7 +128,7 @@ class KillsWorld extends World {
             },
             {
                 alias: victim.alias,
-                nickname: victim.nickname,
+                codename: victim.codename,
                 passphrase: victim.passphrase
             })
             .catch(() => {});
@@ -143,7 +143,7 @@ class KillsWorld extends World {
     assertKillerKillsCount(count) {
         this.credentials = {
             alias: killer.alias,
-            nickname: killer.nickname,
+            codename: killer.codename,
             passphrase: killer.passphrase
         };
 
@@ -159,7 +159,7 @@ class KillsWorld extends World {
     assertVictimDeath() {
         this.credentials = {
             alias: victim.alias,
-            nickname: victim.nickname,
+            codename: victim.codename,
             passphrase: victim.passphrase
         };
 

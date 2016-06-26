@@ -9,13 +9,13 @@ const request = require("request-promise");
 const userTypeCredentials = {
     admin: {
         alias: "admin",
-        nickname: "Admin",
+        codename: "Admin",
         passphrase: "pineapple"
     },
     anonymous: {},
     user: {
         alias: "user",
-        nickname: "User",
+        codename: "User",
         passphrase: "pineapple"
     }
 };
@@ -30,7 +30,7 @@ const credentialLookups = {
     incorrect: function () {
         return {
             alias: "nope",
-            nickname: "nope",
+            codename: "nope",
             passphrase: "nope"
         };
     },

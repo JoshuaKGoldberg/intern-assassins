@@ -10,9 +10,9 @@ export class AppStorage {
     private static /* readonly */ keyAlias: string = "Assassins::Alias";
 
     /**
-     * Key for retrieving user nickname.
+     * Key for retrieving user codename.
      */
-    private static /* readonly */ keyNickname: string = "Assassins::Nickname";
+    private static /* readonly */ keyCodename: string = "Assassins::Codename";
 
     /**
      * Key for retrieving user passphrase.
@@ -34,17 +34,17 @@ export class AppStorage {
     }
 
     /**
-     * @returns User nickname.
+     * @returns User codename.
      */
-    public get nickname(): string {
-        return localStorage.getItem(AppStorage.keyNickname);
+    public get codename(): string {
+        return localStorage.getItem(AppStorage.keyCodename);
     }
 
     /**
-     * @param value   A new value for the user's nickname.
+     * @param value   A new value for the user's codename.
      */
-    public set nickname(value: string) {
-        localStorage.setItem(AppStorage.keyNickname, value);
+    public set codename(value: string) {
+        localStorage.setItem(AppStorage.keyCodename, value);
     }
 
     /**
@@ -67,7 +67,7 @@ export class AppStorage {
      * @param values   Known user credentials.
      */
     public setValues(values: ICredentials): void {
-        [this.alias, this.nickname, this.passphrase] = [values.alias, values.nickname, values.passphrase];
+        [this.alias, this.codename, this.passphrase] = [values.alias, values.codename, values.passphrase];
     }
 
     /**
@@ -76,7 +76,7 @@ export class AppStorage {
     public asCredentials(): ICredentials {
         return {
             alias: this.alias,
-            nickname: this.nickname,
+            codename: this.codename,
             passphrase: this.passphrase
         };
     }
@@ -85,6 +85,6 @@ export class AppStorage {
      * @returns Whether all fields have been filled.
      */
     public isComplete(): boolean {
-        return !!(this.alias && this.nickname && this.passphrase);
+        return !!(this.alias && this.codename && this.passphrase);
     }
 }

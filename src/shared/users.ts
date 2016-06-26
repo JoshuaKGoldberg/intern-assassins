@@ -17,9 +17,9 @@ export interface ILeader {
     kills: number;
 
     /**
-     * A unique friendly nickname of the user.
+     * A unique friendly codename of the user.
      */
-    nickname: string;
+    codename: string;
 }
 
 /**

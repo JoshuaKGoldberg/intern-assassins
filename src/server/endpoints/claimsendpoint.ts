@@ -102,13 +102,13 @@ export class ClaimsEndpoint extends Endpoint<IClaim> {
             await this.api.fireNotificationCallbacks({
                 cause: NotificationCause.KillClaimToKiller,
                 description: `You claimed to have killed ${victim.alias}.`,
-                nickname: killer.nickname,
+                codename: killer.codename,
                 timestamp: Date.now()
             });
             await this.api.fireNotificationCallbacks({
                 cause: NotificationCause.KillClaimToVictim,
                 description: `Someone claims to have killed you.`,
-                nickname: victim.nickname,
+                codename: victim.codename,
                 timestamp: Date.now()
             });
             await this.api.endpoints.users.update(killer);

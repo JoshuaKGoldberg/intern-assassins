@@ -124,11 +124,11 @@ export class EmailNotifier implements INotifier {
      * @returns A promise for the email being sent.
      */
     private async emailDeathToVictim(notification: INotification): Promise<void> {
-        const user: IUser = await this.api.endpoints.users.getByNickname(notification.nickname);
+        const user: IUser = await this.api.endpoints.users.getByCodename(notification.codename);
 
         this.sendMail({
             subject: "You died!",
-            text: `Better luck next time, ${user.nickname}.`,
+            text: `Better luck next time, ${user.codename}.`,
             to: user.alias
         });
     }
@@ -140,11 +140,11 @@ export class EmailNotifier implements INotifier {
      * @returns A promise for the email being sent.
      */
     private async emailKillToKiller(notification: INotification): Promise<void> {
-        const user: IUser = await this.api.endpoints.users.getByNickname(notification.nickname);
+        const user: IUser = await this.api.endpoints.users.getByCodename(notification.codename);
 
         this.sendMail({
             subject: "You scored a kill!",
-            text: `Well played, ${user.nickname}! You now have ${user.kills} kill${user.kills === 0 ? "" : "s"}.`,
+            text: `Well played, ${user.codename}! You now have ${user.kills} kill${user.kills === 0 ? "" : "s"}.`,
             to: user.alias
         });
     }
@@ -156,7 +156,7 @@ export class EmailNotifier implements INotifier {
      * @returns A promise for the email being sent.
      */
     private async emailKillClaimToKiller(notification: INotification): Promise<void> {
-        const user: IUser = await this.api.endpoints.users.getByNickname(notification.nickname);
+        const user: IUser = await this.api.endpoints.users.getByCodename(notification.codename);
 
         this.sendMail({
             subject: "You've claimed a kill.",
@@ -172,7 +172,7 @@ export class EmailNotifier implements INotifier {
      * @returns A promise for the email being sent.
      */
     private async emailKillClaimToVictim(notification: INotification): Promise<void> {
-        const user: IUser = await this.api.endpoints.users.getByNickname(notification.nickname);
+        const user: IUser = await this.api.endpoints.users.getByCodename(notification.codename);
 
         this.sendMail({
             subject: "Your killer claims they've killed you.",

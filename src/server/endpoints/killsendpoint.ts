@@ -84,15 +84,15 @@ export class KillsEndpoint extends Endpoint<IKill> {
 
         await this.api.fireNotificationCallbacks({
             cause: NotificationCause.Kill,
-            description: `${killer.nickname} has scored a kill!`,
-            nickname: killer.nickname,
+            description: `${killer.codename} has scored a kill!`,
+            codename: killer.codename,
             timestamp: Date.now()
         });
 
         await this.api.fireNotificationCallbacks({
             cause: NotificationCause.Death,
-            description: `Oh no! ${victim.nickname} died!`,
-            nickname: victim.nickname,
+            description: `Oh no! ${victim.codename} died!`,
+            codename: victim.codename,
             timestamp: Date.now()
         });
     }

@@ -3,7 +3,7 @@
 
 "use strict";
 import * as React from "react";
-import { INotification } from "../../../../shared/notifications";
+import { INotification, NotificationCause } from "../../../../shared/notifications";
 import { Activity } from "./activity";
 
 /**
@@ -47,6 +47,9 @@ export class ActivityBoard extends React.Component<IActivityBoardProps, void> {
         return (
             <div className="messages-container has-messages">
                 {this.props.notifications
+                    .filter((notification: INotification): boolean => {
+                        return notification.cause === NotificationCause.Kill;
+                    })
                     .sort((a: INotification, b: INotification): number => {
                         return b.timestamp - a.timestamp;
                     })

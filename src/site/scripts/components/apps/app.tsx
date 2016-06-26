@@ -177,10 +177,18 @@ export class App extends React.Component<void, IAppState> {
      * @remarks Because the death is of the user, the page is reloaded.
      */
     private handleDeathNotification(notification: INotification): IAppState {
+        // Eventually, claim notifications will only be sent to relevent users. See #113.
+        if (notification.codename !== this.state.user.codename) {
+            return this.state;
+        }
+
         // When this is moved to Flux, make a(n immutable) copy of this.state. See issue #83.
         const newState: IAppState = this.state;
 
         newState.user.alive = false;
+        newState.leaders
+            .find((leader: ILeader): boolean => leader.codename === notification.codename)
+            .alive = false;
 
         return newState;
     }
@@ -209,6 +217,11 @@ export class App extends React.Component<void, IAppState> {
      * @returns A new state.
      */
     private handleKillClaimToVictimNotification(notification: INotification): IAppState {
+        // Eventually, claim notifications will only be sent to relevent users. See #113.
+        if (notification.codename !== this.state.user.codename) {
+            return this.state;
+        }
+
         // When this is moved to Flux, make a(n immutable) copy of this.state. See issue #83.
         const newState: IAppState = this.state;
 

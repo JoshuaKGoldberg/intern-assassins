@@ -4,7 +4,7 @@
 "use strict";
 import * as http from "http";
 import * as socketIo from "socket.io";
-import { INotification, NotificationCause } from "../../shared/notifications";
+import { INotification } from "../../shared/notifications";
 import { INotifier } from "./notifiers";
 
 /**
@@ -31,10 +31,6 @@ export class SocketNotifier implements INotifier {
      * @param notification   A new notification.
      */
     public receive(notification: INotification): Promise<void> {
-        if (notification.cause !== NotificationCause.Kill) {
-            return;
-        }
-
         this.ioServer.emit("report", notification);
 
         return Promise.resolve();

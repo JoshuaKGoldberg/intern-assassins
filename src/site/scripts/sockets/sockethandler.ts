@@ -119,6 +119,10 @@ export class SocketHandler<TNotification, TState> {
      */
     private handleNotification(notification: TNotification): void {
         const handler: IHandler<TNotification, TState> = this.getHandlerForNotification(notification);
+        if (!handler) {
+            return;
+        }
+
         const newState: TState = handler(notification);
 
         this.receiver(newState, notification);
@@ -128,18 +132,13 @@ export class SocketHandler<TNotification, TState> {
      * Gets the correct handler for a notification.
      * 
      * @param notification   A new notification.
-     * @returns The handler for the notification.
+     * @returns The handler for the notification, if it exists.
      */
     private getHandlerForNotification(notification: TNotification): IHandler<TNotification, TState> {
         if (!this.router) {
             throw new Error("No router defined.");
         }
 
-        const route: number = this.router(notification);
-        if (!this.handlers[route]) {
-            throw new Error(`No handler for route '${route}'.`);
-        }
-
-        return this.handlers[route];
+        return this.handlers[this.router(notification)];
     }
 }

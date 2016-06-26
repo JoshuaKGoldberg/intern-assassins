@@ -76,15 +76,15 @@ export class KillClaimReports extends React.Component<IKillClaimReportsProps, vo
         const oldestClaimDate: moment.Moment = Moment(relevantClaims[0].timestamp);
         const newestClaimDate: moment.Moment = Moment(relevantClaims[relevantClaims.length - 1].timestamp);
         const numberOfDays: number = oldestClaimDate.diff(newestClaimDate, "days") + 1;
-        const killsDescriptor: string = relevantClaims.length === 1 ? "person" : "people";
-        const daysPerKill: number = Math.round(numberOfDays / relevantClaims.length);
-        const daysDescriptor: string = daysPerKill === 1 ? "day" : "days";
+        const claimsDescriptor: string = relevantClaims.length === 1 ? "claim" : "claims";
+        const daysPerClaim: number = Math.round(numberOfDays / relevantClaims.length);
+        const daysDescriptor: string = daysPerClaim === 1 ? "day" : "days";
 
         return (
             <div className="kill-claim-statistics">
-                <span>You've killed <strong>{relevantClaims.length}</strong> {killsDescriptor}.</span>
+                <span>You've filed <strong>{relevantClaims.length}</strong> {claimsDescriptor}.</span>
                 <br />
-                <span>That's {daysPerKill} {daysDescriptor} per kill.</span> 
+                <span>That's {daysPerClaim} {daysDescriptor} per kill.</span> 
             </div>);
     }
 

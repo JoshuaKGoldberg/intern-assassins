@@ -1,5 +1,3 @@
-/// <reference path="../../../typings/all.d.ts" />
-
 "use strict";
 import { ErrorCause } from "../../shared/errors";
 import { CredentialKeys, ICredentials } from "../../shared/login";
@@ -36,7 +34,7 @@ export class UsersEndpoint extends Endpoint<IUser> {
      * 
      * @param credentials   Login values for authentication.
      * @param users   Users to add.
-     * @returns A promise for addingthe users.
+     * @returns A promise for adding the users.
      */
     public async put(credentials: ICredentials, users: IUser[]): Promise<any> {
         await this.validateAdminCredentials(credentials);
@@ -59,13 +57,28 @@ export class UsersEndpoint extends Endpoint<IUser> {
     }
 
     /**
+     * Retrieves a user by alias.
+     * 
+     * @param alias   Alias of the user.
+     */
+    public async getByAlias(alias: string): Promise<IUser> {
+        const user: IUser = await this.collection.findOne({ alias });
+
+        if (!user) {
+            throw new Error(`Alias '${alias}' does not exist.`);
+        }
+
+        return user;
+    }
+
+    /**
      * Retrieves multiple users.
      * 
      * @param credentials   Login values for authentication.
      * @param alias   Aliases of users.
      * @returns A promise for the users with the aliases.
      */
-    public async getByAliases(credentials: ICredentials, aliases: string[]): Promise<IUser[]> {
+    public async getByAliases(aliases: string[]): Promise<IUser[]> {
         const users = await this.collection
             .find({
                 alias: {
@@ -105,7 +118,7 @@ export class UsersEndpoint extends Endpoint<IUser> {
     public async getByCredentials(credentials: ICredentials): Promise<IUser> {
         await this.validateCredentials(credentials);
 
-        const user: IUser = (await this.getByAliases(credentials, [credentials.alias]))[0];
+        const user: IUser = await this.getByAlias(credentials.alias);
         if (credentials.nickname !== user.nickname || credentials.passphrase !== user.passphrase) {
             throw new ServerError(ErrorCause.NotAuthorized);
         }

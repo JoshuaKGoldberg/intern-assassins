@@ -41,7 +41,7 @@ export class Profile extends React.Component<IAppUserProps, void> {
 
                 <div className="area info-display-area">
                     <InfoDisplay info="nickname" display={this.props.user.nickname} />
-                    <InfoDisplay info="target" display={this.props.user.target} />
+                    {this.props.user.alive && <InfoDisplay info="target" display={this.props.user.target} />}
                 </div>
 
                 <div class="area">
@@ -61,11 +61,15 @@ export class Profile extends React.Component<IAppUserProps, void> {
      * @returns The rendered kill claim reports.
      */
     private renderKillClaimReports(): JSX.Element {
-        if (!this.props.killClaims || !this.props.killClaims.length) {
+        if (!this.props.claims || !this.props.claims.length) {
             return undefined;
         }
 
-        return <KillClaimReports killClaims={this.props.killClaims} user={this.props.user} />;
+        return (
+            <KillClaimReports
+                claims={this.props.claims}
+                kills={this.props.kills}
+                user={this.props.user} />);
     }
 
     /**
@@ -74,7 +78,7 @@ export class Profile extends React.Component<IAppUserProps, void> {
      * @returns A promise for the report completing.
      */
     private async onDeath(): Promise<void> {
-        await this.props.sdk.reportKillClaim(
+        await this.props.sdk.addClaim(
             this.props.user,
             {
                 killer: this.props.user.alias,
@@ -91,7 +95,7 @@ export class Profile extends React.Component<IAppUserProps, void> {
      * @returns A promise for the report completing.
      */
     private async onKill(): Promise<void> {
-        await this.props.sdk.reportKillClaim(
+        await this.props.sdk.addClaim(
             this.props.user,
             {
                 killer: this.props.user.alias,

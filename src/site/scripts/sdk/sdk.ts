@@ -1,6 +1,6 @@
 "use strict";
 
-import { IKillClaim } from "../../../shared/kills";
+import { IClaim, IKill } from "../../../shared/kills";
 import { Method } from "../../../shared/actions";
 import { ICredentials } from "../../../shared/login";
 import { INotification } from "../../../shared/notifications";
@@ -43,12 +43,7 @@ export class Sdk {
      * @returns A promise for the user.
      */
     public getUser(credentials: ICredentials): Promise<IUser> {
-        return this.sendAjaxRequest(
-            "GET",
-            "api/user",
-            credentials,
-            {},
-            Sdk.parseResponseForJsonData);
+        return this.sendAjaxRequest("GET", "api/user", credentials);
     }
 
     /**
@@ -57,10 +52,10 @@ export class Sdk {
      * @param credentials   The submitting user credentials.
      * @returns A promise for the user's active kill claims.
      */
-    public getUserActiveKillClaims(credentials: ICredentials): Promise<IKillClaim[]> {
+    public getClaims(credentials: ICredentials): Promise<IClaim[]> {
         return this.sendAjaxRequest(
             "GET",
-            "api/kills",
+            "api/claims",
             credentials,
             {
                 $or: [
@@ -71,8 +66,17 @@ export class Sdk {
                         victim: credentials.alias
                     }
                 ]
-            },
-            Sdk.parseResponseForJsonData);
+            });
+    }
+
+    /**
+     * Retrieves active kill claims on or by the user.
+     * 
+     * @param credentials   The submitting user credentials.
+     * @returns A promise for the user's active kill claims.
+     */
+    public getKills(credentials: ICredentials): Promise<IKill[]> {
+        return this.sendAjaxRequest("GET", "api/kills", credentials);
     }
 
     /**
@@ -82,12 +86,7 @@ export class Sdk {
      * @returns A promise for all users.
      */
     public getUsers(credentials: ICredentials): Promise<IUser[]> {
-        return this.sendAjaxRequest(
-            "GET",
-            "api/users",
-            credentials,
-            {},
-            Sdk.parseResponseForJsonData);
+        return this.sendAjaxRequest("GET", "api/users", credentials);
     }
 
     /**
@@ -107,16 +106,16 @@ export class Sdk {
     }
 
     /**
-     * Reports that a user has died.
+     * Adds a kill claim.
      * 
      * @param credentials   The submitting user credentials.
      * @param alias   The user's alias.
-     * @returns A promise for the created kill claim, if successful.
+     * @returns A promise for the created claim, if successful.
      */
-    public reportKillClaim(credentials: ICredentials, claim: IKillClaim): Promise<IKillClaim> {
+    public addClaim(credentials: ICredentials, claim: IClaim): Promise<IClaim> {
         return this.sendAjaxRequest(
             "PUT",
-            "api/kills",
+            "api/claims",
             credentials,
             claim,
             Sdk.parseResponseForJsonData);

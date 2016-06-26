@@ -5,7 +5,7 @@
 "use strict";
 import * as Moment from "moment";
 import * as React from "react";
-import { IKillClaim } from "../../../../shared/kills";
+import { IClaim, IKill } from "../../../../shared/kills";
 import { IUser } from "../../../../shared/users";
 
 /**
@@ -13,9 +13,14 @@ import { IUser } from "../../../../shared/users";
  */
 export interface IKillClaimReportsProps {
     /**
-     * A user's relevant kill claims.
+     * Any active kill claims related to the user.
      */
-    killClaims: IKillClaim[];
+    claims: IClaim[];
+
+    /**
+     * Any recorded kills by the user.
+     */
+    kills: IKill[];
 
     /**
      * The user who made the claims.
@@ -24,10 +29,10 @@ export interface IKillClaimReportsProps {
 }
 
 /**
- * Kill claims keyed by a description of the date they took place.
+ * Kills keyed by a description of the date they took place.
  */
-interface ICollectedKillClaims {
-    [i: string]: IKillClaim[];
+interface IGroupedKills {
+    [i: string]: IKill[];
 }
 
 /**
@@ -40,77 +45,76 @@ export class KillClaimReports extends React.Component<IKillClaimReportsProps, vo
      * @returns The rendered component.
      */
     public render(): JSX.Element {
-        const collectedReports: ICollectedKillClaims = this.collectKillClaims(this.props.killClaims);
+        const pastKills: IGroupedKills = this.collectKills(this.props.kills);
+        const pendingClaim: IClaim = this.collectPendingClaim(this.props.claims, this.props.kills);
 
         return (
             <div className="kill-claim-reports">
-                {this.renderStatistics(this.props.killClaims)}
-                {Object.keys(collectedReports)
+                {pendingClaim && this.renderPendingClaim(pendingClaim)}
+                {this.props.user.alive && this.renderStatistics(this.props.kills)}
+                {Object.keys(pastKills)
                     .map((key: string): JSX.Element => {
                         return (
                             <div className="kill-claim-group" key={key}>
                                 <h3>{key}</h3>
-                                {this.renderKillClaimsGroup(collectedReports[key])}
+                                {this.renderKillsGroup(pastKills[key])}
                             </div>);
                     })}
             </div>);
     }
 
     /**
-     * Renders a statistics section for kill claims.
+     * Renders a statistics section for the user's kills.
      * 
-     * @param killClaims   Kill claims to summarize.
+     * @param kills   All kills related to the user.
      * @returns The rendered statistics section.
      */
-    private renderStatistics(killClaims: IKillClaim[]): JSX.Element {
-        const relevantClaims: IKillClaim[] = killClaims
-            .filter((killClaim: IKillClaim): boolean => {
-                return killClaim.killer === this.props.user.alias && killClaim.killer !== killClaim.victim;
-            })
-            .sort((a: IKillClaim, b: IKillClaim): number => b.timestamp - a.timestamp);
-
-        if (relevantClaims.length === 0) {
-            return <p className="kill-claim-statistics">You haven't killed anybody yet... Get cracking!</p>;
+    private renderStatistics(kills: IKill[]): JSX.Element {
+        if (kills.length === 0) {
+            return undefined;
         }
 
-        const oldestClaimDate: moment.Moment = Moment(relevantClaims[0].timestamp);
-        const newestClaimDate: moment.Moment = Moment(relevantClaims[relevantClaims.length - 1].timestamp);
-        const numberOfDays: number = oldestClaimDate.diff(newestClaimDate, "days") + 1;
-        const claimsDescriptor: string = relevantClaims.length === 1 ? "claim" : "claims";
-        const daysPerClaim: number = Math.round(numberOfDays / relevantClaims.length);
-        const daysDescriptor: string = daysPerClaim === 1 ? "day" : "days";
+        const userKills: IKill[] = kills.filter((kill: IKill): boolean => {
+            return kill.killer === this.props.user.alias;
+        });
+        const oldestKillDate: moment.Moment = Moment(userKills[0].timestamp);
+        const newestKillDate: moment.Moment = Moment(userKills[userKills.length - 1].timestamp);
+        const numberOfDays: number = oldestKillDate.diff(newestKillDate, "days") + 1;
+        const descriptor: string = userKills.length === 1 ? "person" : "people";
+        const daysPerKill: number = Math.round(numberOfDays / userKills.length);
+        const daysDescriptor: string = daysPerKill === 1 ? "day" : "days";
 
         return (
-            <div className="kill-claim-statistics">
-                <span>You've filed <strong>{relevantClaims.length}</strong> {claimsDescriptor}.</span>
+            <div className="kill-statistics">
+                <span>You've killed <strong>{userKills.length}</strong> {descriptor}.</span>
                 <br />
-                <span>That's {daysPerClaim} {daysDescriptor} per kill.</span> 
+                <span>That's {daysPerKill} {daysDescriptor} per kill.</span> 
             </div>);
     }
 
     /**
-     * Renders a group of kill claims.
+     * Renders a group of kills.
      * 
-     * @param killClaims   Kill claims to render.
-     * @returns The rendered kill claims.
+     * @param kills   Kill to render.
+     * @returns The rendered kills.
      */
-    private renderKillClaimsGroup(killClaims: IKillClaim[]): JSX.Element[] {
-        return killClaims
-            .sort((a: IKillClaim, b: IKillClaim): number => b.timestamp - a.timestamp)
-            .map((killClaim: IKillClaim, i: number): JSX.Element => this.renderKillClaim(killClaim, i));
+    private renderKillsGroup(kills: IKill[]): JSX.Element[] {
+        return kills
+            .sort((a: IKill, b: IKill): number => b.timestamp - a.timestamp)
+            .map((kill: IKill, i: number): JSX.Element => this.renderKill(kill, i));
     }
 
     /**
-     * Renders a single kill claim.
+     * Renders a single kill.
      * 
-     * @param killClaim   The kill claim.
-     * @param i   The claim's index in its container.
-     * @returns The rendered kill claim.
+     * @param kill   The kill.
+     * @param i   The kill's index in its container.
+     * @returns The rendered kill.
      */
-    private renderKillClaim(killClaim: IKillClaim, i: number): JSX.Element {
-        const descriptor = killClaim.victim === this.props.user.alias
-            ? `You were killed by ${killClaim.killer} :(`
-            : `You killed ${killClaim.victim}`;
+    private renderKill(kill: IKill, i: number): JSX.Element {
+        const descriptor = kill.victim === this.props.user.alias
+            ? `You were killed by ${kill.killer} :(`
+            : `You killed ${kill.victim}`;
 
         return (
             <div className="kill-claim" key={i}>
@@ -119,29 +123,61 @@ export class KillClaimReports extends React.Component<IKillClaimReportsProps, vo
     }
 
     /**
-     * Groups kill claims by their date descriptors (rounded to the nearest day).
+     * Groups kills by their date descriptors (rounded to the nearest day).
      * 
-     * @param killClaims   Kill claims to collect.
-     * @returns The kill claims, collected by their date descriptors.
+     * @param kills   Kills to collect.
+     * @returns The kills, collected by their date descriptors.
      */
-    private collectKillClaims(killClaims: IKillClaim[]): ICollectedKillClaims {
-        const collection: ICollectedKillClaims = {};
+    private collectKills(kills: IKill[]): IGroupedKills {
+        const collection: IGroupedKills = {};
 
-        for (const killClaim of killClaims) {
-            if (killClaim.killer === killClaim.victim) {
+        for (const kill of kills) {
+            if (kill.killer === kill.victim) {
                 continue;
             }
 
-            const killDay: moment.Moment = Moment(killClaim.timestamp).startOf("day");
+            const killDay: moment.Moment = Moment(kill.timestamp).startOf("day");
             const descriptor = killDay.calendar().split(" at ")[0];
 
             if (!collection.hasOwnProperty(descriptor)) {
-                collection[descriptor] = [killClaim];
+                collection[descriptor] = [kill];
             } else {
-                collection[descriptor].push(killClaim);
+                collection[descriptor].push(kill);
             }
         }
 
         return collection;
+    }
+
+    /**
+     * Finds any pending claim against the user, if it exists.
+     * 
+     * @param claims   All claims related to the user.
+     * @param kills   All kills related to the user.
+     * @remarks This could be more performant, but at this scale it's unimportant.
+     */
+    private collectPendingClaim(claims: IClaim[], kills: IKill[]): IClaim {
+        if (!this.props.user.alive) {
+            return undefined;
+        }
+
+        // If the user's still alive, any claim against them should be pending
+        return claims
+            .filter((claim: IClaim): boolean => {
+                return claim.victim === this.props.user.alias;
+            })
+            [0];
+    }
+
+    /**
+     * 
+     */
+    private renderPendingClaim(claim: IClaim) {
+        return (
+            <h3 className="pending-claim">
+                Your killer says they've killed you! Can this be?
+                <br />
+                Either <a href="">file a dispute</a> or click 'Are you dead?'.
+            </h3>);
     }
 }

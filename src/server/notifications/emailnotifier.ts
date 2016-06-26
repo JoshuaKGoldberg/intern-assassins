@@ -113,7 +113,7 @@ export class EmailNotifier implements INotifier {
         const user: IUser = await this.api.endpoints.users.getByNickname(notification.nickname);
 
         this.sendMail({
-            to: `${user.alias}@${this.settings.domain}`,
+            to: `${user.alias}${this.settings.domain}`,
             subject: "You died!",
             text: `Better luck next time, ${user.nickname}.`
         });
@@ -129,7 +129,7 @@ export class EmailNotifier implements INotifier {
         const user: IUser = await this.api.endpoints.users.getByNickname(notification.nickname);
 
         this.sendMail({
-            to: `${user.alias}@${this.settings.domain}`,
+            to: `${user.alias}${this.settings.domain}`,
             subject: "You scored a kill!",
             text: `Well played, ${user.nickname}! You now have ${user.kills} kill${user.kills === 0 ? "" : "s"}.`
         });
@@ -145,7 +145,7 @@ export class EmailNotifier implements INotifier {
         const user: IUser = await this.api.endpoints.users.getByNickname(notification.nickname);
 
         this.sendMail({
-            to: `${user.alias}@${this.settings.domain}`,
+            to: `${user.alias}${this.settings.domain}`,
             subject: "You've claimed a kill.",
             text: `Your target hasn't yet verified it. Remind them in a few minutes if they don't.`
         });
@@ -161,7 +161,7 @@ export class EmailNotifier implements INotifier {
         const user: IUser = await this.api.endpoints.users.getByNickname(notification.nickname);
 
         this.sendMail({
-            to: `${user.alias}@${this.settings.domain}`,
+            to: `${user.alias}${this.settings.domain}`,
             subject: "Your killer claims they've killed you.",
             text: `Head to ${this.settings.website} now to verify it.`
         });

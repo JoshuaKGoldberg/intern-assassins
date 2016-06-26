@@ -46,8 +46,11 @@ export class ActivityBoard extends React.Component<IActivityBoardProps, void> {
 
         return (
             <div className="messages-container has-messages">
-                {this.props.notifications.map(
-                    (notification: INotification, i: number): JSX.Element => {
+                {this.props.notifications
+                    .sort((a: INotification, b: INotification): number => {
+                        return b.timestamp - a.timestamp;
+                    })
+                    .map((notification: INotification, i: number): JSX.Element => {
                         return <Activity key={i} {...notification} />;
                     })}
             </div>);

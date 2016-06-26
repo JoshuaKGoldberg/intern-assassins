@@ -66,7 +66,7 @@ class KillsWorld extends World {
     sendKillerKillClaim() {
         return this.sendRequest(
             "PUT",
-            "api/kills",
+            "api/claims",
             {
                 killer: "killer",
                 victim: "victim"
@@ -86,7 +86,7 @@ class KillsWorld extends World {
     sendVictimKillClaim() {
         return this.sendRequest(
             "PUT",
-            "api/kills",
+            "api/claims",
             {
                 killer: "victim",
                 victim: "victim"
@@ -101,7 +101,7 @@ class KillsWorld extends World {
     sendInvalidKillClaim() {
         return this.sendRequest(
             "PUT",
-            "api/kills",
+            "api/claims",
             {
                 victim: "victim"
             },
@@ -121,7 +121,7 @@ class KillsWorld extends World {
     sendUnauthorizedKillClaim() {
         return this.sendRequest(
             "PUT",
-            "api/kills",
+            "api/claims",
             {
                 killer: "killer",
                 victim: "victim"

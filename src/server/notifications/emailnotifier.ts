@@ -144,7 +144,7 @@ export class EmailNotifier implements INotifier {
 
         this.sendMail({
             subject: "You scored a kill!",
-            text: `Well played, ${user.codename}! You now have ${user.kills} kill${user.kills === 0 ? "" : "s"}.`,
+            text: `Well played, ${user.codename}! You now have ${user.kills} kill${user.kills === 1 ? "" : "s"}.`,
             to: user.alias
         });
     }

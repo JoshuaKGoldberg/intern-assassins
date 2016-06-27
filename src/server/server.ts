@@ -5,6 +5,7 @@ import * as express from "express";
 import * as fsp from "fs-promise";
 import * as http from "http";
 import { INotification } from "../shared/notifications";
+import { IRound } from "../shared/rounds";
 import { IUser } from "../shared/users";
 import { IAssassinsSettings } from "../main";
 import { Scheduler } from "./cron/scheduler";
@@ -43,6 +44,11 @@ export interface IServerSettings {
      * Whether to reset the database history.
      */
     reset?: boolean;
+
+    /**
+     * Game rounds.
+     */
+    rounds: IRound[];
 
     /**
      * Users to add when resetting the database.
@@ -104,6 +110,7 @@ export class Server {
         this.app.use("/node_modules", express.static("node_modules"));
 
         this.api = new Api(this.app, this.database, this.scheduler);
+        this.api.endpoints.rounds.initialize(settings.rounds);
         this.server = http.createServer(this.app);
         this.scheduler = new Scheduler();
 
@@ -172,6 +179,10 @@ export class Server {
      */
     public static async createFromSettings(settings: IAssassinsSettings): Promise<Server> {
         const database = await Database.create(settings.database);
-        return new Server(settings.server, database);
+        const server: Server = new Server(settings.server, database);
+
+        await server.api.endpoints.rounds.initialize(settings.server.rounds);
+
+        return server;
     }
 }

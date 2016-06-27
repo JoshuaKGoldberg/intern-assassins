@@ -19,6 +19,10 @@
     },
     "port": 3000,
     "reset": true,
+    "rounds": [{
+      "end": 1687855086839,
+      "start": 1687853086839
+    }],
     "users": [
       {
         "alias": "aaa",

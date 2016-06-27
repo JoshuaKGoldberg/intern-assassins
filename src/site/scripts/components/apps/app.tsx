@@ -3,9 +3,10 @@
 "use strict";
 import * as React from "react";
 import { IKill, IClaim } from "../../../../shared/kills";
-import { INotification, NotificationCause } from "../../../../shared/notifications";
-import { ILeader, IUser } from "../../../../shared/users";
 import { ICredentials } from "../../../../shared/login";
+import { INotification, NotificationCause } from "../../../../shared/notifications";
+import { IRound } from "../../../../shared/rounds";
+import { ILeader, IUser } from "../../../../shared/users";
 import { SocketHandler } from "../../sockets/sockethandler";
 import { AppStorage } from "../../storage/appstorage";
 import { Sdk } from "../../sdk/sdk";
@@ -36,6 +37,11 @@ interface IAppState {
      * Recently pushed notification messages.
      */
     notifications: INotification[];
+
+    /**
+     * Gameplay rounds.
+     */
+    rounds?: IRound[];
 
     /**
      * Currently logged in user, if not anonymous.
@@ -158,15 +164,16 @@ export class App extends React.Component<void, IAppState> {
      */
     private async refreshData(): Promise<void> {
         const credentials: ICredentials = this.storage.asCredentials();
-        const [claims, kills, leaders, notifications, user] = await Promise.all([
+        const [claims, kills, leaders, notifications, rounds, user] = await Promise.all([
             this.sdk.getClaims(credentials),
             this.sdk.getKills(credentials),
             this.sdk.getLeaders(),
             this.sdk.getNotifications(),
+            this.sdk.getRounds(),
             this.sdk.getUser(credentials),
         ]);
 
-        this.setState({ claims, kills, leaders, notifications, user });
+        this.setState({ claims, kills, leaders, notifications, rounds, user });
     }
 
     /**

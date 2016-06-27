@@ -9,6 +9,7 @@ import { KillsEndpoint } from "./killsendpoint";
 import { LeadersEndpoint } from "./leadersendpoint";
 import { LoginEndpoint } from "./loginendpoint";
 import { NotificationsEndpoint } from "./notificationsendpoint";
+import { RoundsEndpoint } from "./roundsendpoint";
 import { UserEndpoint } from "./userendpoint";
 import { UsersEndpoint } from "./usersendpoint";
 
@@ -42,6 +43,11 @@ export class Endpoints {
     public /* readonly */ notifications: NotificationsEndpoint;
 
     /**
+     * Endpoint for gameplay rounds.
+     */
+    public /* readonly */ rounds: RoundsEndpoint;
+
+    /**
      * Endpoint for single user user operations.
      */
     public /* readonly */ user: UserEndpoint;
@@ -68,6 +74,7 @@ export class Endpoints {
         this.leaders = new LeadersEndpoint(api, database);
         this.login = new LoginEndpoint(api, database);
         this.notifications = new NotificationsEndpoint(api, database);
+        this.rounds = new RoundsEndpoint(api, database);
         this.user = new UserEndpoint(api, database);
         this.users = new UsersEndpoint(api, database);
     }

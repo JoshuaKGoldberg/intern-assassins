@@ -4,6 +4,7 @@ import { IClaim, IKill } from "../../../shared/kills";
 import { Method } from "../../../shared/actions";
 import { ICredentials } from "../../../shared/login";
 import { INotification } from "../../../shared/notifications";
+import { IRound } from "../../../shared/rounds";
 import { ILeader, IUser } from "../../../shared/users";
 import { IPartialUser } from "../storage/sheetparser";
 
@@ -141,6 +142,17 @@ export class Sdk {
         return this.sendAjaxRequest(
             "GET",
             "api/notifications");
+    }
+
+    /**
+     * Retrieves all rounds.
+     * 
+     * @returns A promise for all rounds.
+     */
+    public getRounds(): Promise<IRound[]> {
+        return this.sendAjaxRequest(
+            "GET",
+            "api/rounds");
     }
 
     /**

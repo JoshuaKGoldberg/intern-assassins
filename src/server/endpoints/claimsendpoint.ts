@@ -1,5 +1,3 @@
-/// <reference path="../../../typings/all.d.ts" />
-
 "use strict";
 import { ErrorCause } from "../../shared/errors";
 import { IClaim } from "../../shared/kills";

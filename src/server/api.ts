@@ -69,6 +69,7 @@ export class Api {
         this.registerEndpointRoutes(app, this.endpoints.leaders);
         this.registerEndpointRoutes(app, this.endpoints.login);
         this.registerEndpointRoutes(app, this.endpoints.notifications);
+        this.registerEndpointRoutes(app, this.endpoints.rounds);
         this.registerEndpointRoutes(app, this.endpoints.user);
         this.registerEndpointRoutes(app, this.endpoints.users);
         this.scheduler = scheduler;

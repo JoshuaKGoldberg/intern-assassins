@@ -47,7 +47,7 @@ gulp.task("less", () => {
 gulp.task("lint", ["eslint", "tslint"], callback => callback());
 
 gulp.task("test:unit", () => {
-    return gulp.src("test/unit/tests.js")
+    return gulp.src("test/unit/**.js")
         .pipe(mocha({
             reporter: "spec"
         }));

@@ -40,12 +40,27 @@ export enum NotificationCause {
     Kill,
 
     /**
+     * Reminder to the user to kill someone soon.
+     */
+    KillReminder,
+
+    /**
      * The user is claiming to have killed someone.
      */
     KillClaimToKiller,
 
     /**
+     * The user is claiming to have killed someone.
+     */
+    KillClaimToKillerReminder,
+
+    /**
      * Someone is claiming to have killed the user.
      */
-    KillClaimToVictim
+    KillClaimToVictim,
+
+    /**
+     * Someone is claiming to have killed the user.
+     */
+    KillClaimToVictimReminder
 }

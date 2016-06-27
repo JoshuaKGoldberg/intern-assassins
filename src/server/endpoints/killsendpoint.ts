@@ -5,6 +5,7 @@ import { NotificationCause } from "../../shared/notifications";
 import { IUser } from "../../shared/users";
 import { ServerError } from "../errors";
 import { ICredentials } from "../../shared/login";
+import { Delay } from "../cron/delays";
 import { Endpoint } from "./endpoint";
 
 /**
@@ -94,6 +95,41 @@ export class KillsEndpoint extends Endpoint<IKill> {
             description: `Oh no! ${victim.codename} died!`,
             codename: victim.codename,
             timestamp: Date.now()
+        });
+
+        this.api.scheduler.delayChain({
+            [Delay.day * 1.5]: async (): Promise<boolean> => {
+                const futureKiller: IUser = await this.api.endpoints.users.getByAlias(killer.alias);
+                if (futureKiller.kills !== killer.kills) {
+                    return true;
+                }
+
+                await this.api.fireNotificationCallbacks({
+                    cause: NotificationCause.KillReminder,
+                    description: "You haven't killed in a while. Get on it soon, or we'll auto-kill you!",
+                    codename: killer.codename,
+                    timestamp: Date.now()
+                });
+
+                return false;
+            },
+            [Delay.day * 3]: async (): Promise<boolean> => {
+                const futureKiller: IUser = await this.api.endpoints.users.getByAlias(killer.alias);
+                if (futureKiller.kills !== killer.kills) {
+                    return true;
+                }
+
+                await this.finalizeDeath(futureKiller);
+
+                await this.api.fireNotificationCallbacks({
+                    cause: NotificationCause.KillReminder,
+                    description: "You haven't killed in three days so we've auto-killed you. Better luck next time!",
+                    codename: killer.codename,
+                    timestamp: Date.now()
+                });
+
+                return false;
+            }
         });
     }
 }

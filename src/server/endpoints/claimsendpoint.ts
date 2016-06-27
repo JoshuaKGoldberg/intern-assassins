@@ -6,6 +6,7 @@ import { IClaim } from "../../shared/kills";
 import { NotificationCause } from "../../shared/notifications";
 import { IUser } from "../../shared/users";
 import { ICredentials } from "../../shared/login";
+import { Delay } from "../cron/delays";
 import { NotAuthorizedError, ServerError } from "../errors";
 import { Endpoint } from "./endpoint";
 
@@ -98,21 +99,26 @@ export class ClaimsEndpoint extends Endpoint<IClaim> {
         // Only change death status when the victim says so
         if (killer.alias === victim.alias) {
             await this.api.endpoints.kills.finalizeDeath(victim);
-        } else {
-            await this.api.endpoints.users.update(killer);
-            await this.api.fireNotificationCallbacks({
-                cause: NotificationCause.KillClaimToKiller,
-                description: `You claimed to have killed ${victim.alias}.`,
-                codename: killer.codename,
-                timestamp: Date.now()
-            });
-            await this.api.fireNotificationCallbacks({
-                cause: NotificationCause.KillClaimToVictim,
-                description: `Someone claims to have killed you.`,
-                codename: victim.codename,
-                timestamp: Date.now()
-            });
+            return claim;
         }
+
+        await this.api.endpoints.users.update(killer);
+        await this.api.fireNotificationCallbacks({
+            cause: NotificationCause.KillClaimToKiller,
+            description: `You claimed to have killed ${victim.alias}.`,
+            codename: killer.codename,
+            timestamp: Date.now()
+        });
+        await this.api.fireNotificationCallbacks({
+            cause: NotificationCause.KillClaimToVictim,
+            description: `Someone claims to have killed you.`,
+            codename: victim.codename,
+            timestamp: Date.now()
+        });
+
+        this.api.scheduler.delay(
+            Delay.minute,
+            (): void => this.scheduleFollowupReminders(killer, victim));
 
         return claim;
     }
@@ -141,5 +147,81 @@ export class ClaimsEndpoint extends Endpoint<IClaim> {
         }
 
         throw new ServerError(ErrorCause.MissingFields, missingFields);
+    }
+
+    /**
+     * Schedules reminder emails for after a killer files a claim.
+     * 
+     * @param killer   The claiming user.
+     * @param victim   The supposedly killed user.
+     */
+    private scheduleFollowupReminders(killer: IUser, victim: IUser): void {
+        this.api.scheduler.delayChain({
+            [Delay.minute * 10]: async (): Promise<boolean> => {
+                const victimLater: IUser = await this.api.endpoints.users.getByAlias(victim.alias);
+                if (!victimLater.alive) {
+                    return true;
+                }
+
+                await this.api.fireNotificationCallbacks({
+                    cause: NotificationCause.KillClaimToKillerReminder,
+                    description: `${victim.alias} hasn't confirmed you've killed them. Remind them to!`,
+                    codename: killer.codename,
+                    timestamp: Date.now()
+                });
+                await this.api.fireNotificationCallbacks({
+                    cause: NotificationCause.KillClaimToVictimReminder,
+                    description: `You still haven't confirmed you've been killed. Either do so or dispute the claim soon!`,
+                    codename: victim.codename,
+                    timestamp: Date.now()
+                });
+
+                return false;
+            },
+            [Delay.hour]: async (): Promise<boolean> => {
+                const victimLater: IUser = await this.api.endpoints.users.getByAlias(victim.alias);
+                if (!victimLater.alive) {
+                    return true;
+                }
+
+                await this.api.fireNotificationCallbacks({
+                    cause: NotificationCause.KillClaimToKillerReminder,
+                    description: `${victim.alias} still hasn't confirmed you've killed them. Remind them to!`,
+                    codename: killer.codename,
+                    timestamp: Date.now()
+                });
+                await this.api.fireNotificationCallbacks({
+                    cause: NotificationCause.KillClaimToVictimReminder,
+                    description: `You still haven't confirmed you've been killed. Either do so or dispute the claim within the next two hours!`,
+                    codename: victim.codename,
+                    timestamp: Date.now()
+                });
+
+                return false;
+            },
+            [Delay.hour * 3]: async (): Promise<boolean> => {
+                const victimLater: IUser = await this.api.endpoints.users.getByAlias(victim.alias);
+                if (!victimLater.alive) {
+                    return true;
+                }
+
+                this.api.endpoints.kills.finalizeDeath(victim);
+
+                await this.api.fireNotificationCallbacks({
+                    cause: NotificationCause.KillClaimToKillerReminder,
+                    description: `${victim.alias} never confirmed you've killed them. We've auto-killed them for you.`,
+                    codename: killer.codename,
+                    timestamp: Date.now()
+                });
+                await this.api.fireNotificationCallbacks({
+                    cause: NotificationCause.KillClaimToVictimReminder,
+                    description: `You never confirmed you've been killed so we've confirmed the kill automatically. You can dispute the claim if you feel it was unjust.`,
+                    codename: victim.codename,
+                    timestamp: Date.now()
+                });
+
+                return false;
+            }
+        });
     }
 }

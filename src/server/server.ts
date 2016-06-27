@@ -7,6 +7,7 @@ import * as http from "http";
 import { INotification } from "../shared/notifications";
 import { IUser } from "../shared/users";
 import { IAssassinsSettings } from "../main";
+import { Scheduler } from "./cron/scheduler";
 import { NotificationsHub } from "./notifications/notificationshub";
 import { EmailNotifier, IEmailSettings } from "./notifications/emailnotifier";
 import { EndpointNotifier } from "./notifications/endpointnotifier";
@@ -79,6 +80,11 @@ export class Server {
     private server: http.Server;
 
     /**
+     * Schedules 
+     */
+    private scheduler: Scheduler;
+
+    /**
      * MongoDB database.
      */
     private database: Database;
@@ -97,8 +103,9 @@ export class Server {
         this.app.use(express.static("src/site"));
         this.app.use("/node_modules", express.static("node_modules"));
 
-        this.api = new Api(this.app, this.database);
+        this.api = new Api(this.app, this.database, this.scheduler);
         this.server = http.createServer(this.app);
+        this.scheduler = new Scheduler();
 
         this.notificationsHub = new NotificationsHub();
         this.notificationsHub.registerNotifier(new EndpointNotifier(this.api.endpoints.notifications));

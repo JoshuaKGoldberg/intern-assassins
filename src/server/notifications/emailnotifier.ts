@@ -118,6 +118,25 @@ export class EmailNotifier implements INotifier {
     }
 
     /**
+     * Sends an email.
+     * 
+     * @param settings   Nodemailer settings for the email.
+     */
+    public sendMail(settings: nodemailer.SendMailOptions): void {
+        if (!this.transporter) {
+            return;
+        }
+
+        this.transporter.sendMail({
+            cc: this.settings.cc,
+            from: settings.from || this.settings.transporter.auth.user,
+            subject: settings.subject,
+            text: settings.text,
+            to: `settings.to${this.settings.domain}`
+        });
+    }
+
+    /**
      * Sends an email to a victim regarding their death.
      * 
      * @param notification   The triggering notification.
@@ -178,25 +197,6 @@ export class EmailNotifier implements INotifier {
             subject: "Your killer claims they've killed you.",
             text: `Head to ${this.settings.website} now to verify it.`,
             to: user.alias
-        });
-    }
-
-    /**
-     * Sends an email.
-     * 
-     * @param settings   Nodemailer settings for the email.
-     */
-    private sendMail(settings: nodemailer.SendMailOptions): void {
-        if (!this.transporter) {
-            return;
-        }
-
-        this.transporter.sendMail({
-            cc: this.settings.cc,
-            from: settings.from || this.settings.transporter.auth.user,
-            subject: settings.subject,
-            text: settings.text,
-            to: `settings.to${this.settings.domain}`
         });
     }
 }

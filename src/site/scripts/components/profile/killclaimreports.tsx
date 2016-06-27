@@ -170,7 +170,10 @@ export class KillClaimReports extends React.Component<IKillClaimReportsProps, vo
     }
 
     /**
+     * Renders a pending claim.
      * 
+     * @param claim   A kill claim.
+     * @returns The rendered claim.
      */
     private renderPendingClaim(claim: IClaim) {
         return (

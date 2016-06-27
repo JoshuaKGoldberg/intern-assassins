@@ -45,7 +45,7 @@ export class Scheduler {
      * @returns The scheduled time the task will take place.
      */
     public delay(delay: Delay, task: Function): IScheduled {
-        const time: number = this.roundDelay(delay);
+        const time: number = Date.now() + delay;
 
         if (!this.schedules[time]) {
             this.schedules[time] = [task];
@@ -69,10 +69,12 @@ export class Scheduler {
                 return this.delay(
                     parseInt(time),
                     async (): Promise<void> => {
-                        if (!(await chain[time]())) {
-                            for (const scheduled of scheduledTasks) {
-                                this.cancel(scheduled);
-                            }
+                        if (await chain[time]()) {
+                            return;
+                        }
+
+                        for (const scheduled of scheduledTasks) {
+                            this.cancel(scheduled);
                         }
                     });
             });
@@ -82,9 +84,10 @@ export class Scheduler {
 
     /**
      * Runs all pending tasks that have reached their scheduled time.
+     * 
+     * @param now   The current time (by default, Date.now()).
      */
-    public runTasks(): void {
-        const now = Date.now();
+    public runTasks(now: number = Date.now()): void {
         const pastTimes: number[] = Object.keys(this.schedules)
             .map((key: string): number => parseInt(key))
             .filter((time: number): boolean => time <= now);
@@ -115,15 +118,5 @@ export class Scheduler {
                 tasks.splice(taskIndex, 1);
             }
         }
-    }
-
-    /**
-     * Generates a time delay from now up to the next minute.
-     * 
-     * @param delay   How much time to delay from now.
-     * @returns Now plus the delay, rounded to the next minute.
-     */
-    private roundDelay(delay: Delay): number {
-        return Math.ceil(Date.now() + delay / Delay.minute) * Delay.minute;
     }
 }

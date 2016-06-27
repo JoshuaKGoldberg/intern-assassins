@@ -110,7 +110,6 @@ export class Server {
         this.app.use("/node_modules", express.static("node_modules"));
 
         this.api = new Api(this.app, this.database, this.scheduler);
-        this.api.endpoints.rounds.initialize(settings.rounds);
         this.server = http.createServer(this.app);
         this.scheduler = new Scheduler();
 

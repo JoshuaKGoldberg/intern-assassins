@@ -8,6 +8,11 @@ import { Endpoint } from "./endpoint";
  */
 export class RoundsEndpoint extends Endpoint<IRound> {
     /**
+     * In-memory cache of the never-changing rounds.
+     */
+    public /* readonly */ rounds: IRound[];
+
+    /**
      * @returns Path to this part of the global api.
      */
     public getRoute(): string {
@@ -21,7 +26,7 @@ export class RoundsEndpoint extends Endpoint<IRound> {
      * @returns All rounds.
      */
     public async get(credentials: ICredentials, query: any): Promise<IRound[]> {
-        return await this.collection.find().toArray();
+        return this.rounds;
     }
 
     /**
@@ -32,5 +37,6 @@ export class RoundsEndpoint extends Endpoint<IRound> {
      */
     public async initialize(rounds: IRound[]): Promise<void> {
         await this.collection.insertMany(rounds);
+        this.rounds = rounds;
     }
 }

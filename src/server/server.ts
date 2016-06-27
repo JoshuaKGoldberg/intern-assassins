@@ -80,7 +80,7 @@ export class Server {
     private server: http.Server;
 
     /**
-     * Schedules 
+     * Schedules tasks at a delay.
      */
     private scheduler: Scheduler;
 

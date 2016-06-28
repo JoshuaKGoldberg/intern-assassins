@@ -5,7 +5,9 @@
 import * as React from "react";
 import { INotification } from "../../../../shared/notifications";
 import { ILeader } from "../../../../shared/users";
+import { IRound } from "../../../../shared/rounds";
 import { ActivityBoard } from "./activityboard";
+import { Countdown } from "./countdown";
 import { Leaderboard } from "./leaderboard";
 
 /**
@@ -21,6 +23,11 @@ export interface ISidebarProps {
      * Displayed activity messages.
      */
     notifications: INotification[];
+
+    /**
+     * Gameplay rounds.
+     */
+    rounds: IRound[];
 }
 
 /**
@@ -73,7 +80,26 @@ export class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
             <section className="sidebar">
                 {this.renderSelectionChangers()}
                 {this.renderers[this.state.selected]()}
+                {this.renderCountdown()}
             </section>);
+    }
+
+    /**
+     * Renders the countdown timer to the end of the round.
+     * 
+     * @returns The rendered countdown timer.
+     */
+    public renderCountdown(): JSX.Element {
+        const currentRound: IRound = this.getCurrentRound();
+        if (!currentRound) {
+            return undefined;
+        }
+
+        return (
+            <Countdown
+                descriptor="left in the round"
+                goalTime={currentRound.end}
+                onComplete={(): void => this.forceUpdate()} />);
     }
 
     /**
@@ -118,5 +144,30 @@ export class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
      */
     private setSelection(selected: SidebarSelection): void {
         this.setState({ selected });
+    }
+
+    /**
+     * Determines which round is currently in play.
+     * 
+     * @returns The current round, if it exists.
+     */
+    private getCurrentRound(): IRound {
+        // Case: no rounds yet
+        if (!this.props.rounds) {
+            return undefined;
+        }
+
+        const now: number = Date.now();
+
+        // Case: inside a round
+        console.log("Rounds", this.props.rounds, now);
+        for (const round of this.props.rounds) {
+            if (round.start <= now && round.end > now) {
+                return round;
+            }
+        }
+
+        // Case: between rounds
+        return undefined;
     }
 }

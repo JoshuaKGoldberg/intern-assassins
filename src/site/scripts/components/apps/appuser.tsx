@@ -3,6 +3,7 @@
 "use strict";
 import * as React from "react";
 import { IClaim, IKill } from "../../../../shared/kills";
+import { IRound } from "../../../../shared/rounds";
 import { INotification } from "../../../../shared/notifications";
 import { ILeader, IUser } from "../../../../shared/users";
 import { Sdk } from "../../sdk/sdk";
@@ -25,9 +26,24 @@ export interface IAppUserProps {
     kills: IKill[];
 
     /**
+     * Leaders to be shown in the sidebar.
+     */
+    leaders: ILeader[];
+
+    /**
+     * Recently pushed notification messages.
+     */
+    notifications: INotification[];
+
+    /**
      * Hook to request new user data from the server.
      */
     refreshUserData: () => void;
+
+    /**
+     * Gameplay rounds.
+     */
+    rounds: IRound[];
 
     /**
      * Wrapper around the server API.
@@ -38,16 +54,6 @@ export interface IAppUserProps {
      * Information on the user.
      */
     user: IUser;
-
-    /**
-     * Recently pushed notification messages.
-     */
-    notifications: INotification[];
-
-    /**
-     * Leaders to be shown in the sidebar.
-     */
-    leaders: ILeader[];
 }
 
 /**
@@ -66,7 +72,10 @@ export class AppUser extends React.Component<IAppUserProps, void> {
                     <ActionButton action={(): void => this.logOut()} small text="x" />
                 </div>
                 <Profile {...this.props} />
-                <Sidebar notifications={this.props.notifications} leaders={this.props.leaders} />
+                <Sidebar
+                    leaders={this.props.leaders}
+                    notifications={this.props.notifications}
+                    rounds={this.props.rounds} />
             </div>);
     }
 

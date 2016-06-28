@@ -114,8 +114,9 @@ export class App extends React.Component<void, IAppState> {
                     <AppAdmin
                         leaders={this.state.leaders}
                         notifications={this.state.notifications}
-                        user={this.state.user}
-                        sdk={this.sdk} />);
+                        rounds={this.state.rounds}
+                        sdk={this.sdk}
+                        user={this.state.user} />);
             }
 
             return (
@@ -125,6 +126,7 @@ export class App extends React.Component<void, IAppState> {
                     leaders={this.state.leaders}
                     notifications={this.state.notifications}
                     refreshUserData={(): void => { this.refreshData(); }}
+                    rounds={this.state.rounds}
                     sdk={this.sdk}
                     user={this.state.user} />);
         }

@@ -3,6 +3,7 @@
 "use strict";
 import * as React from "react";
 import { INotification } from "../../../../shared/notifications";
+import { IRound } from "../../../../shared/rounds";
 import { ILeader, IUser } from "../../../../shared/users";
 import { ActionButton } from "../profile/actionbutton";
 import { Greeting } from "../profile/greeting";
@@ -16,6 +17,21 @@ import { UsersTables } from "../admin/userstables";
  */
 export interface IAppAdminProps {
     /**
+     * Leaders to be shown in the sidebar.
+     */
+    leaders: ILeader[];
+
+    /**
+     * Recently pushed notification messages.
+     */
+    notifications: INotification[];
+
+    /**
+     * Gameplay rounds.
+     */
+    rounds: IRound[];
+
+    /**
      * Wrapper around the server API.
      */
     sdk: Sdk;
@@ -24,16 +40,6 @@ export interface IAppAdminProps {
      * Information on the user.
      */
     user: IUser;
-
-    /**
-     * Recently pushed notification messages.
-     */
-    notifications: INotification[];
-
-    /**
-     * Leaders to be shown in the sidebar.
-     */
-    leaders: ILeader[];
 }
 
 /**
@@ -59,7 +65,10 @@ export class AppAdmin extends React.Component<IAppAdminProps, void> {
                     <UsersTables sdk={this.props.sdk} user={this.props.user} />
                     <UsersImporter onImport={(): void => this.onImport()} sdk={this.props.sdk} user={this.props.user} />
                 </section>
-                <Sidebar notifications={this.props.notifications} leaders={this.props.leaders} />
+                <Sidebar
+                    leaders={this.props.leaders}
+                    notifications={this.props.notifications}
+                    rounds={this.props.rounds} />
             </div>);
     }
 

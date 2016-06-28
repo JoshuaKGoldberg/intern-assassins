@@ -70,10 +70,14 @@ input {
 
 #app.app-countdown {
     display: block;
-    font-size: 2.1em;
     text-align: center;
 
     h3 {
+        font-size: 4.2em;
+    }
+
+    h4 {
+        font-size: 1.4em;
         font-style: italic;
     }
 }
@@ -113,6 +117,11 @@ input {
 .sidebar {
     background: @color-background-dark;
     color: @color-font-light;
+
+    .countdown h3, .countdown h4 {
+        margin: 0;
+        text-align: center;
+    }
 }
 
 .no-messages {

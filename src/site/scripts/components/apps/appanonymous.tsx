@@ -2,11 +2,11 @@
 /// <reference path="../../../../../typings/react/index.d.ts" />
 
 "use strict";
-import * as Moment from "moment";
 import * as React from "react";
 import { Sdk } from "../../sdk/sdk";
 import { ICredentials, CredentialKeys } from "../../../../shared/login";
 import { IRound } from "../../../../shared/rounds";
+import { Countdown } from "../sidebar/countdown";
 
 /**
  * Props for an AppAnonymous component.
@@ -56,10 +56,17 @@ export class AppAnonymous extends React.Component<IAppAnonymousProps, IAppAnonym
      */
     public componentDidMount(): void {
         this.props.sdk.getRounds()
-            .then((rounds: IRound[]) => this.startCountdown(rounds[0]))
-            .catch((error: Error) => this.setState({
-                errors: [error.message || JSON.stringify(error)]
-            }));
+            .then((rounds: IRound[]) => {
+                this.setState({
+                    errors: [],
+                    startTime: rounds[0].start
+                });
+            })
+            .catch((error: Error): void => {
+                this.setState({
+                    errors: [error.message || JSON.stringify(error)]
+                });
+            });
     }
 
     /**
@@ -73,41 +80,16 @@ export class AppAnonymous extends React.Component<IAppAnonymousProps, IAppAnonym
         }
 
         if (this.state.startTime > Date.now()) {
-            return this.renderCountdown(this.state.startTime - Date.now());
+            return (
+                <div id="app" className="app-countdown">
+                    <Countdown
+                        descriptor="until the killing begins"
+                        onComplete={(): void => this.forceUpdate()}
+                        goalTime={this.state.startTime} />
+                </div>);
         }
 
         return this.renderLoginScreen();
-    }
-
-    /**
-     * Renders a countdown timer until the first round.
-     * 
-     * @param remainingTime   How long, in milliseconds, until the first round.
-     * @returns The rendered countdown timer.
-     */
-    private renderCountdown(remainingTime: number): JSX.Element {
-        const duration: moment.Duration = Moment.duration(remainingTime);
-        const days: number = duration.days();
-        let descriptor: string;
-
-        if (days > 0) {
-            descriptor = [
-                this.renderTimeString(days, "day"),
-                this.renderTimeString(duration.hours(), "hour")
-            ].join(" ");
-        } else {
-            descriptor = [
-                this.renderTimeDigit(duration.hours()),
-                this.renderTimeDigit(duration.minutes()),
-                this.renderTimeDigit(duration.seconds())
-            ].join(":");
-        }
-
-        return (
-            <div id="app" className="app-countdown">
-                <h1>{descriptor}</h1>
-                <h3>until the killing begins</h3>
-            </div>);
     }
 
     /**
@@ -184,55 +166,5 @@ export class AppAnonymous extends React.Component<IAppAnonymousProps, IAppAnonym
                     errors: [error]
                 });
             });
-    }
-
-    /**
-     * Starts a countdown timer for the first round.
-     * 
-     * @param round   The first round, if it is known.
-     */
-    private startCountdown(round: IRound): void {
-        if (!round) {
-            throw new Error("No first round retrieved from server.");
-        }
-
-        this.setState(
-            {
-                errors: [],
-                startTime: round.start
-            },
-            (): void => {
-                const updateTicks: any = setInterval(
-                    (): void => {
-                        const now: number = Date.now();
-                        if (now >= this.state.startTime) {
-                            clearInterval(updateTicks);
-                        }
-
-                        this.forceUpdate();
-                    },
-                    1000);
-            });
-    }
-
-    /**
-     * Renders a time as a pluralized string.
-     * 
-     * @param amount   How much of the time measurement.
-     * @param measurement   A time measurement, such as "day".
-     * @returns The amount and measurement, pluralized.
-     */
-    private renderTimeString(amount: number, measurement: string): string {
-        return amount === 1 ? `${amount} ${measurement}` : `${amount} ${measurement}s`;
-    }
-
-    /**
-     * Renders a number as a digit of length 2.
-     * 
-     * @param amount   A number.
-     * @returns The amount as a digit of length 2.
-     */
-    private renderTimeDigit(amount: number): string {
-        return amount < 10 ? `0${amount}` : `${amount}`;
     }
 }

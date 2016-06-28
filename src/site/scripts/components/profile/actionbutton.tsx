@@ -131,11 +131,11 @@ export class ActionButton extends React.Component<IActionButtonProps, IActionBut
 
         return (
             <div className="action-confirmation">
-            <input
-                onClick={onClick}
-                type="button"
-                value={value} />
-                {this.renderCancel()}
+                <input
+                    onClick={onClick}
+                    type="button"
+                    value={value} />
+                    {this.renderCancel()}
             </div>);
     }
 
@@ -149,10 +149,10 @@ export class ActionButton extends React.Component<IActionButtonProps, IActionBut
         }
 
         return (
-          <input
-            onClick={onClick}
-            type="button"
-            value="Cancel"/>);
+            <input
+                onClick={onClick}
+                type="button"
+                value="Cancel"/>);
     }
 
     /**

@@ -16,5 +16,8 @@ export const Footer: React.StatelessComponent<void> = (): JSX.Element => {
                 <br />
                 Kill someone by tagging them with your badge. You'll then receive their old target as your own.
             </p>
+            <p>
+                For feedback/comments send mail to <a href="mailto:iscassassingame2016@service.microsoft.com">ISC Assassin Game 2016</a>
+            </p>
         </footer>);
 };

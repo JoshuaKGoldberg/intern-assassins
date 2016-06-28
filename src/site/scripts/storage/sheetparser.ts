@@ -80,9 +80,10 @@ export class SheetParser {
             });
         }
 
-        credentials.sort(() => Math.random() - 0.5);
+        credentials = this.generateUniqueCredentials(credentials);
 
         return credentials
+            .sort(() => Math.random() - 0.5)
             .map((user: ICredentials, i: number): IPartialUser => {
                 return {
                     alias: user.alias,
@@ -119,5 +120,42 @@ export class SheetParser {
             ...Object.keys(this.sheet)
                 .map((key: string): number => parseInt(key.replace(/^\D+/g, "")))
                 .filter((value: number): boolean => !isNaN(value)));
+    }
+
+    /**
+     * Creates a version of credentials with unique aliases and codenames.
+     * 
+     * @param allCredentials   Raw credentials from input.
+     * @returns Credentials with duplicated aliases and unique codenames.
+     */
+    private generateUniqueCredentials(allCredentials: ICredentials[]): ICredentials[] {
+        const usedAliases: { [i: string]: boolean } = {};
+        const usedCredentials: { [i: string]: number } = {};
+
+        return allCredentials
+            .reverse()
+            // Ignore all but the last alias submission (they're reversed)
+            .filter((credentials: ICredentials): boolean => {
+                const alias: string = credentials.alias;
+
+                if (usedAliases[alias]) {
+                    return false;
+                }
+
+                usedAliases[alias] = true;
+                return true;
+            })
+            .reverse()
+            // Add a (#) to duplicated codenames
+            .map((credentials: ICredentials): ICredentials => {
+                let codename: string = credentials.codename;
+
+                if (usedAliases[codename]) {
+                    usedCredentials[codename] += 1;
+                    credentials[codename] += ` (${usedCredentials[codename]})`;
+                }
+
+                return credentials;
+            });
     }
 }

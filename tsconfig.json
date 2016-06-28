@@ -54,6 +54,7 @@
         "src/site/scripts/components/footer.tsx",
         "src/site/scripts/components/profile/actionbutton.tsx",
         "src/site/scripts/components/profile/actions.tsx",
+        "src/site/scripts/components/profile/confirmationdialog.tsx",
         "src/site/scripts/components/profile/greeting.tsx",
         "src/site/scripts/components/profile/killclaimreports.tsx",
         "src/site/scripts/components/profile/profile.tsx",

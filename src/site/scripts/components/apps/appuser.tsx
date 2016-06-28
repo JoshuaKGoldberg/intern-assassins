@@ -69,7 +69,7 @@ export class AppUser extends React.Component<IAppUserProps, void> {
         return (
             <div id="app" className="app-user">
                 <div id="logout">
-                    <ActionButton action={(): void => this.logOut()} small text="x" />
+                    <ActionButton action={(): void => this.logOut()} small text="Sign Out" />
                 </div>
                 <Profile {...this.props} />
                 <Sidebar

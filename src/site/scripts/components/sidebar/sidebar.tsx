@@ -160,7 +160,6 @@ export class Sidebar extends React.Component<ISidebarProps, ISidebarState> {
         const now: number = Date.now();
 
         // Case: inside a round
-        console.log("Rounds", this.props.rounds, now);
         for (const round of this.props.rounds) {
             if (round.start <= now && round.end > now) {
                 return round;

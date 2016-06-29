@@ -1,4 +1,3 @@
-/// <reference path="../../../../../typings/moment/index.d.ts" />
 /// <reference path="../../../../../typings/react/index.d.ts" />
 
 "use strict";

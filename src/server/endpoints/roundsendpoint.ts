@@ -1,5 +1,8 @@
+/// <reference path="../../../typings/moment/index.d.ts" />
+
 "use strict";
-import { IRound } from "../../shared/rounds";
+import * as Moment from "moment";
+import { IRawRound, IRound } from "../../shared/rounds";
 import { ICredentials } from "../../shared/login";
 import { Endpoint } from "./endpoint";
 
@@ -32,11 +35,39 @@ export class RoundsEndpoint extends Endpoint<IRound> {
     /**
      * Adds gameplay rounds to the database.
      * 
-     * @param rounds   Rounds to add to the database.
-     * @returns A promise for adding the rounds.
+     * @param rawRounds   Raw rounds from settings.
+     * @returns A promise for the sanitized and added rounds.
      */
-    public async initialize(rounds: IRound[]): Promise<void> {
+    public async initialize(rawRounds: IRawRound[]): Promise<IRound[]> {
+        const rounds: IRound[] = this.sanitizeRounds(rawRounds);
+
         await this.collection.insertMany(rounds);
         this.rounds = rounds;
+        return rounds;
+    }
+
+    /**
+     * Sanitizes rounds by formatting their dates nicely.
+     * 
+     * @param rawRounds   Raw rounds from settings.
+     * @returns Sanitized equivalents of the rounds.
+     */
+    private sanitizeRounds(rawRounds: IRawRound[]): IRound[] {
+        return rawRounds.map((rawRound: IRawRound): IRound => {
+            return {
+                end: this.formatRoundTime(rawRound.end),
+                start: this.formatRoundTime(rawRound.start)
+            };
+        });
+    }
+
+    /**
+     * Formats a timestamp in "LLLL" time.
+     * 
+     * @param rawTime   A raw timestamp.
+     * @returns The timestamp formatted.
+     */
+    private formatRoundTime(rawTime: string): number {
+        return +Moment(rawTime, "LLLL").toDate();
     }
 }

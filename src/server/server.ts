@@ -5,7 +5,7 @@ import * as express from "express";
 import * as fsp from "fs-promise";
 import * as http from "http";
 import { INotification } from "../shared/notifications";
-import { IRound } from "../shared/rounds";
+import { IRawRound } from "../shared/rounds";
 import { IUser } from "../shared/users";
 import { IAssassinsSettings } from "../main";
 import { Scheduler } from "./cron/scheduler";
@@ -48,7 +48,7 @@ export interface IServerSettings {
     /**
      * Game rounds.
      */
-    rounds: IRound[];
+    rounds: IRawRound[];
 
     /**
      * Users to add when resetting the database.

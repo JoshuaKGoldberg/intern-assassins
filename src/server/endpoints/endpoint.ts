@@ -12,6 +12,24 @@ import { Api } from "../api";
 import { Database } from "../database";
 
 /**
+ * Description of how to update an item.
+ * 
+ * @type TFilter   How to search for the item.
+ * @type TUpdate   How to update the item.
+ */
+export interface IUpdate<TFilter, TUpdate> {
+    /**
+     * Filter to search for the item.
+     */
+    filter: TFilter;
+
+    /**
+     * New values for the updated item.
+     */
+    updated: TUpdate;
+}
+
+/**
  * Exposes a single type of data from a database.
  * 
  * @type T   The type of data being stored.
@@ -70,7 +88,7 @@ export abstract class Endpoint<T> {
      * @param data   Data to post.
      * @returns A promise for the result, if posted successfully.
      */
-    public post(credentials: ICredentials, data: any, response: express.Response): Promise<T> {
+    public post(credentials: ICredentials, data: any, response: express.Response): Promise<any> {
         throw new ServerError(ErrorCause.NotImplemented);
     }
 

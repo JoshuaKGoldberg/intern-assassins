@@ -3,7 +3,7 @@ import { ErrorCause } from "../../shared/errors";
 import { CredentialKeys, ICredentials } from "../../shared/login";
 import { IUser } from "../../shared/users";
 import { ServerError } from "../errors";
-import { Endpoint } from "./endpoint";
+import { Endpoint, IUpdate } from "./endpoint";
 
 /**
  * Mock database storage for users.
@@ -27,6 +27,17 @@ export class UsersEndpoint extends Endpoint<IUser> {
         await this.validateAdminCredentials(credentials);
 
         return this.getAll();
+    }
+
+    /**
+     * Updates a single user.
+     * 
+     * @param credentials   Login values for authentication.
+     * @returns A promise for the updated user.
+     */
+    public async post(credentials: ICredentials, update: IUpdate<ICredentials, IUser>): Promise<void> {
+        await this.validateAdminCredentials(credentials);
+        await this.collection.updateOne(update.filter, update.updated);
     }
 
     /**

@@ -1,11 +1,9 @@
 /// <reference path="../../../../../typings/jszip/index.d.ts" />
 /// <reference path="../../../../../typings/react/index.d.ts" />
-/// <reference path="../../../../../typings/react-dropzone/index.d.ts" />
 /// <reference path="../../../../../typings/xlsx/index.d.ts" />
 
 "use strict";
 import * as React from "react";
-import * as Dropzone from "react-dropzone";
 import { IUser } from "../../../../shared/users";
 import { IPartialUser, SheetParser } from "../../storage/sheetparser";
 import { Sdk } from "../../sdk/sdk";
@@ -52,6 +50,11 @@ interface IUsersImporterState {
  */
 export class UsersImporter extends React.Component<IUsersImporterProps, IUsersImporterState> {
     /**
+     * Reference key for the file input.
+     */
+    private static keyFileInput: string = "fileInput";
+
+    /**
      * Initializes a new instance of the UsersImporter class.
      * 
      * @param props   Properties for the component.
@@ -79,7 +82,7 @@ export class UsersImporter extends React.Component<IUsersImporterProps, IUsersIm
     public render(): JSX.Element {
         return (
             <div className={"users-importer"}>
-                {this.renderDropzone()}
+                {this.renderFileInput()}
                 {this.renderImport()}
             </div>);
     }
@@ -89,18 +92,16 @@ export class UsersImporter extends React.Component<IUsersImporterProps, IUsersIm
      * 
      * @returns The rendered file drop area.
      */
-    private renderDropzone(): JSX.Element {
+    private renderFileInput(): JSX.Element {
         if (this.state.importing) {
             return <h3>Confirm Import</h3>;
         }
 
         return (
-            <Dropzone
-                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                onDrop={(files: File[]): void => this.handleDrop(files)}
-                style={{}}>
-                <input type="button" value="Import .xlsx" />
-            </Dropzone>);
+            <form onSubmit={(): void => this.uploadFile()}>
+                <input type="file" name="file" ref={UsersImporter.keyFileInput} /><br />
+                <input type="submit" />
+            </form>);
     }
 
     /**
@@ -158,14 +159,18 @@ export class UsersImporter extends React.Component<IUsersImporterProps, IUsersIm
      * @param files   Files being selected.
      * @remarks Only the first file is respected.
      */
-    private handleDrop(files: File[]): void {
+    private uploadFile(): void {
+        const file = (this.refs[UsersImporter.keyFileInput] as any).getDOMNode().files[0];
+        if (!file) {
+            return;
+        }
+
         this.setState(
             {
                 importing: true
             },
             (): void => {
                 const reader = new FileReader();
-                const file: File = files[0];
 
                 reader.onload = (event: ProgressEvent): void => {
                     const data: string = (event.target as any).result;

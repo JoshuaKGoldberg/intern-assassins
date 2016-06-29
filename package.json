@@ -41,7 +41,6 @@
     "nodemailer": "^2.4.2",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
-    "react-dropzone": "^3.5.1",
     "request-promise": "^3.0.0",
     "requirejs": "^2.2.0",
     "run-sequence": "^1.2.0",

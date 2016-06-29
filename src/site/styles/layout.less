@@ -37,13 +37,18 @@ input {
 /* Sidebar */
 
 .sidebar {
-    padding: @padding-section;
+    padding: 35px 14px 21px;
     box-sizing: border-box;
+    transition: @transition-speed padding,
 }
 
 .selection-changers {
     display: block;
     text-align: center;
+}
+
+.selection-changer {
+    transition: @transition-speed margin;
 }
 
 .activity {
@@ -68,6 +73,7 @@ input {
     padding: @padding-section;
     padding-bottom: 70px;
     text-align: center;
+    transition: @transition-speed padding, @transition-speed margin;
 
     .area {
         display: block;
@@ -146,11 +152,13 @@ input {
     }
 
     .sidebar {
+        padding: @padding-section;
         width: 490px;
     }
 
     .selection-changers {
-        display: flex;
+        margin: auto;
+        min-width: 420px;
     }
 
     .selection-changer {
@@ -158,8 +166,14 @@ input {
     }
 
     #profile {
-        padding-bottom: 0;
         width: 100%;
+        margin-left: 3px;
+        padding: 0 14px 0 49px;
+        text-align: left;
+    }
+
+    .greeting-area {
+        padding-left: 14px;
     }
 
     .action-confirmation {

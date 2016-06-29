@@ -14,14 +14,7 @@ const tslint = require("gulp-tslint");
 const uglify = require("gulp-uglify");
 
 gulp.task("browserify", () => {
-    const browsering = browserify(
-        "src/site/scripts/main.js",
-        {
-            insertGlobals: true,
-            debug: true
-        });
-
-    return browsering
+    return browserify("src/site/scripts/main.js")
         .transform("babelify", { presets: ["es2015"] })
         .bundle()
         .pipe(source("main.js"))

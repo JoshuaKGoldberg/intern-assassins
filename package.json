@@ -12,6 +12,19 @@
     "url": "https://github.com/JoshuaKGoldberg/intern-assassins/issues"
   },
   "homepage": "https://github.com/JoshuaKGoldberg/intern-assassins#readme",
+  "browser": {
+    "react": "./node_modules/react/dist/react.min.js",
+    "react-dom": "./node_modules/react-dom/dist/react-dom.min.js"
+  },
+  "browserify-shim": {
+    "react": "global:React",
+    "react-dom": "global:ReactDOM"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
   "dependencies": {
     "babel-polyfill": "^6.9.1",
     "babel-preset-es2015": "^6.9.0",
@@ -19,6 +32,7 @@
     "bluebird": "^3.4.1",
     "body-parser": "^1.15.1",
     "browserify": "^13.0.1",
+    "browserify-shim": "^3.8.12",
     "chai": "^3.5.0",
     "eslint": "^2.13.1",
     "eslint-plugin-react": "^5.2.2",
@@ -41,7 +55,6 @@
     "nodemailer": "^2.4.2",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
-    "react-dropzone": "^3.5.1",
     "request-promise": "^3.0.0",
     "requirejs": "^2.2.0",
     "run-sequence": "^1.2.0",

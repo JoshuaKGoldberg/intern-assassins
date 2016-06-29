@@ -1,6 +1,21 @@
 "use strict";
 
 /**
+ * JSON-friendly raw description of a round.
+ */
+export interface IRawRound {
+    /**
+     * Ending time of the round in "LLLL" date format.
+     */
+    end: string;
+
+    /**
+     * Starting time of the round in "LLLL" date format.
+     */
+    start: string;
+}
+
+/**
  * A single round of gameplay.
  */
 export interface IRound {

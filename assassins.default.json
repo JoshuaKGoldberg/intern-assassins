@@ -12,16 +12,21 @@
       }
     ],
     "email": {
-      "cc": [],
-      "domain": "",
-      "transporter": {},
-      "website": "localhost:3000"
+      "cc": ["your@email.com"],
+      "domain": "@email.com",
+      "website": "localhost"
     },
     "port": 3000,
     "reset": true,
     "rounds": [{
-      "end": 1687855086839,
-      "start": 1687853086839
+      "end": "Friday, July 8, 2016 12:01 AM",
+      "start": "Friday, July 1, 2016 12:01 AM"
+    }, {
+      "end": "Friday, July 15, 2016 12:01 AM",
+      "start": "Friday, July 8, 2016 12:01 AM"
+    }, {
+      "end": "Friday, July 22, 2016 12:01 AM",
+      "start": "Friday, July 15, 2016 12:01 AM"
     }],
     "users": [
       {

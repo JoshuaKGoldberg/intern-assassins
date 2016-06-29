@@ -155,9 +155,6 @@ export class UsersImporter extends React.Component<IUsersImporterProps, IUsersIm
 
     /**
      * Handles an Excel file being selected.
-     * 
-     * @param files   Files being selected.
-     * @remarks Only the first file is respected.
      */
     private uploadFile(): void {
         const file = (this.refs[UsersImporter.keyFileInput] as any).getDOMNode().files[0];

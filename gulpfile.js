@@ -1,4 +1,5 @@
-const babelify = require("babelify");
+"use strict";
+
 const browserify = require("browserify");
 const buffer = require("vinyl-buffer");
 const eslint = require("gulp-eslint");
@@ -25,7 +26,10 @@ gulp.task("browserify", () => {
 
 gulp.task("eslint", () => {
     return gulp
-        .src("test/**/*.js")
+        .src([
+            "test/**/*.js",
+            "./*.js"
+        ])
         .pipe(eslint())
         .pipe(eslint.format())
         .pipe(eslint.failAfterError());
@@ -48,7 +52,7 @@ gulp.task("test:unit", () => {
 
 // Feature testing
 // Todo #71: Run these synchronously, and therefore as a part of the default tests
-const featureTasks = (() => {
+(() => {
     function testFeature(feature) {
         return gulp.src(`test/integration/features/${feature}.feature`)
             .pipe(cucumber({
@@ -90,7 +94,7 @@ gulp.task("tslint", () => {
 });
 
 gulp.task("watch", () => {
-    gulp.watch(["*.json", "src/**/*.ts","src/**/*.tsx"], ["tsc", "lint", "browserify"]);
+    gulp.watch(["*.json", "src/**/*.ts", "src/**/*.tsx"], ["tsc", "lint", "browserify"]);
     gulp.watch(["src/site/**/*.less"], ["less"]);
 });
 

@@ -6,7 +6,7 @@ import { ICredentials } from "../../../shared/login";
 import { INotification } from "../../../shared/notifications";
 import { IRound } from "../../../shared/rounds";
 import { ILeader, IUser } from "../../../shared/users";
-import { IPartialUser } from "../storage/sheetparser";
+import { IPartialUser } from "../storage/csvparser";
 
 /**
  * Parses a request for a type of response.

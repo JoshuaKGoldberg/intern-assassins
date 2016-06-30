@@ -14,7 +14,7 @@ export interface IActionProps {
     alive: boolean;
 
     /**
-     * The user's target
+     * The user's target.
      */
     target: string;
 
@@ -33,7 +33,7 @@ export interface IActionProps {
  * Component for actionable profile buttons.
  */
 export const Actions: React.StatelessComponent<IActionProps> = (props: IActionProps): JSX.Element => {
-    let killButton  = `I killed ${props.target}!`;
+    const killButton  = `I killed ${props.target}!`;
     if (!props.alive) {
         return (
             <div className="actions actions-dead">
@@ -43,7 +43,13 @@ export const Actions: React.StatelessComponent<IActionProps> = (props: IActionPr
 
     return (
         <div className="actions actions-alive">
-            <ActionButton action={(): void => props.onKill()} text={killButton} confirmationText="Are you sure you want to report a kill?"/>
-            <ActionButton action={(): void => props.onDeath()} text="I'm dead!" confirmationText="Are you sure you want to report yourself as dead?"/>
+            <ActionButton
+                action={(): void => props.onKill()}
+                text={killButton}
+                confirmationText="Are you sure you want to report a kill?"/>
+            <ActionButton
+                action={(): void => props.onDeath()}
+                text="I'm dead!"
+                confirmationText="Are you sure you want to report yourself as dead?"/>
         </div>);
 };

@@ -16,6 +16,10 @@ table {
 input {
     width: 175px;
     box-sizing: border-box;
+
+    &[type=file] {
+        width: 294px;
+    }
 }
 
 
@@ -137,6 +141,22 @@ input {
             padding: 14px 28px;
         }
     }
+
+    .users-table-updates {
+        text-align: center;
+
+        table {
+            margin-bottom: 0;
+        }
+
+        input[type=submit] {
+            margin-bottom: 35px;
+        }
+    }
+}
+
+.user-field-actions {
+    padding-top: 7px;
 }
 
 .users-importer {

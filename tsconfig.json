@@ -42,6 +42,7 @@
         "src/site/scripts/components/apps/appadmin.tsx",
         "src/site/scripts/components/apps/appanonymous.tsx",
         "src/site/scripts/components/apps/appuser.tsx",
+        "src/site/scripts/components/admin/userfield.tsx",
         "src/site/scripts/components/admin/userstable.tsx",
         "src/site/scripts/components/admin/usersimporter.tsx",
         "src/site/scripts/components/admin/userstables.tsx",

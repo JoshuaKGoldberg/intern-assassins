@@ -1,7 +1,7 @@
 "use strict";
 
 import { IClaim, IKill } from "../../../shared/kills";
-import { Method } from "../../../shared/actions";
+import { IUpdate, Method } from "../../../shared/actions";
 import { ICredentials } from "../../../shared/login";
 import { INotification } from "../../../shared/notifications";
 import { IRound } from "../../../shared/rounds";
@@ -45,6 +45,22 @@ export class Sdk {
      */
     public getUser(credentials: ICredentials): Promise<IUser> {
         return this.sendAjaxRequest("GET", "api/user", credentials);
+    }
+
+    /**
+     * Updates users.
+     * 
+     * @param credentials   The submitting user credentials.
+     * @param update   Description of the update.
+     * @returns A promise for completing the updates.
+     */
+    public postUsers(credentials: ICredentials, updates: IUpdate<ICredentials, ICredentials>[]): Promise<boolean> {
+        return this.sendAjaxRequest(
+            "POST",
+            "api/users",
+            credentials,
+            updates,
+            Sdk.parseResponseForOkStatus);
     }
 
     /**

@@ -17,6 +17,11 @@ import { UsersTables } from "../admin/userstables";
  */
 export interface IAppAdminProps {
     /**
+     * Information on the admin.
+     */
+    admin: IUser;
+
+    /**
      * Leaders to be shown in the sidebar.
      */
     leaders: ILeader[];
@@ -35,11 +40,6 @@ export interface IAppAdminProps {
      * Wrapper around the server API.
      */
     sdk: Sdk;
-
-    /**
-     * Information on the user.
-     */
-    user: IUser;
 }
 
 /**
@@ -59,11 +59,14 @@ export class AppAdmin extends React.Component<IAppAdminProps, void> {
                         <ActionButton action={(): void => this.logOut()} small text="x" />
                     </div>
                     <div className="area greeting-area">
-                        <Greeting admin={this.props.user.admin} codename={this.props.user.codename} />
+                        <Greeting admin={true} codename={this.props.admin.codename} />
                     </div>
 
-                    <UsersTables sdk={this.props.sdk} user={this.props.user} />
-                    <UsersImporter onImport={(): void => this.onImport()} sdk={this.props.sdk} user={this.props.user} />
+                    <UsersTables admin={this.props.admin} sdk={this.props.sdk} />
+                    <UsersImporter
+                        admin={this.props.admin}
+                        onImport={(): void => this.onImport()}
+                        sdk={this.props.sdk} />
                 </section>
                 <Sidebar
                     leaders={this.props.leaders}

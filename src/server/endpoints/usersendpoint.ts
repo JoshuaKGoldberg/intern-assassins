@@ -1,9 +1,10 @@
 "use strict";
+import { IUpdate } from "../../shared/actions";
 import { ErrorCause } from "../../shared/errors";
 import { CredentialKeys, ICredentials } from "../../shared/login";
 import { IUser } from "../../shared/users";
 import { ServerError } from "../errors";
-import { Endpoint, IUpdate } from "./endpoint";
+import { Endpoint } from "./endpoint";
 
 /**
  * Mock database storage for users.
@@ -30,19 +31,26 @@ export class UsersEndpoint extends Endpoint<IUser> {
     }
 
     /**
-     * Updates a single user's codename and/or passphrase.
+     * Updates user fields.
      * 
      * @param credentials   Login values for authentication.
-     * @returns A promise for the updated user.
+     * @param updates   Descriptions of updates.
+     * @returns A promise for the updates completing.
      */
-    public async post(credentials: ICredentials, update: IUpdate<ICredentials, IUser>): Promise<void> {
-        if (update.filter.alias !== update.updated.alias) {
-            throw new ServerError(ErrorCause.NotImplemented, "You can't update a user's alias.");
-        }
-
+    public async post(credentials: ICredentials, updates: IUpdate<ICredentials, ICredentials>[]): Promise<void> {
         await this.validateAdminCredentials(credentials);
-        await this.collection.updateOne(update.filter, update.updated);
+        await Promise.all(
+            updates.map(async (update: IUpdate<ICredentials, ICredentials>): Promise<void> => {
+                if (update.filter.alias !== update.updated.alias) {
+                    throw new ServerError(ErrorCause.NotImplemented, "You can't update a user's alias.");
+                }
 
+                await this.collection.updateOne(
+                    update.filter,
+                    {
+                        $set: update.updated
+                    });
+            }));
     }
 
     /**

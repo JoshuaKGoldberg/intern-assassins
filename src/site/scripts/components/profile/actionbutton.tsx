@@ -86,11 +86,11 @@ export class ActionButton extends React.Component<IActionButtonProps, IActionBut
     /**
      * Renders the input button.
      * 
-     * @param {boolean} skipConfirm if true renders a button that will execute the action immediately and not ask for confirmation
+     * @param skipConfirm if true renders skips confirmation dialog.
      * @returns The rendered input button.
      */
     private renderButton(skipConfirm: boolean): JSX.Element {
-        const onClick = skipConfirm ? () : void => { this.props.action(); } : () : void => { this.toggleExpansion(); };
+        const onClick = skipConfirm ? (): void => { this.props.action(); } : (): void => { this.toggleExpansion(); };
 
         return (
             <input
@@ -121,8 +121,8 @@ export class ActionButton extends React.Component<IActionButtonProps, IActionBut
             <div className="action-confirmation">
                 <div className="action-confirmation-overlay"/>
                 <ConfirmationDialog
-                    action={() => onClick()}
-                    onCancel={() => this.toggleExpansion()}
+                    action={(): void => onClick()}
+                    onCancel={(): void => this.toggleExpansion()}
                     confirmationText={this.props.confirmationText} />
             </div>);
     }

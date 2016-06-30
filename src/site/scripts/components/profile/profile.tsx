@@ -41,11 +41,14 @@ export class Profile extends React.Component<IAppUserProps, void> {
                         </div>)}
                 </div>
 
-                <div class="area">
+                <div class="area actions-area">
+                    <h3>Actions</h3>
                     <Actions
                         alive={this.props.user.alive}
                         onDeath={(): void => { this.onDeath(); }}
-                        onKill={(): void => { this.onKill(); }} />
+                        onKill={(): void => { this.onKill(); }}
+                        rounds={this.props.rounds}
+                        target={this.props.user.target} />
                 </div>
 
                 {this.renderKillClaimReports()}

@@ -56,7 +56,8 @@ export class RoundsEndpoint extends Endpoint<IRound> {
         return rawRounds.map((rawRound: IRawRound): IRound => {
             return {
                 end: this.formatRoundTime(rawRound.end),
-                start: this.formatRoundTime(rawRound.start)
+                start: this.formatRoundTime(rawRound.start),
+                timeToKill: rawRound.timeToKill
             };
         });
     }

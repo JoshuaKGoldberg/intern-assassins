@@ -13,6 +13,11 @@ export interface IRawRound {
      * Starting time of the round in "LLLL" date format.
      */
     start: string;
+
+    /**
+     * If applicable, a moment.js descriptor of how quickly kills are required.
+     */
+    timeToKill?: [number, string];
 }
 
 /**
@@ -28,4 +33,9 @@ export interface IRound {
      * Starting time of the round.
      */
     start: number;
+
+    /**
+     * If applicable, a moment.js descriptor of how quickly kills are required.
+     */
+    timeToKill?: [number, string];
 }

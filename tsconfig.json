@@ -57,6 +57,7 @@
         "src/site/scripts/components/profile/greeting.tsx",
         "src/site/scripts/components/profile/killclaimreports.tsx",
         "src/site/scripts/components/profile/profile.tsx",
+        "src/site/scripts/components/profile/killcountdown.tsx",
         "src/site/scripts/storage/appstorage.ts",
         "src/site/scripts/storage/csvparser.ts",
         "src/site/scripts/sockets/sockethandler.ts"

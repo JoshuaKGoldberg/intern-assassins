@@ -193,11 +193,14 @@ export class App extends React.Component<void, IAppState> {
 
         // When this is moved to Flux, make a(n immutable) copy of this.state. See issue #83.
         const newState: IAppState = this.state;
+        const victim: ILeader = newState.leaders
+            .find((leader: ILeader): boolean => leader.codename === notification.codename);
+
+        if (victim) {
+            victim.alive = false;
+        }
 
         newState.user.alive = false;
-        newState.leaders
-            .find((leader: ILeader): boolean => leader.codename === notification.codename)
-            .alive = false;
 
         return newState;
     }
@@ -211,10 +214,12 @@ export class App extends React.Component<void, IAppState> {
     private handleKillNotification(notification: INotification): IAppState {
         // When this is moved to Flux, make a(n immutable) copy of this.state. See issue #83.
         const newState: IAppState = this.state;
+        const killer: ILeader = newState.leaders
+            .find((leader: ILeader): boolean => leader.codename === notification.codename);
 
-        newState.leaders
-            .find((leader: ILeader): boolean => leader.codename === notification.codename)
-            .kills += 1;
+        if (killer) {
+            killer.kills += 1;
+        }
 
         return newState;
     }

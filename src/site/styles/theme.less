@@ -35,8 +35,6 @@ h1 {
 }
 
 input {
-    margin: 0 14px;
-    padding: 11px 21px 14px;
     border: 1px solid transparent;
     border-bottom-color: @color-font-light;
     background: transparent;
@@ -45,7 +43,22 @@ input {
     font-weight: 100;
     font-size: 117%;
     text-align: center;
-    cursor: text;
+
+    &[disabled] {
+        color: @color-font-light;
+        border: 0;
+    }
+
+    &[readonly] {
+        color: @color-font-medium;
+    }
+}
+
+input[type=button],
+input[type=submit] {
+    margin: 0 14px;
+    padding: 11px 21px 14px;
+    cursor: pointer;
     transition: 210ms all;
 
     &:hover, &:active, &.active {
@@ -59,11 +72,6 @@ input {
         &[type="submit"] {
             border-color: #7a7;
         }
-    }
-
-    &[type=button],
-    &[type=submit] {
-        cursor: pointer;
     }
 
     &.dark {

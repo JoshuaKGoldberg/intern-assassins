@@ -12,24 +12,6 @@ import { Api } from "../api";
 import { Database } from "../database";
 
 /**
- * Description of how to update an item.
- * 
- * @type TFilter   How to search for the item.
- * @type TUpdate   How to update the item.
- */
-export interface IUpdate<TFilter, TUpdate> {
-    /**
-     * Filter to search for the item.
-     */
-    filter: TFilter;
-
-    /**
-     * New values for the updated item.
-     */
-    updated: TUpdate;
-}
-
-/**
  * Exposes a single type of data from a database.
  * 
  * @type T   The type of data being stored.

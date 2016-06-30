@@ -2,12 +2,19 @@
 
 "use strict";
 import * as React from "react";
+import { ICredentials } from "../../../../shared/login";
 import { IUser } from "../../../../shared/users";
+import { UserField } from "./userfield";
 
 /**
  * Props for a UsersTable component.
  */
 export interface IUsersTableProps {
+    /**
+     * Information on the current admin.
+     */
+    admin: IUser;
+
     /**
      * Fields on users to display as columns.
      */
@@ -19,15 +26,44 @@ export interface IUsersTableProps {
     heading: string;
 
     /**
+     * Callback for submitting updates.
+     */
+    onUpdates: (updatedUsers: IUpdatedUsers) => void;
+
+    /**
      * Users to display in the table.
      */
     users?: IUser[];
 }
 
 /**
+ * Updated users, keyed by alias.
+ */
+export interface IUpdatedUsers {
+    [i: string]: ICredentials;
+};
+
+/**
+ * State for a UsersTable component.
+ */
+interface IUsersTableState {
+    /**
+     * Updated users waiting to be submitted, keyed by alias.
+     */
+    updatedUsers: IUpdatedUsers;
+}
+
+/**
  * Component for an administrative table of users.
  */
-export class UsersTable extends React.Component<IUsersTableProps, void> {
+export class UsersTable extends React.Component<IUsersTableProps, IUsersTableState> {
+    /**
+     * State for the component.
+     */
+    public state: IUsersTableState = {
+        updatedUsers: {}
+    };
+
     /**
      * Renders the component.
      * 
@@ -41,17 +77,47 @@ export class UsersTable extends React.Component<IUsersTableProps, void> {
         return (
             <div class="users-table">
                 <h3>{this.props.heading}</h3>
-                {this.renderTable()}
+                {this.renderUpdates()}
+                {this.renderTable(
+                    this.props.users
+                        .filter((user: IUser): boolean => {
+                            return !this.state.updatedUsers[user.alias];
+                        }),
+                    this.props.fields)}
             </div>);
     }
 
     /**
-     * Renders the table of users.
+     * Renders a table of updated users.
+     * 
+     * @returns The rendered table.
+     */
+    private renderUpdates(): JSX.Element {
+        if (Object.keys(this.state.updatedUsers).length === 0) {
+            return undefined;
+        }
+
+        const users: ICredentials[] = Object
+            .keys(this.state.updatedUsers)
+            .map((key: string): ICredentials => this.state.updatedUsers[key]);
+
+        return (
+            <div className="users-table-updates">
+                <h3>Pending updates</h3>
+                {this.renderTable(users, ["alias", "codename"])}
+                <input
+                    onClick={(): void => this.onUpdates()}
+                    type="submit" />
+            </div>);
+    }
+
+    /**
+     * Renders a table of users.
      * 
      * @returns The rendered table of users.
      */
-    public renderTable(): JSX.Element {
-        if (this.props.users.length === 0) {
+    private renderTable(users: ICredentials[], fields: string[]): JSX.Element {
+        if (users.length === 0) {
             return <em>None!</em>;
         }
 
@@ -59,11 +125,11 @@ export class UsersTable extends React.Component<IUsersTableProps, void> {
             <table>
                 <thead>
                     <tr>
-                        {this.renderHead()}
+                        {this.renderHead(fields)}
                     </tr>
                 </thead>
                 <tbody>
-                    {this.renderBody()}
+                    {this.renderBody(users, fields)}
                 </tbody>
             </table>);
     }
@@ -71,24 +137,26 @@ export class UsersTable extends React.Component<IUsersTableProps, void> {
     /**
      * Renders the head component.
      * 
+     * @param fields   Fields to display for later users.
      * @returns The rendered head component.
      */
-    private renderHead(): JSX.Element[] {
-        return this.props.fields
-            .map((key: string, i: number): JSX.Element => {
-                return <th key={i}>{key}</th>;
-            });
+    private renderHead(fields: string[]): JSX.Element[] {
+        return fields.map((key: string, i: number): JSX.Element => {
+            return <th key={i}>{key}</th>;
+        });
     }
 
     /**
      * Renders the body component.
      * 
+     * @param users   Information for users.
+     * @param fields   Fields to display on the users.
      * @returns The rendered body component.
      */
-    private renderBody(): JSX.Element[] {
-        return this.props.users
+    private renderBody(users: ICredentials[], fields: string[]): JSX.Element[] {
+        return users
             .map((user: IUser, i: number): JSX.Element => {
-                return <tr key={i}>{this.renderUser(user)}</tr>;
+                return <tr key={i}>{this.renderUser(user, fields)}</tr>;
             });
     }
 
@@ -96,13 +164,55 @@ export class UsersTable extends React.Component<IUsersTableProps, void> {
      * Renders a single user's row.
      * 
      * @param user   Information on a user.
+     * @param fields   Fields to display on the user.
      * @returns The rendered user row.
      */
-    private renderUser(user: IUser): JSX.Element[] {
-        return this.props.fields
+    private renderUser(user: ICredentials, fields: string[]): JSX.Element[] {
+        return fields
             .filter((field: string): boolean => user.hasOwnProperty(field))
             .map((field: string, i: number): JSX.Element => {
-                return <td key={i}>{user[field].toString()}</td>;
+                return (
+                    <td key={i}>
+                        <UserField
+                            admin={this.props.admin}
+                            editable={field === "codename"}
+                            field={field}
+                            onNewValue={(newValue: string) => this.handleNewUserValue(user, field, newValue)}
+                            user={user} />
+                    </td>);
             });
+    }
+
+    /**
+     * Handles a user field reporting a new value.
+     * 
+     * @param user   The owning user.
+     * @param field   The name of the user's field.
+     * @param newValue   A new value for the user's field.
+     */
+    private handleNewUserValue(user: ICredentials, field: string, newValue: string): void {
+        const updated: ICredentials = {
+            alias: user.alias,
+            codename: user.codename,
+            passphrase: user.passphrase
+        };
+
+        updated[field] = newValue;
+
+        // Note: this should be switched to using an immutable structure...
+        this.state.updatedUsers[updated.alias] = updated;
+        this.setState({
+            updatedUsers: this.state.updatedUsers
+        });
+    }
+
+    /**
+     * Submits pending updates.
+     */
+    private onUpdates(): void {
+        this.props.onUpdates(this.state.updatedUsers);
+        this.setState({
+            updatedUsers: {}
+        });
     }
 }

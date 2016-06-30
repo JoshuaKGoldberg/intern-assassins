@@ -15,6 +15,11 @@ declare var XLSX: any;
  */
 export interface IUsersImporterProps {
     /**
+     * Information on the admin.
+     */
+    admin: IUser;
+
+    /**
      * Callback for after importing.
      */
     onImport?: () => void;
@@ -23,11 +28,6 @@ export interface IUsersImporterProps {
      * Wrapper around the server API.
      */
     sdk: Sdk;
-
-    /**
-     * Information on the user.
-     */
-    user: IUser;
 }
 
 /**
@@ -62,11 +62,6 @@ export class UsersImporter extends React.Component<IUsersImporterProps, IUsersIm
      */
     public constructor(props: IUsersImporterProps, context?: any) {
         super(props, context);
-
-        requirejs(["jszip"], (jszip: JSZip) => {
-            (window as any).JSZip = jszip;
-            requirejs(["xlsx"]);
-        });
     }
 
     /**
@@ -189,7 +184,7 @@ export class UsersImporter extends React.Component<IUsersImporterProps, IUsersIm
      * Finalizes importing the staged users.
      */
     private async import(): Promise<void> {
-        await this.props.sdk.importUsers(this.props.user, this.state.importingUsers);
+        await this.props.sdk.importUsers(this.props.admin, this.state.importingUsers);
 
         this.setState(
             {

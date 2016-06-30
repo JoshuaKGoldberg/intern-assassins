@@ -3,22 +3,24 @@
 "use strict";
 import * as React from "react";
 import { Sdk } from "../../sdk/sdk";
+import { IUpdate } from "../../../../shared/actions";
+import { ICredentials } from "../../../../shared/login";
 import { IUser } from "../../../../shared/users";
-import { UsersTable } from "./userstable";
+import { IUpdatedUsers, UsersTable } from "./userstable";
 
 /**
  * Props for a UsersTables component.
  */
 export interface IUsersTablesProps {
     /**
+     * Information on the current admin.
+     */
+    admin: IUser;
+
+    /**
      * Wrapper around the server API.
      */
     sdk: Sdk;
-
-    /**
-     * Information on the current user.
-     */
-    user: IUser;
 }
 
 /**
@@ -52,7 +54,7 @@ export class UsersTables extends React.Component<IUsersTablesProps, IUsersTables
             loading: true,
         };
 
-        this.props.sdk.getUsers(this.props.user)
+        this.props.sdk.getUsers(this.props.admin)
             .then((users: IUser[]): void => {
                 this.setState({
                     loading: false,
@@ -74,24 +76,55 @@ export class UsersTables extends React.Component<IUsersTablesProps, IUsersTables
         const usersAlive: IUser[] = this.state.users.filter(
             (user: IUser): boolean => !user.admin && user.alive);
         const usersDead: IUser[] = this.state.users.filter(
-            (user: IUser): boolean => !user.admin && user.alive);
+            (user: IUser): boolean => !user.admin && !user.alive);
         const admins: IUser[] = this.state.users.filter(
             (user: IUser): boolean => user.admin);
 
         return (
             <div id="administration">
                 <UsersTable
+                    admin={this.props.admin}
                     fields={["alias", "codename", "target"]}
                     heading="Alive"
+                    onUpdates={(updatedUsers: IUpdatedUsers): Promise<void> => this.onUpdates(updatedUsers)}
                     users={usersAlive} />
                 <UsersTable
+                    admin={this.props.admin}
                     fields={["alias", "codename"]}
                     heading="Dead"
+                    onUpdates={(updatedUsers: IUpdatedUsers): Promise<void> => this.onUpdates(updatedUsers)}
                     users={usersDead} />
                 <UsersTable
+                    admin={this.props.admin}
                     fields={["alias", "codename"]}
                     heading="Admins"
+                    onUpdates={(updatedUsers: IUpdatedUsers): Promise<void> => this.onUpdates(updatedUsers)}
                     users={admins} />
             </div>);
+    }
+
+    /**
+     * Submits pending updates to the server.
+     * 
+     * @param updatedUsers   Descriptions of updated users.
+     * @returns A promise for the users being updated.
+     */
+    private async onUpdates(updatedUsers: IUpdatedUsers): Promise<void> {
+        await this.props.sdk.postUsers(
+            this.props.admin,
+            Object.keys(updatedUsers)
+                .map((key: string): IUpdate<ICredentials, ICredentials> => {
+                    const updatedUser: ICredentials = updatedUsers[key];
+
+                    return {
+                        filter: {
+                            alias: updatedUser.alias
+                        } as ICredentials,
+                        updated: updatedUser
+                    };
+                }));
+
+        // Todo: be less inelegant
+        window.location.reload();
     }
 }

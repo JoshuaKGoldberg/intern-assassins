@@ -14,6 +14,11 @@ export interface IActionButtonProps {
     action: () => void;
 
     /**
+     * Confirmation text to display in the confirmation dialog.
+     */
+    confirmationText?: string;
+
+    /**
      * Whether the button is small.
      */
     small?: boolean;
@@ -22,11 +27,6 @@ export interface IActionButtonProps {
      * Textual display.
      */
     text: string;
-
-    /**
-     * Confirmation text to display in the confirmation dialog.
-     */
-    confirmationText?: string;
 }
 
 /**
@@ -86,29 +86,18 @@ export class ActionButton extends React.Component<IActionButtonProps, IActionBut
     /**
      * Renders the input button.
      * 
+     * @param {boolean} skipConfirm if true renders a button that will execute the action immediately and not ask for confirmation
      * @returns The rendered input button.
      */
-    private renderButton(shortCircuitAction: boolean): JSX.Element {
-        if (shortCircuitAction) {
-            let onClick = (): void => {
-                this.props.action();
-            };
+    private renderButton(skipConfirm: boolean): JSX.Element {
+        const onClick = skipConfirm ? () : void => { this.props.action(); } : () : void => { this.toggleExpansion(); };
 
-            return (
-                <input
-                    className="action-button"
-                    onClick={(onClick)}
-                    type="button"
-                    value={this.props.text} />);
-        } else {
-            return (
-                <input
-                    className="action-button"
-                    onClick={() => this.toggleExpansion()}
-                    type="button"
-                    value={this.props.text} />);
-        }
-
+        return (
+            <input
+                className="action-button"
+                onClick={onClick}
+                type="button"
+                value={this.props.text} />);
     }
 
     /**

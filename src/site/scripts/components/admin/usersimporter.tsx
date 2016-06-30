@@ -5,7 +5,7 @@
 "use strict";
 import * as React from "react";
 import { IUser } from "../../../../shared/users";
-import { IPartialUser, SheetParser } from "../../storage/sheetparser";
+import { IPartialUser, CsvParser } from "../../storage/csvparser";
 import { Sdk } from "../../sdk/sdk";
 import { ActionButton } from "../profile/actionbutton";
 declare var XLSX: any;
@@ -93,7 +93,7 @@ export class UsersImporter extends React.Component<IUsersImporterProps, IUsersIm
         }
 
         return (
-            <form onSubmit={(): void => this.uploadFile()}>
+            <form onSubmit={(event: React.FormEvent): void => this.uploadFile(event)}>
                 <input type="file" name="file" ref={UsersImporter.keyFileInput} /><br />
                 <input type="submit" />
             </form>);
@@ -128,7 +128,7 @@ export class UsersImporter extends React.Component<IUsersImporterProps, IUsersIm
                 </table>
                 <ActionButton
                     action={(): void => { this.import(); }}
-                    text="Confrm!" />
+                    text="Confirm!" />
             </div>);
     }
 
@@ -137,7 +137,7 @@ export class UsersImporter extends React.Component<IUsersImporterProps, IUsersIm
      * 
      * @param user   The staged user.
      * @param i   The index of the user's row.
-     * @returns 
+     * @returns The rendered partial user.
      */
     private renderPartialUser(user: IPartialUser, i: number): JSX.Element {
         return (
@@ -149,10 +149,14 @@ export class UsersImporter extends React.Component<IUsersImporterProps, IUsersIm
     }
 
     /**
-     * Handles an Excel file being selected.
+     * Handles a .csv file being selected.
+     * 
+     * @param event   The triggering event.
      */
-    private uploadFile(): void {
-        const file = (this.refs[UsersImporter.keyFileInput] as any).getDOMNode().files[0];
+    private uploadFile(event: React.FormEvent): void {
+        event.preventDefault();
+
+        const file = (this.refs[UsersImporter.keyFileInput] as HTMLInputElement).files[0];
         if (!file) {
             return;
         }
@@ -164,19 +168,14 @@ export class UsersImporter extends React.Component<IUsersImporterProps, IUsersIm
             (): void => {
                 const reader = new FileReader();
 
-                reader.onload = (event: ProgressEvent): void => {
-                    const data: string = (event.target as any).result;
-                    const parsedFile: any = XLSX.read(data, {
-                        type: "binary"
-                    });
-                    const sheet: any = parsedFile.Sheets.Sheet1;
-                    const users = new SheetParser(sheet).collectUsers();
+                reader.onload = (): void => {
+                    const users = new CsvParser(reader.result).collectUsers();
                     this.setState({
                         importingUsers: users
                     });
                 };
 
-                reader.readAsBinaryString(file);
+                reader.readAsText(file);
             });
     }
 

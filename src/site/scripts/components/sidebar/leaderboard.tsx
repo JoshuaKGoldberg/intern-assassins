@@ -32,6 +32,7 @@ export class Leaderboard extends React.Component<ILeaderboardProps, void> {
             <div className="leaderboard">
                 {this.renderLeadersTable("alive", true)}
                 {this.renderLeadersTable("dead", false)}
+                <div className="top-shown">(Top {this.props.leaders.length} shown)</div>
             </div>);
     }
 
@@ -43,21 +44,30 @@ export class Leaderboard extends React.Component<ILeaderboardProps, void> {
      * @returns The rendered container.
      */
     public renderLeadersTable(title: string, alive: boolean): JSX.Element {
+        const leaders: ILeader[] = this.props.leaders
+            .filter((leader: ILeader): boolean => leader.alive === alive)
+            .sort((a: ILeader, b: ILeader): number => b.kills - a.kills);
+
+        if (leaders.length === 0) {
+            return (
+                <div className="leaders-table-container">
+                    <h3>{title}</h3>
+                    <em>nobody yet...</em>
+                </div>);
+        }
+
         return (
             <div className="leaders-table-container">
                 <h3>{title}</h3>
                 <table>
                     <tbody>
-                        {this.props.leaders
-                            .filter((leader: ILeader): boolean => leader.alive === alive)
-                            .sort((a: ILeader, b: ILeader): number => b.kills - a.kills)
-                            .map((leader: ILeader, i: number): JSX.Element => {
-                                return (
-                                    <tr key={i}>
-                                        <td className="leader-name">{leader.codename}</td>
-                                        <td className="leader-kills">{leader.kills}</td>
-                                    </tr>);
-                            })}
+                        {leaders.map((leader: ILeader, i: number): JSX.Element => {
+                            return (
+                                <tr key={i}>
+                                    <td className="leader-name">{leader.codename}</td>
+                                    <td className="leader-kills">{leader.kills}</td>
+                                </tr>);
+                        })}
                     </tbody>
                 </table>
             </div>);

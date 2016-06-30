@@ -25,9 +25,9 @@ export class LeadersEndpoint extends Endpoint<ILeader[]> {
         const leaders: { [i: string]: ILeader } = {};
         const users: IUser[] = await this.api.endpoints.users.getAll();
 
-        // List non-admin users as leaders, keyed by alias
+        // List non-admin users with kills as leaders, keyed by alias
         users
-            .filter((user: IUser): boolean => !user.admin)
+            .filter((user: IUser): boolean => !user.admin && user.kills > 0)
             .forEach((user: IUser): void => {
                 leaders[user.alias] = {
                     alive: user.alive,
@@ -36,7 +36,7 @@ export class LeadersEndpoint extends Endpoint<ILeader[]> {
                 };
             });
 
-        // Sort leaders by kills (descending), then by codename (ascending).
+        // Sort the top 15 leaders by kills (descending), then by codename (ascending).
         const result = Object.keys(leaders)
             .map((key: string): ILeader => leaders[key])
             .sort((a: ILeader, b: ILeader): number => {
@@ -45,7 +45,8 @@ export class LeadersEndpoint extends Endpoint<ILeader[]> {
                 }
 
                 return a.codename < b.codename ? -1 : 1;
-            });
+            })
+            .slice(0, 15);
 
         return result;
     }

@@ -55,7 +55,6 @@
         "src/site/scripts/components/profile/actionbutton.tsx",
         "src/site/scripts/components/profile/actions.tsx",
         "src/site/scripts/components/profile/greeting.tsx",
-        "src/site/scripts/components/profile/infodisplay.tsx",
         "src/site/scripts/components/profile/killclaimreports.tsx",
         "src/site/scripts/components/profile/profile.tsx",
         "src/site/scripts/storage/appstorage.ts",

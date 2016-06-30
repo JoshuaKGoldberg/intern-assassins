@@ -1,12 +1,10 @@
 /// <reference path="../../../../../typings/react/index.d.ts" />
-/// <reference path="../../../../../typings/react-dom/index.d.ts" />
 
 "use strict";
 import * as React from "react";
 import { IAppUserProps } from "../apps/appuser";
 import { Actions } from "./actions";
 import { Greeting } from "./greeting";
-import { InfoDisplay } from "./infodisplay";
 import { KillClaimReports } from "./killclaimreports";
 
 /**
@@ -37,11 +35,10 @@ export class Profile extends React.Component<IAppUserProps, void> {
             <section id="profile">
                 <div className="area greeting-area">
                     <Greeting admin={this.props.user.admin} codename={this.props.user.codename} />
-                </div>
-
-                <div className="area info-display-area">
-                    <InfoDisplay info="codename" display={this.props.user.codename} />
-                    {this.props.user.alive && <InfoDisplay info="target" display={this.props.user.target} />}
+                    {this.props.user.alive && (
+                        <div className="your-target">
+                            Your target is <strong>{this.props.user.target}</strong>.
+                        </div>)}
                 </div>
 
                 <div class="area">

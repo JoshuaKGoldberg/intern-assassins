@@ -129,6 +129,30 @@ export class ClaimsEndpoint extends Endpoint<IClaim> {
     }
 
     /**
+     * Deletes a kill claim.
+     * 
+     * @param credentials   Login values for authentication.
+     * @param claim   A claim to delete.
+     * @returns A promise for deleting the claim.
+     */
+    public async delete(credentials: ICredentials, claim: IClaim): Promise<void> {
+        await this.validateAdminCredentials(credentials);
+        await this.collection.deleteOne(claim);
+    }
+
+    /**
+     * Deletes all claims against a victim.
+     * 
+     * @param victim   A user the claims are against.
+     * @returns A promise for deleting the claims.
+     */
+    public async deleteClaimsAgainst(victim: IUser): Promise<void> {
+        await this.collection.deleteMany({
+            victim: victim.alias
+        });
+    }
+
+    /**
      * Validates that a kill claim has the required fields.
      */
     private validateClaim(claim: IClaim): void {
@@ -156,8 +180,7 @@ export class ClaimsEndpoint extends Endpoint<IClaim> {
     private scheduleFollowupReminders(killer: IUser, victim: IUser): void {
         this.api.scheduler.delayChain({
             [Delay.minute * 10]: async (): Promise<boolean> => {
-                const victimLater: IUser = await this.api.endpoints.users.getByAlias(victim.alias);
-                if (!victimLater.alive) {
+                if (!(await this.isClaimStillOpen(killer.alias, victim.alias))) {
                     return true;
                 }
 
@@ -177,8 +200,7 @@ export class ClaimsEndpoint extends Endpoint<IClaim> {
                 return false;
             },
             [Delay.hour]: async (): Promise<boolean> => {
-                const victimLater: IUser = await this.api.endpoints.users.getByAlias(victim.alias);
-                if (!victimLater.alive) {
+                if (!(await this.isClaimStillOpen(killer.alias, victim.alias))) {
                     return true;
                 }
 
@@ -198,8 +220,7 @@ export class ClaimsEndpoint extends Endpoint<IClaim> {
                 return false;
             },
             [Delay.hour * 3]: async (): Promise<boolean> => {
-                const victimLater: IUser = await this.api.endpoints.users.getByAlias(victim.alias);
-                if (!victimLater.alive) {
+                if (!(await this.isClaimStillOpen(killer.alias, victim.alias))) {
                     return true;
                 }
 
@@ -221,5 +242,16 @@ export class ClaimsEndpoint extends Endpoint<IClaim> {
                 return false;
             }
         });
+    }
+
+    /**
+     * Determines if there's still a claim between users.
+     * 
+     * @param killer   Alias of a killer.
+     * @param killer   Alias of a vitim.
+     * @returns A promise for whether there's a claim between users.
+     */
+    private async isClaimStillOpen(killer: string, victim: string): Promise<boolean> {
+        return !!(await this.collection.find({ killer, victim }));
     }
 }

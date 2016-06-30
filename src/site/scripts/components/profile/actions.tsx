@@ -47,7 +47,6 @@ export const Actions: React.StatelessComponent<IActionProps> = (props: IActionPr
             </div>);
     }
 
-
     return (
         <div className="actions actions-alive">
             <ActionButton

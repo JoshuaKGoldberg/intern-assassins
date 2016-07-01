@@ -78,10 +78,11 @@ export class KillsEndpoint extends Endpoint<IKill> {
         killer.target = victim.target;
         await this.api.endpoints.users.update(killer);
 
-        // Update the victim: no longer alive or with a target
+        // Update the victim: no longer alive with a target or any claims
         victim.alive = false;
         victim.target = "";
         await this.api.endpoints.users.update(victim);
+        await this.api.endpoints.claims.deleteClaimsWith(victim);
 
         await this.api.fireNotificationCallbacks({
             cause: NotificationCause.Kill,

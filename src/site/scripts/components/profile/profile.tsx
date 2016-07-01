@@ -45,10 +45,11 @@ export class Profile extends React.Component<IAppUserProps, void> {
                     <h3>Actions</h3>
                     <Actions
                         alive={this.props.user.alive}
-                        target={this.props.user.target}
+                        claims={this.props.claims}
                         onDeath={(): void => { this.onDeath(); }}
                         onKill={(): void => { this.onKill(); }}
-                        rounds={this.props.rounds}/>
+                        rounds={this.props.rounds}
+                        target={this.props.user.target} />
                 </div>
 
                 {this.renderKillClaimReports()}

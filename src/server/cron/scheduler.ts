@@ -69,7 +69,7 @@ export class Scheduler {
                 return this.delay(
                     parseInt(time),
                     async (): Promise<void> => {
-                        if (await chain[time]()) {
+                        if (!(await chain[time]())) {
                             return;
                         }
 

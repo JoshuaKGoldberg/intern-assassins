@@ -2,6 +2,7 @@
 
 "use strict";
 import * as React from "react";
+import { IClaim } from "../../../../shared/kills";
 import { INotification } from "../../../../shared/notifications";
 import { IRound } from "../../../../shared/rounds";
 import { ILeader, IUser } from "../../../../shared/users";
@@ -9,6 +10,7 @@ import { ActionButton } from "../profile/actionbutton";
 import { Greeting } from "../profile/greeting";
 import { Sdk } from "../../sdk/sdk";
 import { Sidebar } from "../sidebar/sidebar";
+import { ClaimsTable } from "../admin/claimstable";
 import { UsersImporter } from "../admin/usersimporter";
 import { UsersTables } from "../admin/userstables";
 
@@ -20,6 +22,11 @@ export interface IAppAdminProps {
      * Information on the admin.
      */
     admin: IUser;
+
+    /**
+     * Any active kill claims related to the user, if not anonymous.
+     */
+    claims?: IClaim[];
 
     /**
      * Leaders to be shown in the sidebar.
@@ -61,6 +68,8 @@ export class AppAdmin extends React.Component<IAppAdminProps, void> {
                     <div className="area greeting-area">
                         <Greeting admin={true} codename={this.props.admin.codename} />
                     </div>
+
+                    <ClaimsTable admin={this.props.admin} claims={this.props.claims} sdk={this.props.sdk} />
 
                     <UsersTables admin={this.props.admin} sdk={this.props.sdk} />
                     <UsersImporter

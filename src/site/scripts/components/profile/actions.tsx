@@ -2,6 +2,7 @@
 
 "use strict";
 import * as React from "react";
+import { IClaim } from "../../../../shared/kills";
 import { IRound } from "../../../../shared/rounds";
 import { ActionButton } from "./actionbutton";
 
@@ -13,6 +14,11 @@ export interface IActionProps {
      * Whether the user is alive.
      */
     alive: boolean;
+
+    /**
+     * Active claims related to the user.
+     */
+    claims: IClaim[];
 
     /**
      * Handler for the user reporting their own death.
@@ -39,7 +45,6 @@ export interface IActionProps {
  * Component for actionable profile buttons.
  */
 export const Actions: React.StatelessComponent<IActionProps> = (props: IActionProps): JSX.Element => {
-    const killButton  = `I killed ${props.target}!`;
     if (!props.alive) {
         return (
             <div className="actions actions-dead">
@@ -49,10 +54,11 @@ export const Actions: React.StatelessComponent<IActionProps> = (props: IActionPr
 
     return (
         <div className="actions actions-alive">
-            <ActionButton
-                action={(): void => props.onKill()}
-                text={killButton}
-                confirmationText="Are you sure you want to report a kill?"/>
+            {props.claims.length === 0 && (
+                <ActionButton
+                    action={(): void => props.onKill()}
+                    text={`I killed ${props.target}!`}
+                    confirmationText="Are you sure you want to report a kill?"/>)}
             <ActionButton
                 action={(): void => props.onDeath()}
                 text="I'm dead!"

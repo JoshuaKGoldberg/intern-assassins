@@ -45,6 +45,11 @@ interface IActionButtonState {
  */
 export class ActionButton extends React.Component<IActionButtonProps, IActionButtonState> {
     /**
+     * Reference key for the main action input.
+     */
+    private static refInput: string = "refInput";
+
+    /**
      * State for the component.
      */
     public state: IActionButtonState = {
@@ -67,80 +72,70 @@ export class ActionButton extends React.Component<IActionButtonProps, IActionBut
             className += " action-expanded";
         }
 
-        className += ` action-${this.props.text.replace(/\s+/g, "-")}`;
+        className += ` action-${this.props.text.toLowerCase().replace(/\s+/g, "-")}`;
 
-        if (this.props.confirmationText === undefined) {
-            return (
-            <div className={className}>
-                {this.renderButton(true)}
-            </div>);
-        } else {
         return (
             <div className={className}>
-                {this.renderButton(false)}
-                {this.renderConfirmation()}
+                {this.state.expanded
+                    ? this.renderConfirmation()
+                    : this.renderButton(this.props.confirmationText === undefined)}
             </div>);
-        }
     }
 
     /**
-     * Renders the input button.
+     * Renders the main action button.
      * 
-     * @param skipConfirm if true renders skips confirmation dialog.
-     * @returns The rendered input button.
+     * @param skipConfirmation   Whether the action can skip a confirmation dialog.
+     * @returns The rendered action button.
      */
-    private renderButton(skipConfirm: boolean): JSX.Element {
-        const onClick = skipConfirm ? (): void => { this.props.action(); } : (): void => { this.toggleExpansion(); };
+    private renderButton(skipConfirmation: boolean): JSX.Element {
+        const onClick = skipConfirmation
+            ? (): void => this.props.action()
+            : (): void => this.showConfirmation();
 
         return (
             <input
                 className="action-button"
                 onClick={onClick}
+                ref={ActionButton.refInput}
                 type="button"
                 value={this.props.text} />);
     }
 
     /**
-     * Renders the confirmation button.
+     * Renders a confirmation dialog for performing the action.
      * 
-     * @returns The rendered confirmation button.
+     * @returns The rendered confirmation dialog.
      */
     private renderConfirmation(): JSX.Element {
-        let onClick: () => void;
-
-        if (!this.state.expanded) {
-            onClick = undefined;
-        } else {
-            onClick = (): void => {
-                this.props.action();
-                this.toggleExpansion();
-            };
-        }
-
         return (
-            <div className="action-confirmation">
-                <div className="action-confirmation-overlay"/>
-                <ConfirmationDialog
-                    action={(): void => onClick()}
-                    onCancel={(): void => this.toggleExpansion()}
-                    confirmationText={this.props.confirmationText} />
-            </div>);
+            <ConfirmationDialog
+                action={this.props.action}
+                close={(): void => this.hideConfirmation()}
+                confirmationText={this.props.confirmationText} />);
     }
 
     /**
-     * Toggles whether this is expanded for a confirmation button.
+     * Shows the confirmation dialog.
      */
-    private toggleExpansion(): void {
-        if (this.state.expanded) {
-            this.setState({
-                expanded: false,
-            });
-
-            return;
-        }
-
+    private showConfirmation(): void {
         this.setState({
             expanded: true
         });
+    }
+
+    /**
+     * Hides the confirmation dialog.
+     * 
+     * @remarks This returns focus back to the main button.
+     */
+    private hideConfirmation(): void {
+        this.setState(
+            {
+                expanded: false
+            },
+            (): void => {
+                (this.refs[ActionButton.refInput] as HTMLInputElement).focus();
+            });
     }
 }

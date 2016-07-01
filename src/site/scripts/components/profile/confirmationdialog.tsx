@@ -18,9 +18,9 @@ export interface IConfirmationDialogProps {
     confirmationText: string;
 
     /**
-     * The action to execute on cancel.
+     * Closes the confirmation dialog.
      */
-    onCancel: () => void;
+    close: () => void;
 }
 
 /**
@@ -28,18 +28,23 @@ export interface IConfirmationDialogProps {
  */
 export const ConfirmationDialog: React.StatelessComponent<IConfirmationDialogProps> = (props: IConfirmationDialogProps): JSX.Element => {
     return (
-        <div className="action-confirmation-container">
-            <div className="action-confirmation-text">{props.confirmationText}</div>
-            <div className="action-confirmation-buttons">
-                <input
-                    onClick={props.onCancel}
-                    type="button"
-                    value="Cancel" />
-                <input
-                    className="action-confirm"
-                    onClick={props.action}
-                    type="button"
-                    value="Confirm" />
+        <section className="confirmation-dialog">
+            <div className="confirmation-dialog-display">
+                <p>{props.confirmationText}</p>
+                <div>
+                    <input
+                        onClick={props.close}
+                        type="button"
+                        value="Cancel" />
+                    <input
+                        className="action-confirm"
+                        onClick={(): void => {
+                            props.action();
+                            props.close();
+                        }}
+                        type="button"
+                        value="Confirm" />
+                </div>
             </div>
-        </div>);
+        </section>);
 };

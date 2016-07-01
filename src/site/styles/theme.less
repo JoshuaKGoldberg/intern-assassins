@@ -195,15 +195,9 @@ input[type=submit] {
     margin-top: 28px;
 }
 
-.action-confirmation {
-    opacity: 0;
-    display: none;
-    transition: 175ms opacity;
-
-    .action-expanded & {
-        display: block;
-        opacity: 1;
-    }
+.confirmation-dialog {
+    background: @color-background-translucent;
+    z-index: 10;
 }
 
 input.action-confirm {

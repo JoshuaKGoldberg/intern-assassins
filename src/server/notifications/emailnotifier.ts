@@ -33,7 +33,7 @@ export interface IEmailSettings {
     /**
      * Settings for the transporter.
      */
-    transporter: smtp.SmtpOptions;
+    transporter?: smtp.SmtpOptions;
 
     /**
      * Friendly name of the hosting assassins website.
@@ -84,7 +84,6 @@ export class EmailNotifier implements INotifier {
             this.settings = {
                 cc: [],
                 domain: "@localhost",
-                transporter: {},
                 website: "localhost"
             };
             return;
@@ -93,11 +92,13 @@ export class EmailNotifier implements INotifier {
         this.settings = settings;
 
         // If email settings do exist, they must be filled out to create a transporter
-        if (!settings.transporter.service) {
-            throw new Error("No transporter.service defined in email settings.");
-        }
-        if (!settings.transporter.auth) {
-            throw new Error("No transporter.auth defined in email settings.");
+        if (settings.transporter) {
+            if (!settings.transporter.service) {
+                throw new Error("No transporter.service defined in email settings.");
+            }
+            if (!settings.transporter.auth) {
+                throw new Error("No transporter.auth defined in email settings.");
+            }
         }
 
         this.transporter = nodemailer.createTransport(settings.transporter);

@@ -44,24 +44,24 @@ export interface IActionProps {
 /**
  * Component for actionable profile buttons.
  */
-export class Actions extends React.Component<IActionProps, void> {
-    /**
-     * Renders the component.
-     * 
-     * @returns The rendered component.
-     */
-    public render(): JSX.Element {
-        if (!this.props.alive) {
-            return (
-                <div className="actions actions-dead">
-                    <em>You're dead, so unfortunately you can't do anything.</em>
-                </div>);
-        }
-
+export const Actions: React.StatelessComponent<IActionProps> = (props: IActionProps): JSX.Element => {
+    if (!props.alive) {
         return (
-            <div className="actions actions-alive">
-                {this.props.claims.length === 0 && <ActionButton action={(): void => this.props.onKill()} text="Report a kill!" />}
-                <ActionButton action={(): void => this.props.onDeath()} text="Are you dead?" />
+            <div className="actions actions-dead">
+                <em>You're dead, so unfortunately you can't do anything.</em>
             </div>);
     }
+
+    return (
+        <div className="actions actions-alive">
+            {props.claims.length === 0 && (
+                <ActionButton
+                    action={(): void => props.onKill()}
+                    text={`I killed ${props.target}!`}
+                    confirmationText="Are you sure you want to report a kill?"/>)}
+            <ActionButton
+                action={(): void => props.onDeath()}
+                text="I'm dead!"
+                confirmationText="Are you sure you want to report yourself as dead?"/>
+        </div>);
 };

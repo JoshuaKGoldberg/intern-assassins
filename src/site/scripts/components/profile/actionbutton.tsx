@@ -2,6 +2,7 @@
 
 "use strict";
 import * as React from "react";
+import { ConfirmationDialog } from "./confirmationdialog";
 
 /**
  * Props for an ActionButton component.
@@ -13,9 +14,9 @@ export interface IActionButtonProps {
     action: () => void;
 
     /**
-     * Delay ticks when activated, if not the default.
+     * Confirmation text to display in the confirmation dialog.
      */
-    delay?: number;
+    confirmationText?: string;
 
     /**
      * Whether the button is small.
@@ -32,20 +33,11 @@ export interface IActionButtonProps {
  * State for an ActionButton component.
  */
 interface IActionButtonState {
-    /**
-     * How long until this can be activated.
-     */
-    delay?: number;
 
     /**
      * Whether this has had its confirmation expanded.
      */
     expanded: boolean;
-
-    /**
-     * Confirmation text, chosen at random.
-     */
-    confirmation: string;
 }
 
 /**
@@ -53,20 +45,9 @@ interface IActionButtonState {
  */
 export class ActionButton extends React.Component<IActionButtonProps, IActionButtonState> {
     /**
-     * Possible confirmation texts.
-     */
-    private static /* readonly */ confirmations: string[] = [
-        "Are you sure",
-        "For real?",
-        "O rly?",
-        "You sure?"
-    ];
-
-    /**
      * State for the component.
      */
     public state: IActionButtonState = {
-        confirmation: ActionButton.confirmations[Math.random() * ActionButton.confirmations.length | 0],
         expanded: false
     };
 
@@ -88,23 +69,33 @@ export class ActionButton extends React.Component<IActionButtonProps, IActionBut
 
         className += ` action-${this.props.text.replace(/\s+/g, "-")}`;
 
+        if (this.props.confirmationText === undefined) {
+            return (
+            <div className={className}>
+                {this.renderButton(true)}
+            </div>);
+        } else {
         return (
             <div className={className}>
-                {this.renderButton()}
+                {this.renderButton(false)}
                 {this.renderConfirmation()}
             </div>);
+        }
     }
 
     /**
      * Renders the input button.
      * 
+     * @param skipConfirm if true renders skips confirmation dialog.
      * @returns The rendered input button.
      */
-    private renderButton(): JSX.Element {
+    private renderButton(skipConfirm: boolean): JSX.Element {
+        const onClick = skipConfirm ? (): void => { this.props.action(); } : (): void => { this.toggleExpansion(); };
+
         return (
             <input
                 className="action-button"
-                onClick={(): void => this.toggleExpansion()}
+                onClick={onClick}
                 type="button"
                 value={this.props.text} />);
     }
@@ -116,43 +107,24 @@ export class ActionButton extends React.Component<IActionButtonProps, IActionBut
      */
     private renderConfirmation(): JSX.Element {
         let onClick: () => void;
-        let value: string;
 
-        if (!this.state.expanded || this.state.delay > 0) {
+        if (!this.state.expanded) {
             onClick = undefined;
-            value = this.state.delay ? this.state.delay.toString() : "";
         } else {
             onClick = (): void => {
                 this.props.action();
                 this.toggleExpansion();
             };
-            value = this.state.confirmation;
         }
 
         return (
             <div className="action-confirmation">
-                <input
-                    onClick={onClick}
-                    type="button"
-                    value={value} />
-                    {this.renderCancel()}
+                <div className="action-confirmation-overlay"/>
+                <ConfirmationDialog
+                    action={(): void => onClick()}
+                    onCancel={(): void => this.toggleExpansion()}
+                    confirmationText={this.props.confirmationText} />
             </div>);
-    }
-
-    private renderCancel(): JSX.Element {
-        let onClick: () => void;
-
-        if (this.state.expanded) {
-            onClick = (): void => {
-                this.toggleExpansion();
-            };
-        }
-
-        return (
-            <input
-                onClick={onClick}
-                type="button"
-                value="Cancel"/>);
     }
 
     /**
@@ -161,32 +133,14 @@ export class ActionButton extends React.Component<IActionButtonProps, IActionBut
     private toggleExpansion(): void {
         if (this.state.expanded) {
             this.setState({
-                confirmation: this.state.confirmation,
                 expanded: false,
-                delay: 0
             });
 
             return;
         }
 
         this.setState({
-            confirmation: this.state.confirmation,
-            expanded: true,
-            delay: this.props.delay || 3
+            expanded: true
         });
-
-        const interval: NodeJS.Timer = setInterval(
-            (): void => {
-                if (this.state.delay === 0) {
-                    clearInterval(interval);
-                } else {
-                    this.setState({
-                        confirmation: this.state.confirmation,
-                        expanded: true,
-                        delay: this.state.delay - 1
-                    });
-                }
-            },
-            1000);
     }
 }

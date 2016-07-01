@@ -132,7 +132,7 @@ export class EmailNotifier implements INotifier {
             from: settings.from || this.settings.transporter.auth.user,
             subject: settings.subject,
             text: settings.text,
-            to: `settings.to${this.settings.domain}`
+            to: `${settings.to}${this.settings.domain}`
         });
     }
 

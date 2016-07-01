@@ -163,9 +163,12 @@ export class ClaimsEndpoint extends Endpoint<IClaim> {
      * @param victim   A user the claims are against.
      * @returns A promise for deleting the claims.
      */
-    public async deleteClaimsAgainst(victim: IUser): Promise<void> {
+    public async deleteClaimsWith(victim: IUser): Promise<void> {
         await this.collection.deleteMany({
             victim: victim.alias
+        });
+        await this.collection.deleteMany({
+            killer: victim.alias
         });
     }
 

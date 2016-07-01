@@ -222,6 +222,12 @@ export class App extends React.Component<void, IAppState> {
             killer.kills += 1;
         }
 
+        console.log("Notification", notification, "against", newState.claims);
+        if (notification.codename === this.state.user.codename) {
+            newState.claims = newState.claims.filter(
+                (claim: IClaim): boolean => claim.killer !== this.state.user.alias);
+        }
+
         return newState;
     }
 

@@ -73,17 +73,7 @@ export class Sdk {
         return this.sendAjaxRequest(
             "GET",
             "api/claims",
-            credentials,
-            {
-                $or: [
-                    {
-                        killer: credentials.alias
-                    },
-                    {
-                        victim: credentials.alias
-                    }
-                ]
-            });
+            credentials);
     }
 
     /**

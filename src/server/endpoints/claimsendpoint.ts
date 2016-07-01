@@ -25,12 +25,29 @@ export class ClaimsEndpoint extends Endpoint<IClaim> {
      * @param credentials   Login values for authentication.
      * @param query   A filter on the kill claims.
      * @returns Filtered kill claims.
-     * @remarks It would be more efficient to modify the filter for non-admin
-     *          users, rather than the post-query results.
+     * @remarks Admins are given all claims, whereas regular users are given
+     *          claims related to them.
      */
-    public async get(credentials: ICredentials, query: any): Promise<IClaim[]> {
+    public async get(credentials: ICredentials): Promise<IClaim[]> {
         const user: IUser = await this.validateUserCredentials(credentials);
-        let claims: IClaim[] = await this.collection.find(query).toArray();
+        let query: any;
+
+        if (user.admin) {
+            query = {};
+        } else {
+            query = {
+                $or: [
+                    {
+                        killer: user.alias
+                    },
+                    {
+                        victim: user.alias
+                    }
+                ]
+            };
+        }
+
+        const claims: IClaim[] = await this.collection.find(query).toArray();
 
         // Admins can view all claims no matter what
         if (user.admin) {

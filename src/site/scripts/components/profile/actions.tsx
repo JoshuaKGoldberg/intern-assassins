@@ -2,6 +2,7 @@
 
 "use strict";
 import * as React from "react";
+import { IClaim } from "../../../../shared/kills";
 import { IRound } from "../../../../shared/rounds";
 import { ActionButton } from "./actionbutton";
 
@@ -13,6 +14,11 @@ export interface IActionProps {
      * Whether the user is alive.
      */
     alive: boolean;
+
+    /**
+     * Active claims related to the user.
+     */
+    claims: IClaim[];
 
     /**
      * Handler for the user reporting their own death.
@@ -54,7 +60,7 @@ export class Actions extends React.Component<IActionProps, void> {
 
         return (
             <div className="actions actions-alive">
-                <ActionButton action={(): void => this.props.onKill()} text="Report a kill!" />
+                {this.props.claims.length === 0 && <ActionButton action={(): void => this.props.onKill()} text="Report a kill!" />}
                 <ActionButton action={(): void => this.props.onDeath()} text="Are you dead?" />
             </div>);
     }

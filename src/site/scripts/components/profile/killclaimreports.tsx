@@ -36,7 +36,7 @@ interface IGroupedKills {
 }
 
 /**
- * Component for a user's relevant kill claims.
+ * Component for a user's relevant kills and/or claims.
  */
 export class KillClaimReports extends React.Component<IKillClaimReportsProps, void> {
     /**
@@ -45,19 +45,18 @@ export class KillClaimReports extends React.Component<IKillClaimReportsProps, vo
      * @returns The rendered component.
      */
     public render(): JSX.Element {
-        const pastKills: IGroupedKills = this.collectKills(this.props.kills);
-        const pendingClaim: IClaim = this.collectPendingClaim(this.props.claims, this.props.kills);
+        const groupedKills: IGroupedKills = this.groupKills(this.props.kills);
 
         return (
             <div className="kill-claim-reports">
-                {pendingClaim && this.renderPendingClaim(pendingClaim)}
+                {this.renderPendingClaims(this.props.claims)}
                 {this.props.user.alive && this.renderStatistics(this.props.kills)}
-                {Object.keys(pastKills)
+                {Object.keys(groupedKills)
                     .map((key: string): JSX.Element => {
                         return (
                             <div className="kill-claim-group" key={key}>
                                 <h3>{key}</h3>
-                                {this.renderKillsGroup(pastKills[key])}
+                                {this.renderKillsGroup(groupedKills[key])}
                             </div>);
                     })}
             </div>);
@@ -128,7 +127,7 @@ export class KillClaimReports extends React.Component<IKillClaimReportsProps, vo
      * @param kills   Kills to collect.
      * @returns The kills, collected by their date descriptors.
      */
-    private collectKills(kills: IKill[]): IGroupedKills {
+    private groupKills(kills: IKill[]): IGroupedKills {
         const collection: IGroupedKills = {};
 
         for (const kill of kills) {
@@ -150,23 +149,16 @@ export class KillClaimReports extends React.Component<IKillClaimReportsProps, vo
     }
 
     /**
-     * Finds any pending claim against the user, if it exists.
+     * Renders all pending claims.
      * 
-     * @param claims   All claims related to the user.
-     * @param kills   All kills related to the user.
-     * @remarks This could be more performant, but at this scale it's unimportant.
+     * @param claim   All pending claim.
+     * @returns The rendered claims.
      */
-    private collectPendingClaim(claims: IClaim[], kills: IKill[]): IClaim {
-        if (!this.props.user.alive) {
-            return undefined;
-        }
-
-        // If the user's still alive, any claim against them should be pending
-        return claims
-            .filter((claim: IClaim): boolean => {
-                return claim.victim === this.props.user.alias;
-            })
-            [0];
+    private renderPendingClaims(claims: IClaim[]) {
+        return (
+            <div className="pending-claims">
+                {claims.map((claim: IClaim): JSX.Element => this.renderPendingClaim(claim))}
+            </div>);
     }
 
     /**
@@ -176,11 +168,13 @@ export class KillClaimReports extends React.Component<IKillClaimReportsProps, vo
      * @returns The rendered claim.
      */
     private renderPendingClaim(claim: IClaim) {
+        if (claim.victim !== this.props.user.alias) {
+            return <span>Still waiting on {claim.victim} to respond...</span>;
+        }
+
         return (
             <h3 className="pending-claim">
-                Your killer says they've killed you! Can this be?
-                <br />
-                Either <a href="">file a dispute</a> or click 'Are you dead?'.
+                Your killer says they've killed you!
             </h3>);
     }
 }

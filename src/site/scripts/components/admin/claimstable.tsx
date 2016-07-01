@@ -42,7 +42,24 @@ export class ClaimsTable extends React.Component<IClaimsTableProps, IClaimsTable
      */
     public render(): JSX.Element {
         return (
-            <table className="claims-table">
+            <div className="claims-table">
+                <h3>Claims</h3>
+                {this.renderClaims()}
+            </div>);
+    }
+
+    /**
+     * Renders claims, if there are any.
+     * 
+     * @returns The rendered claims.
+     */
+    public renderClaims(): JSX.Element {
+        if (!this.props.claims.length) {
+            return <em>Nothing right now...</em>;
+        }
+
+        return (
+            <table>
                 <thead>
                     <tr>
                         <th>Killer</th>

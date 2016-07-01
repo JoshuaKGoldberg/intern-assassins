@@ -59,7 +59,6 @@ export class AppAdmin extends React.Component<IAppAdminProps, void> {
      * @returns The rendered component.
      */
     public render(): JSX.Element {
-        console.log("Claims", this.props.claims);
         return (
             <div id="app" className="app-admin">
                 <section id="profile">

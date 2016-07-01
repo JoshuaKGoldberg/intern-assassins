@@ -124,7 +124,7 @@ export class KillsEndpoint extends Endpoint<IKill> {
 
                 await this.api.fireNotificationCallbacks({
                     cause: NotificationCause.KillReminder,
-                    description: "You haven't killed in three days so we've auto-killed you. Better luck next time!",
+                    description: "You haven't killed in a while so we've auto-killed you. Better luck next time!",
                     codename: killer.codename,
                     timestamp: Date.now()
                 });

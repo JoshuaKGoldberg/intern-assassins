@@ -63,6 +63,7 @@ export class Api {
             response.send("ACK");
         });
 
+        this.scheduler = scheduler;
         this.endpoints = new Endpoints(this, database);
         this.registerEndpointRoutes(app, this.endpoints.claims);
         this.registerEndpointRoutes(app, this.endpoints.kills);
@@ -72,7 +73,6 @@ export class Api {
         this.registerEndpointRoutes(app, this.endpoints.rounds);
         this.registerEndpointRoutes(app, this.endpoints.user);
         this.registerEndpointRoutes(app, this.endpoints.users);
-        this.scheduler = scheduler;
     }
 
     /**

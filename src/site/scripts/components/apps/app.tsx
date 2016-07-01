@@ -113,6 +113,7 @@ export class App extends React.Component<void, IAppState> {
                 return (
                     <AppAdmin
                         admin={this.state.user}
+                        claims={this.state.claims}
                         leaders={this.state.leaders}
                         notifications={this.state.notifications}
                         rounds={this.state.rounds}

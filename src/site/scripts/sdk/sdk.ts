@@ -64,7 +64,7 @@ export class Sdk {
     }
 
     /**
-     * Retrieves active kill claims on or by the user.
+     * Retrieves kill claims the user is allowed to see.
      * 
      * @param credentials   The submitting user credentials.
      * @returns A promise for the user's active kill claims.

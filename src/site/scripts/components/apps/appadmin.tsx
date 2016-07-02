@@ -63,7 +63,7 @@ export class AppAdmin extends React.Component<IAppAdminProps, void> {
             <div id="app" className="app-admin">
                 <section id="profile">
                     <div id="logout">
-                        <ActionButton action={(): void => this.logOut()} small text="x" />
+                        <ActionButton action={(): void => this.logOut()} small text="Sign Out" />
                     </div>
                     <div className="area greeting-area">
                         <Greeting admin={true} codename={this.props.admin.codename} />

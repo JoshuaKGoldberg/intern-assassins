@@ -1,6 +1,7 @@
 /// <reference path="../../../../../typings/react/index.d.ts" />
 
 "use strict";
+import * as Moment from "moment";
 import * as React from "react";
 import { IClaim } from "../../../../shared/kills";
 import { IUser } from "../../../../shared/users";
@@ -27,14 +28,9 @@ export interface IClaimsTableProps {
 }
 
 /**
- * State for a ClaimsTable component.
- */
-interface IClaimsTableState { }
-
-/**
  * Component for an editable user's field.
  */
-export class ClaimsTable extends React.Component<IClaimsTableProps, IClaimsTableState> {
+export class ClaimsTable extends React.Component<IClaimsTableProps, void> {
     /**
      * Renders the component.
      * 
@@ -64,7 +60,7 @@ export class ClaimsTable extends React.Component<IClaimsTableProps, IClaimsTable
                     <tr>
                         <th>Killer</th>
                         <th>Victim</th>
-                        <th>Time</th>
+                        <th className="claim-time">Time</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -87,7 +83,7 @@ export class ClaimsTable extends React.Component<IClaimsTableProps, IClaimsTable
             <tr>
                 <td>{claim.killer}</td>
                 <td>{claim.victim}</td>
-                <td>{claim.timestamp}</td>
+                <td className="claim-time">{Moment(claim.timestamp).calendar()}</td>
                 <td>(soon)</td>
             </tr>);
     }

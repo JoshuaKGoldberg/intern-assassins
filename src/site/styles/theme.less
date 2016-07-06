@@ -43,6 +43,7 @@ input {
     font-weight: 100;
     font-size: 117%;
     text-align: center;
+    transition: @transition-speed border-color, @transition-speed box-shadow;
 
     &[disabled] {
         color: @color-font-light;
@@ -51,6 +52,13 @@ input {
 
     &[readonly] {
         color: @color-font-medium;
+    }
+
+    &:active, &:focus, &:hover {
+        border-color: @color-accent-color;
+        box-shadow:
+            0 0 2px 1px @color-accent-faded,
+            0 0 1px @color-accent-faded inset;
     }
 }
 

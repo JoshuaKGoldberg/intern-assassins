@@ -104,7 +104,7 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
         return (
             <div className="users-table-updates">
                 <h3>Pending updates</h3>
-                {this.renderTable(users, ["alias", "codename"])}
+                {this.renderTable(users, this.props.fields)}
                 <input
                     onClick={(): void => this.onUpdates()}
                     type="submit" />
@@ -168,6 +168,7 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
      * @returns The rendered user row.
      */
     private renderUser(user: ICredentials, fields: string[]): JSX.Element[] {
+        console.log("u/f", user, fields);
         return fields
             .filter((field: string): boolean => user.hasOwnProperty(field))
             .map((field: string, i: number): JSX.Element => {
@@ -175,7 +176,7 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
                     <td key={i}>
                         <UserField
                             admin={this.props.admin}
-                            editable={field === "codename"}
+                            editable={field !== "alias"}
                             field={field}
                             onNewValue={(newValue: string) => this.handleNewUserValue(user, field, newValue)}
                             user={user} />

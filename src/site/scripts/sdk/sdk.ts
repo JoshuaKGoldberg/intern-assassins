@@ -196,7 +196,7 @@ export class Sdk {
             };
 
             if (method === "GET") {
-                request.open(method, url + "?body=" + body);
+                request.open(method, url + "?body=" + encodeURIComponent(body));
                 request.send();
             } else {
                 request.open(method, url);

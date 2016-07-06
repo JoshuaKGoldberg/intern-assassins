@@ -3,9 +3,10 @@
 "use strict";
 import * as Moment from "moment";
 import * as React from "react";
-import { IClaim } from "../../../../shared/kills";
+import { ClaimAction, IClaim } from "../../../../shared/kills";
 import { IUser } from "../../../../shared/users";
 import { Sdk } from "../../sdk/sdk";
+import { ActionButton } from "../profile/actionbutton";
 
 /**
  * Props for an ClaimsTable component.
@@ -84,7 +85,30 @@ export class ClaimsTable extends React.Component<IClaimsTableProps, void> {
                 <td>{claim.killer}</td>
                 <td>{claim.victim}</td>
                 <td className="claim-time">{Moment(claim.timestamp).calendar()}</td>
-                <td>(soon)</td>
+                <td>
+                    <ActionButton
+                        action={(): void => { this.actOnClaim(claim, ClaimAction.Approve); }}
+                        confirmationText={`Are you sure you want to approve the claim by ${claim.killer}?`}
+                        text="Approve" />
+                    <ActionButton
+                        action={(): void => { this.actOnClaim(claim, ClaimAction.Deny); }}
+                        confirmationText={`Are you sure you want to deny the claim by ${claim.killer}?`}
+                        text="Deny" />
+                </td>
             </tr>);
+    }
+
+    /**
+     * POSTs an action on a claim.
+     * 
+     * @param claim   A claim to act upon.
+     * @param action   The action to take on the claim.
+     * @returns A promise for completing the action.
+     */
+    private async actOnClaim(claim: IClaim, action: ClaimAction): Promise<void> {
+        await this.props.sdk.actOnClaim(this.props.admin, claim, action);
+
+        // Todo: be less inelegant
+        location.reload();
     }
 }

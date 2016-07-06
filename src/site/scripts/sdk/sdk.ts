@@ -1,6 +1,6 @@
 "use strict";
 
-import { IClaim, IKill } from "../../../shared/kills";
+import { ClaimAction, IClaim, IKill } from "../../../shared/kills";
 import { IUpdate, Method } from "../../../shared/actions";
 import { ICredentials } from "../../../shared/login";
 import { INotification } from "../../../shared/notifications";
@@ -159,6 +159,23 @@ export class Sdk {
         return this.sendAjaxRequest(
             "GET",
             "api/rounds");
+    }
+
+    /**
+     * POSTs an action on a claim.
+     * 
+     * @param credentials   The submitting admin credentials.
+     * @param claim   A claim to act upon.
+     * @param action   The action to take on the claim.
+     * @returns A promise for completing the action.
+     */
+    public actOnClaim(credentials: ICredentials, claim: IClaim, action: ClaimAction): Promise<any> {
+        return this.sendAjaxRequest(
+            "POST",
+            "api/claims",
+            credentials,
+            { action, claim },
+            Sdk.parseResponseForOkStatus);
     }
 
     /**

@@ -168,7 +168,6 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
      * @returns The rendered user row.
      */
     private renderUser(user: ICredentials, fields: string[]): JSX.Element[] {
-        console.log("u/f", user, fields);
         return fields
             .filter((field: string): boolean => user.hasOwnProperty(field))
             .map((field: string, i: number): JSX.Element => {

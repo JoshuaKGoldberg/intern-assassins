@@ -24,3 +24,18 @@ export interface IClaim {
  * A user was killed.
  */
 export interface IKill extends IClaim { }
+
+/**
+ * Admin actions on a claim.
+ */
+export const enum ClaimAction {
+    /**
+     * Approve the claim.
+     */
+    Approve,
+
+    /**
+     * Deny the claim (delete it).
+     */
+    Deny
+}

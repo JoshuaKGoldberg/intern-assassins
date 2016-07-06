@@ -1,11 +1,26 @@
 "use strict";
 import { ErrorCause } from "../../shared/errors";
-import { IClaim } from "../../shared/kills";
+import { ClaimAction, IClaim } from "../../shared/kills";
 import { NotificationCause } from "../../shared/notifications";
 import { IUser } from "../../shared/users";
 import { ICredentials } from "../../shared/login";
 import { NotAuthorizedError, ServerError } from "../errors";
 import { Endpoint } from "./endpoint";
+
+/**
+ * Data from a POST request to act on a claim.
+ */
+interface IClaimPost {
+    /**
+     * The action to take on the claim.
+     */
+    action: ClaimAction;
+
+    /**
+     * The claim to be acted on.
+     */
+    claim: IClaim;
+}
 
 /**
  * Endpoint for claimed kills.
@@ -131,6 +146,34 @@ export class ClaimsEndpoint extends Endpoint<IClaim> {
         });
 
         return claim;
+    }
+
+    /**
+     * Performs an action on a claim.
+     * 
+     * @param credentials   Login credentials for authentication.
+     * @param data   A claim and an action to take on it.
+     * @returns A promise for taking the action on the claim.
+     */
+    public async post(credentials: ICredentials, data: IClaimPost): Promise<void> {
+        await this.validateAdminCredentials(credentials);
+
+        switch (data.action) {
+            case ClaimAction.Approve:
+                const victim: IUser = await this.api.endpoints.users.getByAlias(data.claim.victim);
+                await this.api.endpoints.kills.finalizeDeath(victim);
+                break;
+
+            case ClaimAction.Deny:
+                await this.collection.deleteMany({
+                    killer: data.claim.killer,
+                    victim: data.claim.victim
+                });
+                break;
+
+            default:
+                throw new ServerError(ErrorCause.InvalidData, data);
+        }
     }
 
     /**

@@ -6,7 +6,6 @@ import * as express from "express";
 import { Method } from "../shared/actions";
 import { INotification } from "../shared/notifications";
 import { ErrorCause } from "../shared/errors";
-import { Scheduler } from "./cron/scheduler";
 import { Database } from "./database";
 import { ServerError } from "./errors";
 import { Endpoint } from "./endpoints/endpoint";
@@ -41,11 +40,6 @@ export class Api {
     public /* readonly */ endpoints: Endpoints;
 
     /**
-     * 
-     */
-    public /* readonly */ scheduler: Scheduler;
-
-    /**
      * Callbacks to notify of notifications.
      */
     private notificationCallbacks: INotificationCallback[] = [];
@@ -55,15 +49,14 @@ export class Api {
      * under the application.
      * 
      * @param app   The container application.
-     * @param scheduler   Scheduler for later tasks.
+     * @param database   The container application's database.
      */
-    public constructor(app: any, database: Database, scheduler: Scheduler) {
+    public constructor(app: any, database: Database) {
         app.use(bodyParser.json());
         app.get("/api", (request: express.Request, response: express.Response): void => {
             response.send("ACK");
         });
 
-        this.scheduler = scheduler;
         this.endpoints = new Endpoints(this, database);
         this.registerEndpointRoutes(app, this.endpoints.claims);
         this.registerEndpointRoutes(app, this.endpoints.kills);

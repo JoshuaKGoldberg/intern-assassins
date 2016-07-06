@@ -8,8 +8,6 @@
     "files": [
         "src/main.ts",
         "src/server/api.ts",
-        "src/server/cron/delays.ts",
-        "src/server/cron/scheduler.ts",
         "src/server/database.ts",
         "src/server/errors.ts",
         "src/server/server.ts",

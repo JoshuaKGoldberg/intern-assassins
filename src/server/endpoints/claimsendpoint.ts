@@ -4,7 +4,6 @@ import { IClaim } from "../../shared/kills";
 import { NotificationCause } from "../../shared/notifications";
 import { IUser } from "../../shared/users";
 import { ICredentials } from "../../shared/login";
-import { Delay } from "../cron/delays";
 import { NotAuthorizedError, ServerError } from "../errors";
 import { Endpoint } from "./endpoint";
 
@@ -131,10 +130,6 @@ export class ClaimsEndpoint extends Endpoint<IClaim> {
             timestamp: Date.now()
         });
 
-        this.api.scheduler.delay(
-            Delay.minute,
-            (): void => this.scheduleFollowupReminders(killer, victim));
-
         return claim;
     }
 
@@ -189,89 +184,5 @@ export class ClaimsEndpoint extends Endpoint<IClaim> {
         }
 
         throw new ServerError(ErrorCause.MissingFields, missingFields);
-    }
-
-    /**
-     * Schedules reminder emails for after a killer files a claim.
-     * 
-     * @param killer   The claiming user.
-     * @param victim   The supposedly killed user.
-     */
-    private scheduleFollowupReminders(killer: IUser, victim: IUser): void {
-        this.api.scheduler.delayChain({
-            [Delay.minute * 10]: async (): Promise<boolean> => {
-                if (!(await this.isClaimStillOpen(killer.alias, victim.alias))) {
-                    return true;
-                }
-
-                await this.api.fireNotificationCallbacks({
-                    cause: NotificationCause.KillClaimToKillerReminder,
-                    description: `${victim.alias} hasn't confirmed you've killed them. Remind them to!`,
-                    codename: killer.codename,
-                    timestamp: Date.now()
-                });
-                await this.api.fireNotificationCallbacks({
-                    cause: NotificationCause.KillClaimToVictimReminder,
-                    description: `You still haven't confirmed you've been killed. Either do so or dispute the claim soon!`,
-                    codename: victim.codename,
-                    timestamp: Date.now()
-                });
-
-                return false;
-            },
-            [Delay.hour]: async (): Promise<boolean> => {
-                if (!(await this.isClaimStillOpen(killer.alias, victim.alias))) {
-                    return true;
-                }
-
-                await this.api.fireNotificationCallbacks({
-                    cause: NotificationCause.KillClaimToKillerReminder,
-                    description: `${victim.alias} still hasn't confirmed you've killed them. Remind them to!`,
-                    codename: killer.codename,
-                    timestamp: Date.now()
-                });
-                await this.api.fireNotificationCallbacks({
-                    cause: NotificationCause.KillClaimToVictimReminder,
-                    description: `You still haven't confirmed you've been killed. Either do so or dispute the claim within the next two hours!`,
-                    codename: victim.codename,
-                    timestamp: Date.now()
-                });
-
-                return false;
-            },
-            [Delay.hour * 3]: async (): Promise<boolean> => {
-                if (!(await this.isClaimStillOpen(killer.alias, victim.alias))) {
-                    return true;
-                }
-
-                this.api.endpoints.kills.finalizeDeath(victim);
-
-                await this.api.fireNotificationCallbacks({
-                    cause: NotificationCause.KillClaimToKillerReminder,
-                    description: `${victim.alias} never confirmed you've killed them. We've auto-killed them for you.`,
-                    codename: killer.codename,
-                    timestamp: Date.now()
-                });
-                await this.api.fireNotificationCallbacks({
-                    cause: NotificationCause.KillClaimToVictimReminder,
-                    description: `You never confirmed you've been killed so we've confirmed the kill automatically. You can dispute the claim if you feel it was unjust.`,
-                    codename: victim.codename,
-                    timestamp: Date.now()
-                });
-
-                return false;
-            }
-        });
-    }
-
-    /**
-     * Determines if there's still a claim between users.
-     * 
-     * @param killer   Alias of a killer.
-     * @param killer   Alias of a vitim.
-     * @returns A promise for whether there's a claim between users.
-     */
-    private async isClaimStillOpen(killer: string, victim: string): Promise<boolean> {
-        return !!(await this.collection.find({ killer, victim }));
     }
 }

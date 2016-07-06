@@ -8,7 +8,6 @@ import { INotification } from "../shared/notifications";
 import { IRawRound } from "../shared/rounds";
 import { IUser } from "../shared/users";
 import { IAssassinsSettings } from "../main";
-import { Scheduler } from "./cron/scheduler";
 import { NotificationsHub } from "./notifications/notificationshub";
 import { EmailNotifier, IEmailSettings } from "./notifications/emailnotifier";
 import { EndpointNotifier } from "./notifications/endpointnotifier";
@@ -86,11 +85,6 @@ export class Server {
     private server: http.Server;
 
     /**
-     * Schedules tasks at a delay.
-     */
-    private scheduler: Scheduler;
-
-    /**
      * MongoDB database.
      */
     private database: Database;
@@ -109,9 +103,8 @@ export class Server {
         this.app.use(express.static("src/site"));
         this.app.use("/node_modules", express.static("node_modules"));
 
-        this.scheduler = new Scheduler();
         this.server = http.createServer(this.app);
-        this.api = new Api(this.app, this.database, this.scheduler);
+        this.api = new Api(this.app, this.database);
 
         this.notificationsHub = new NotificationsHub();
         this.notificationsHub.registerNotifier(new EndpointNotifier(this.api.endpoints.notifications));

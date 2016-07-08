@@ -161,6 +161,7 @@ export class Api {
         }
 
         response.status(errorCode).json(details);
+        console.log(error.stack);
     }
 
     /**

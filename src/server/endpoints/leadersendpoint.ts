@@ -22,32 +22,24 @@ export class LeadersEndpoint extends Endpoint<ILeader[]> {
      * @returns A promise for leader information.
      */
     public async get(): Promise<ILeader[]> {
-        const leaders: { [i: string]: ILeader } = {};
         const users: IUser[] = await this.api.endpoints.users.getAll();
 
-        // List non-admin users with kills as leaders, keyed by alias
-        users
+        // Leaders are non-admin users with kills, sorted by kills (descending) then codename
+        return users
             .filter((user: IUser): boolean => !user.admin && user.kills > 0)
-            .forEach((user: IUser): void => {
-                leaders[user.alias] = {
+            .map((user: IUser): ILeader => {
+                return {
                     alive: user.alive,
                     kills: user.kills,
                     codename: user.codename
                 };
-            });
-
-        // Sort the top 15 leaders by kills (descending), then by codename (ascending).
-        const result = Object.keys(leaders)
-            .map((key: string): ILeader => leaders[key])
+            })
             .sort((a: ILeader, b: ILeader): number => {
                 if (a.kills !== b.kills) {
                     return b.kills - a.kills;
                 }
 
                 return a.codename < b.codename ? -1 : 1;
-            })
-            .slice(0, 15);
-
-        return result;
+            });
     }
 }

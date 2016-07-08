@@ -3,7 +3,6 @@
 "use strict";
 import * as React from "react";
 import { Sdk } from "../../sdk/sdk";
-import { ICredentials } from "../../../../shared/login";
 import { IUser } from "../../../../shared/users";
 import { ActionButton } from "../profile/actionbutton";
 import { UserField } from "./userfield";
@@ -47,7 +46,7 @@ export interface IUsersTableProps {
  * Updated users, keyed by alias.
  */
 export interface IUpdatedUsers {
-    [i: string]: ICredentials;
+    [i: string]: IUser;
 };
 
 /**
@@ -104,9 +103,9 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
             return undefined;
         }
 
-        const users: ICredentials[] = Object
+        const users: IUser[] = Object
             .keys(this.state.updatedUsers)
-            .map((key: string): ICredentials => this.state.updatedUsers[key]);
+            .map((key: string): IUser => this.state.updatedUsers[key]);
 
         return (
             <div className="users-table-updates">
@@ -123,7 +122,7 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
      * 
      * @returns The rendered table of users.
      */
-    private renderTable(users: ICredentials[], fields: string[]): JSX.Element {
+    private renderTable(users: IUser[], fields: string[]): JSX.Element {
         if (users.length === 0) {
             return <em>None!</em>;
         }
@@ -160,7 +159,7 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
      * @param fields   Fields to display on the users.
      * @returns The rendered body component.
      */
-    private renderBody(users: ICredentials[], fields: string[]): JSX.Element[] {
+    private renderBody(users: IUser[], fields: string[]): JSX.Element[] {
         return users
             .map((user: IUser, i: number): JSX.Element => {
                 return <tr key={i}>{this.renderUser(user, fields)}</tr>;
@@ -174,7 +173,7 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
      * @param fields   Fields to display on the user.
      * @returns The rendered user row.
      */
-    private renderUser(user: ICredentials, fields: string[]): JSX.Element[] {
+    private renderUser(user: IUser, fields: string[]): JSX.Element[] {
         const elements: JSX.Element[] = fields
             .filter((field: string): boolean => user.hasOwnProperty(field))
             .map((field: string, i: number): JSX.Element => {
@@ -207,12 +206,12 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
      * @param field   The name of the user's field.
      * @param newValue   A new value for the user's field.
      */
-    private handleNewUserValue(user: ICredentials, field: string, newValue: any): void {
-        const updated: ICredentials = {
+    private handleNewUserValue(user: IUser, field: string, newValue: any): void {
+        const updated: IUser = {
             alias: user.alias,
             codename: user.codename,
             passphrase: user.passphrase
-        };
+        } as IUser;
 
         updated[field] = newValue;
 
@@ -229,7 +228,7 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
      * @param victim   A user to kill.
      * @returns A promise for removing the user.
      */
-    private async killUserQuietly(user: ICredentials): Promise<void> {
+    private async killUserQuietly(user: IUser): Promise<void> {
         await this.props.sdk.killUserQuietly(this.props.admin, user);
 
         // Todo: be more elegant...

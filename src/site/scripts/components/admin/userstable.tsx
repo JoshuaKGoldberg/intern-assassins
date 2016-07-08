@@ -107,6 +107,8 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
             .keys(this.state.updatedUsers)
             .map((key: string): IUser => this.state.updatedUsers[key]);
 
+        console.log("updated users", this.state.updatedUsers);
+
         return (
             <div className="users-table-updates">
                 <h3>Pending updates</h3>
@@ -181,9 +183,8 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
                     <td key={i}>
                         <UserField
                             admin={this.props.admin}
-                            editable={field !== "alias"}
                             field={field}
-                            onNewValue={(newValue: string) => this.handleNewUserValue(user, field, newValue)}
+                            onNewValue={(newValue: any) => this.handleNewUserValue(user, field, newValue)}
                             user={user} />
                     </td>);
             });
@@ -193,6 +194,7 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
                 <ActionButton
                     action={(): void => { this.killUserQuietly(user); }}
                     confirmationText={`Are you sure you want to kill ${user.alias}?`}
+                    small={true}
                     text="Kill Quietly" />
             </td>);
 
@@ -207,6 +209,7 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
      * @param newValue   A new value for the user's field.
      */
     private handleNewUserValue(user: IUser, field: string, newValue: any): void {
+        console.log("handleNewUserValue", user, field, newValue);
         const updated: IUser = {
             alias: user.alias,
             codename: user.codename,

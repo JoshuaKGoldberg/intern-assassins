@@ -41,3 +41,53 @@ export interface IUser extends ICredentials, ILeader {
      */
     target?: string;
 }
+
+/**
+ * Description of how a user field behaves.
+ */
+export interface IUserField {
+    /**
+     * Whether the field is locked for editing.
+     */
+    readonly?: boolean;
+
+    /**
+     * Input and storage type.
+     */
+    type: UserFieldType;
+}
+
+/**
+ * User fields, keyed by name.
+ */
+export interface IUserFields {
+    [i: string]: IUserField;
+}
+
+/**
+ * Input and storage type of a user field.
+ */
+export type UserFieldType = "number" | "string";
+
+/**
+ * Visible user fields for administrators.
+ */
+export const UserFields: IUserFields = {
+    alias: {
+        readonly: true,
+        type: "string"
+    },
+    codename: {
+        type: "string"
+    },
+    kills: {
+        type: "number"
+    },
+    passphrase: {
+        type: "string"
+    },
+    target: {
+        type: "string"
+    }
+};
+

@@ -22,7 +22,6 @@ export class LeadersEndpoint extends Endpoint<ILeader[]> {
      * @returns A promise for leader information.
      */
     public async get(): Promise<ILeader[]> {
-        const leaders: { [i: string]: ILeader } = {};
         const users: IUser[] = await this.api.endpoints.users.getAll();
 
         // Leaders are non-admin users with kills, sorted by kills (descending) then codename

@@ -90,4 +90,3 @@ export const UserFields: IUserFields = {
         type: "string"
     }
 };
-

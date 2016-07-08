@@ -3,7 +3,7 @@
 "use strict";
 import * as React from "react";
 import { ICredentials } from "../../../../shared/login";
-import { IUser } from "../../../../shared/users";
+import { IUser, UserFields } from "../../../../shared/users";
 
 /**
  * Props for an UserField component.
@@ -13,11 +13,6 @@ export interface IUserFieldProps {
      * Information on the current admin.
      */
     admin: IUser;
-
-    /**
-     * Whether the content can be updated.
-     */
-    editable: boolean;
 
     /**
      * Key of the user's field.
@@ -88,7 +83,7 @@ export class UserField extends React.Component<IUserFieldProps, IUserFieldState>
                 <input
                     placeholder={this.props.user[this.props.field]}
                     onChange={(event: React.FormEvent): void => this.onChange(event)}
-                    type="text"
+                    type={UserFields[this.props.field].type}
                     value={this.state.newValue} />
                 <div className="user-field-actions">
                     <input
@@ -114,18 +109,18 @@ export class UserField extends React.Component<IUserFieldProps, IUserFieldState>
             <div className="user-field user-field-static">
                 <input
                     onClick={(): void => this.onActivate()}
-                    readonly={this.props.editable ? "" : "readonly"}
+                    readonly={UserFields[this.props.field].readonly ? "readonly" : ""}
                     ref={UserField.refInput}
-                    type="text"
+                    type={UserFields[this.props.field].type}
                     value={this.props.user[this.props.field]} />
             </div>);
     }
 
     /**
-     * 
+     * Handles the field being clicked for editing, if allowed.
      */
     private onActivate(): void {
-        if (!this.props.editable) {
+        if (UserFields[this.props.field].readonly) {
             return;
         }
 
@@ -136,7 +131,7 @@ export class UserField extends React.Component<IUserFieldProps, IUserFieldState>
     }
 
     /**
-     * 
+     * Cancels an editing state.
      */
     private onCancel(): void {
         this.setState({
@@ -146,19 +141,25 @@ export class UserField extends React.Component<IUserFieldProps, IUserFieldState>
     }
 
     /**
+     * Handles the input being updated while editing.
      * 
+     * @param event   The triggering event.
      */
     private onChange(event: React.FormEvent): void {
-        this.setState({
-            newValue: (event.target as any).value
-        });
+        let newValue: any = (event.target as any).value;
+
+        if (UserFields[this.props.field].type === "number") {
+            newValue = parseInt(newValue);
+        }
+
+        this.setState({ newValue });
     }
 
     /**
-     * 
+     * Handles the user submitting the new state.
      */
     private async onSubmit(): Promise<void> {
-        if (!this.state.newValue) {
+        if (typeof this.state.newValue === "undefined") {
             return;
         }
 

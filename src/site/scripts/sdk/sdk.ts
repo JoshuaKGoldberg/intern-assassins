@@ -120,7 +120,7 @@ export class Sdk {
      * @param victim   A user to kill.
      * @returns A promise for killing the user.
      */
-    public async killUserQuietly(credentials: ICredentials, victim: ICredentials): Promise<any> {
+    public async killUserQuietly(credentials: ICredentials, victim: IPartialUser): Promise<any> {
         const killer: IUser = (await this.getUsers(
             credentials,
             {
@@ -147,7 +147,7 @@ export class Sdk {
                         target: killer.alias
                     },
                     updated: {
-                        target: killer.target
+                        target: victim.target
                     }
                 }
             ]);

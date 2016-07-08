@@ -107,8 +107,6 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
             .keys(this.state.updatedUsers)
             .map((key: string): IUser => this.state.updatedUsers[key]);
 
-        console.log("updated users", this.state.updatedUsers);
-
         return (
             <div className="users-table-updates">
                 <h3>Pending updates</h3>
@@ -177,7 +175,6 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
      */
     private renderUser(user: IUser, fields: string[]): JSX.Element[] {
         const elements: JSX.Element[] = fields
-            .filter((field: string): boolean => user.hasOwnProperty(field))
             .map((field: string, i: number): JSX.Element => {
                 return (
                     <td key={i}>
@@ -209,12 +206,11 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
      * @param newValue   A new value for the user's field.
      */
     private handleNewUserValue(user: IUser, field: string, newValue: any): void {
-        console.log("handleNewUserValue", user, field, newValue);
-        const updated: IUser = {
-            alias: user.alias,
-            codename: user.codename,
-            passphrase: user.passphrase
-        } as IUser;
+        const updated: IUser = {} as IUser;
+
+        for (const i in user) {
+            updated[i] = user[i];
+        }
 
         updated[field] = newValue;
 

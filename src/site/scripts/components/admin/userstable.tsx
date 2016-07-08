@@ -2,8 +2,10 @@
 
 "use strict";
 import * as React from "react";
+import { Sdk } from "../../sdk/sdk";
 import { ICredentials } from "../../../../shared/login";
 import { IUser } from "../../../../shared/users";
+import { ActionButton } from "../profile/actionbutton";
 import { UserField } from "./userfield";
 
 /**
@@ -29,6 +31,11 @@ export interface IUsersTableProps {
      * Callback for submitting updates.
      */
     onUpdates: (updatedUsers: IUpdatedUsers) => void;
+
+    /**
+     * Wrapper around the server API.
+     */
+    sdk: Sdk;
 
     /**
      * Users to display in the table.
@@ -141,7 +148,7 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
      * @returns The rendered head component.
      */
     private renderHead(fields: string[]): JSX.Element[] {
-        return fields.map((key: string, i: number): JSX.Element => {
+        return [...fields, "actions"].map((key: string, i: number): JSX.Element => {
             return <th key={i}>{key}</th>;
         });
     }
@@ -168,7 +175,7 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
      * @returns The rendered user row.
      */
     private renderUser(user: ICredentials, fields: string[]): JSX.Element[] {
-        return fields
+        const elements: JSX.Element[] = fields
             .filter((field: string): boolean => user.hasOwnProperty(field))
             .map((field: string, i: number): JSX.Element => {
                 return (
@@ -181,6 +188,16 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
                             user={user} />
                     </td>);
             });
+
+        elements.push(
+            <td key={elements.length}>
+                <ActionButton
+                    action={(): void => { this.killUserQuietly(user); }}
+                    confirmationText={`Are you sure you want to kill ${user.alias}?`}
+                    text="Kill Quietly" />
+            </td>);
+
+        return elements;
     }
 
     /**
@@ -190,7 +207,7 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
      * @param field   The name of the user's field.
      * @param newValue   A new value for the user's field.
      */
-    private handleNewUserValue(user: ICredentials, field: string, newValue: string): void {
+    private handleNewUserValue(user: ICredentials, field: string, newValue: any): void {
         const updated: ICredentials = {
             alias: user.alias,
             codename: user.codename,
@@ -204,6 +221,19 @@ export class UsersTable extends React.Component<IUsersTableProps, IUsersTableSta
         this.setState({
             updatedUsers: this.state.updatedUsers
         });
+    }
+
+    /**
+     * Removes a user from the game without increasing any kill count.
+     * 
+     * @param victim   A user to kill.
+     * @returns A promise for removing the user.
+     */
+    private async killUserQuietly(user: ICredentials): Promise<void> {
+        await this.props.sdk.killUserQuietly(this.props.admin, user);
+
+        // Todo: be more elegant...
+        location.reload();
     }
 
     /**

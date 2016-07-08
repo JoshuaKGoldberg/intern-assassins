@@ -87,18 +87,21 @@ export class UsersTables extends React.Component<IUsersTablesProps, IUsersTables
                     fields={["alias", "codename", "passphrase", "target"]}
                     heading="Alive"
                     onUpdates={(updatedUsers: IUpdatedUsers): Promise<void> => this.onUpdates(updatedUsers)}
+                    sdk={this.props.sdk}
                     users={usersAlive} />
                 <UsersTable
                     admin={this.props.admin}
                     fields={["alias", "codename", "passphrase"]}
                     heading="Dead"
                     onUpdates={(updatedUsers: IUpdatedUsers): Promise<void> => this.onUpdates(updatedUsers)}
+                    sdk={this.props.sdk}
                     users={usersDead} />
                 <UsersTable
                     admin={this.props.admin}
                     fields={["alias", "codename"]}
                     heading="Admins"
                     onUpdates={(updatedUsers: IUpdatedUsers): Promise<void> => this.onUpdates(updatedUsers)}
+                    sdk={this.props.sdk}
                     users={admins} />
             </div>);
     }

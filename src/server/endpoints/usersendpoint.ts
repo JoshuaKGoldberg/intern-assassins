@@ -21,13 +21,14 @@ export class UsersEndpoint extends Endpoint<IUser> {
      * Retrieves all users.
      * 
      * @param credentials   Login values for authentication.
+     * @param query   An optional query to match on.
      * @returns A promise for all users.
      * @remarks A user retrieving their own data should use "user/get".
      */
-    public async get(credentials: ICredentials): Promise<IUser[]> {
+    public async get(credentials: ICredentials, query?: any): Promise<IUser[]> {
         await this.validateAdminCredentials(credentials);
 
-        return this.getAll();
+        return this.getAll(query);
     }
 
     /**
@@ -41,7 +42,7 @@ export class UsersEndpoint extends Endpoint<IUser> {
         await this.validateAdminCredentials(credentials);
         await Promise.all(
             updates.map(async (update: IUpdate<ICredentials, ICredentials>): Promise<void> => {
-                if (update.filter.alias !== update.updated.alias) {
+                if (update.updated.alias && update.filter.alias !== update.updated.alias) {
                     throw new ServerError(ErrorCause.NotImplemented, "You can't update a user's alias.");
                 }
 
@@ -74,10 +75,11 @@ export class UsersEndpoint extends Endpoint<IUser> {
     /**
      * Retrieves all users.
      * 
+     * @param query   An optional query to match on.
      * @returns A promise for all users.
      */
-    public getAll(): Promise<IUser[]> {
-        return this.collection.find().toArray();
+    public getAll(query?: any): Promise<IUser[]> {
+        return this.collection.find(query).toArray();
     }
 
     /**

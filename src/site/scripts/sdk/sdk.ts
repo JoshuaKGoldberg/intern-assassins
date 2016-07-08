@@ -54,7 +54,7 @@ export class Sdk {
      * @param update   Description of the update.
      * @returns A promise for completing the updates.
      */
-    public postUsers(credentials: ICredentials, updates: IUpdate<ICredentials, ICredentials>[]): Promise<boolean> {
+    public postUsers(credentials: ICredentials, updates: IUpdate<any, any>[]): Promise<boolean> {
         return this.sendAjaxRequest(
             "POST",
             "api/users",
@@ -90,10 +90,11 @@ export class Sdk {
      * Retrieves all users' information.
      * 
      * @param credentials   The submitting user credentials.
+     * @param query   An optional query to match on.
      * @returns A promise for all users.
      */
-    public getUsers(credentials: ICredentials): Promise<IUser[]> {
-        return this.sendAjaxRequest("GET", "api/users", credentials);
+    public getUsers(credentials: ICredentials, query?: any): Promise<IUser[]> {
+        return this.sendAjaxRequest("GET", "api/users", credentials, query);
     }
 
     /**
@@ -110,6 +111,46 @@ export class Sdk {
             credentials,
             users,
             Sdk.parseResponseForOkStatus);
+    }
+
+    /**
+     * Removes a user from the game without increasing any kill count.
+     * 
+     * @param credentials   The submitting admin credentials.
+     * @param victim   A user to kill.
+     * @returns A promise for killing the user.
+     */
+    public async killUserQuietly(credentials: ICredentials, victim: ICredentials): Promise<any> {
+        const killer: IUser = (await this.getUsers(
+            credentials,
+            {
+                alive: true,
+                target: victim.alias
+            }))
+            [0];
+
+        await this.postUsers(
+            credentials,
+            [
+                // Kill the victim
+                {
+                    filter: {
+                        alias: victim.alias
+                    },
+                    updated: {
+                        alive: false
+                    }
+                },
+                // Update the killer's target to be the victim's target
+                {
+                    filter: {
+                        target: killer.alias
+                    },
+                    updated: {
+                        target: killer.target
+                    }
+                }
+            ]);
     }
 
     /**

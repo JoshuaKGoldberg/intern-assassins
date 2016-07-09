@@ -144,7 +144,7 @@ export class Sdk {
                 // Update the killer's target to be the victim's target
                 {
                     filter: {
-                        target: killer.alias
+                        alias: killer.alias
                     },
                     updated: {
                         target: victim.target

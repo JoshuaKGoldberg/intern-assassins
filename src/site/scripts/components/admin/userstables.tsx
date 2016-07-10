@@ -4,7 +4,6 @@
 import * as React from "react";
 import { Sdk } from "../../sdk/sdk";
 import { IUpdate } from "../../../../shared/actions";
-import { ICredentials } from "../../../../shared/login";
 import { IUser } from "../../../../shared/users";
 import { IUpdatedUsers, UsersTable } from "./userstable";
 
@@ -116,14 +115,21 @@ export class UsersTables extends React.Component<IUsersTablesProps, IUsersTables
         await this.props.sdk.postUsers(
             this.props.admin,
             Object.keys(updatedUsers)
-                .map((key: string): IUpdate<ICredentials, ICredentials> => {
-                    const updatedUser: ICredentials = updatedUsers[key];
+                .map((key: string): IUpdate<any, IUser> => {
+                    const updatedUser: IUser = updatedUsers[key];
 
                     return {
                         filter: {
                             alias: updatedUser.alias
-                        } as ICredentials,
-                        updated: updatedUser
+                        },
+                        updated: {
+                            admin: updatedUser.admin,
+                            alive: updatedUser.alive,
+                            codename: updatedUser.codename,
+                            kills: updatedUser.kills,
+                            passphrase: updatedUser.passphrase,
+                            target: updatedUser.target
+                        } as any
                     };
                 }));
 

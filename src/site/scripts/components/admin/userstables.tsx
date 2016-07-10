@@ -4,7 +4,6 @@
 import * as React from "react";
 import { Sdk } from "../../sdk/sdk";
 import { IUpdate } from "../../../../shared/actions";
-import { ICredentials } from "../../../../shared/login";
 import { IUser } from "../../../../shared/users";
 import { IUpdatedUsers, UsersTable } from "./userstable";
 
